@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+import type { PageId } from '../types/navigation'
+import { normalizePageId } from '../types/navigation'
 
 interface SearchItem {
   id: string
   title: string
   sectionId: string
+  pageId: PageId
   category: string
   description: string
   keywords: string[]
@@ -14,6 +17,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-arrhenius',
     title: 'Teori Asam Basa Arrhenius',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Konsep pelepasan ion H⁺ dan OH⁻ dalam pelarut air (1884).',
     keywords: ['arrhenius', 'teori', 'ion', 'h+', 'oh-', 'air', 'pelarut'],
@@ -22,6 +26,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-bronsted',
     title: 'Teori Brønsted–Lowry & Asam-Basa Konjugasi',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Donor dan akseptor proton (H⁺) serta pasangan konjugasi.',
     keywords: ['bronsted', 'lowry', 'proton', 'donor', 'akseptor', 'konjugasi'],
@@ -30,6 +35,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lewis',
     title: 'Teori Asam Basa Lewis',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Serah terima pasangan elektron bebas (PEB) & ikatan kovalen koordinasi.',
     keywords: ['lewis', 'elektron', 'peb', 'koordinasi', 'bf3', 'nh3'],
@@ -38,6 +44,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-sifat',
     title: 'Sifat Fisis & Kimia Larutan Asam Basa',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Rasa, daya hantar elektrolit, reaksi dengan seng & karbonat.',
     keywords: ['sifat', 'fisis', 'kimia', 'elektrolit', 'korosif', 'licin', 'kaustik', 'karbonat'],
@@ -46,6 +53,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-kehidupan',
     title: 'Asam & Basa dalam Kehidupan Sehari-hari',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Asam lambung HCl, cuka asetat, vitamin C, soda kue, dan antasida maag.',
     keywords: ['sehari-hari', 'lambung', 'hcl', 'cuka', 'asetat', 'lemon', 'sitrat', 'sabun', 'maag', 'antasida'],
@@ -54,6 +62,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-netralisasi',
     title: 'Reaksi Netralisasi & Titrasi',
     sectionId: 'teori-section',
+    pageId: 'teori',
     category: 'Materi Teori',
     description: 'Asam + Basa → Garam + Air dan aplikasi pengapuran tanah masam.',
     keywords: ['netralisasi', 'titrasi', 'garam', 'air', 'pengapuran', 'sengatan'],
@@ -62,6 +71,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lab-lakmus',
     title: 'Pengujian Kertas Lakmus Merah & Biru',
     sectionId: 'lab-section',
+    pageId: 'lab',
     category: 'Lab Virtual',
     description: 'Identifikasi sifat asam (memerahkan) dan basa (membirukan).',
     keywords: ['lakmus', 'kertas', 'merah', 'biru', 'indikator', 'lab'],
@@ -70,6 +80,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lab-pp',
     title: 'Indikator Fenolftalein (PP)',
     sectionId: 'lab-section',
+    pageId: 'lab',
     category: 'Lab Virtual',
     description: 'Trayek pH 8.3–10.0: bening di asam/netral, merah muda di basa.',
     keywords: ['fenolftalein', 'pp', 'trayek', 'merah muda', 'magenta', 'titrasi'],
@@ -78,6 +89,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lab-btb',
     title: 'Indikator Bromtimol Biru (BTB)',
     sectionId: 'lab-section',
+    pageId: 'lab',
     category: 'Lab Virtual',
     description: 'Trayek pH 6.0–7.6: kuning di asam, hijau di netral, biru di basa.',
     keywords: ['btb', 'bromtimol', 'kuning', 'hijau', 'biru'],
@@ -86,6 +98,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lab-mo',
     title: 'Indikator Metil Jingga (Methyl Orange / MO)',
     sectionId: 'lab-section',
+    pageId: 'lab',
     category: 'Lab Virtual',
     description: 'Trayek pH 3.1–4.4: merah di asam kuat, kuning di netral/basa.',
     keywords: ['metil', 'jingga', 'mo', 'orange', 'trayek'],
@@ -94,6 +107,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-lab-alami',
     title: 'Indikator Alami: Kol Ungu & Kunyit',
     sectionId: 'lab-section',
+    pageId: 'lab',
     category: 'Lab Virtual',
     description: 'Pigmen antosianin dan kurkumin sebagai indikator ramah lingkungan.',
     keywords: ['alami', 'kol ungu', 'kunyit', 'kurkumin', 'antosianin'],
@@ -102,6 +116,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-skala-ph',
     title: 'Visualisasi Skala pH 0 – 14',
     sectionId: 'skala-section',
+    pageId: 'skala',
     category: 'Skala pH',
     description: 'Hubungan [H⁺], [OH⁻], dan tetapan air Kw = 10⁻¹⁴ pada 25°C.',
     keywords: ['skala', 'ph', 'derajat keasaman', 'kw', 'logaritma', 'h+', 'oh-'],
@@ -110,6 +125,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-calc-ph',
     title: 'Kalkulator pH Asam Kuat & Basa Kuat',
     sectionId: 'kalkulator-section',
+    pageId: 'kalkulator',
     category: 'Kalkulator pH',
     description: 'Perhitungan matematis asam monoprotik (HCl, HNO₃) dan basa kuat (NaOH, KOH).',
     keywords: ['kalkulator', 'hitung', 'molaritas', 'konsentrasi', 'asam kuat', 'basa kuat', 'poh'],
@@ -118,14 +134,16 @@ const SEARCH_DATABASE: SearchItem[] = [
     id: 's-kuis',
     title: 'Kuis Evaluasi Formatif & Skor',
     sectionId: 'kuis-section',
-    category: 'Evaluasi',
-    description: '8 soal pilihan ganda interaktif dengan pembahasan kimia mendalam.',
+    pageId: 'kuis',
+    category: 'Kuis dan Skor',
+    description: '10 soal pilihan ganda HOTS Modul 1 (C3–C5, A–E) dengan pembahasan kimia mendalam.',
     keywords: ['kuis', 'soal', 'skor', 'evaluasi', 'latihan', 'pembahasan'],
   },
   {
     id: 's-refleksi',
     title: 'Jurnal Refleksi Pembelajaran Mandiri',
     sectionId: 'refleksi-section',
+    pageId: 'refleksi',
     category: 'Refleksi',
     description: 'Tuliskan pemahaman, kesulitan, rencana belajar, serta cetak PDF.',
     keywords: ['refleksi', 'jurnal', 'cetak', 'pdf', 'lembar kerja', 'metakognisi'],
@@ -135,12 +153,14 @@ const SEARCH_DATABASE: SearchItem[] = [
 interface SearchModalProps {
   isOpen: boolean
   onClose: () => void
-  onNavigateToSection: (sectionId: string) => void
+  onNavigateToPage: (pageId: PageId) => void
+  onNavigateToSection?: (sectionId: string) => void
 }
 
 export function SearchModal({
   isOpen,
   onClose,
+  onNavigateToPage,
   onNavigateToSection,
 }: SearchModalProps) {
   const [query, setQuery] = useState('')
@@ -170,8 +190,12 @@ export function SearchModal({
           )
         })
 
-  const handleSelect = (sectionId: string) => {
-    onNavigateToSection(sectionId)
+  const handleSelect = (item: SearchItem) => {
+    const targetPage = item.pageId || normalizePageId(item.sectionId)
+    onNavigateToPage(targetPage)
+    if (onNavigateToSection) {
+      onNavigateToSection(item.sectionId)
+    }
     onClose()
   }
 
@@ -234,7 +258,7 @@ export function SearchModal({
                   key={item.id}
                   type="button"
                   className="search-result-item"
-                  onClick={() => handleSelect(item.sectionId)}
+                  onClick={() => handleSelect(item)}
                 >
                   <div className="result-item-top">
                     <span className="result-category-badge">{item.category}</span>

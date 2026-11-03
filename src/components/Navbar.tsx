@@ -1,29 +1,19 @@
 import { useState } from 'react'
+import type { PageId } from '../types/navigation'
+import { MAIN_NAV_ITEMS } from '../types/navigation'
 
 interface NavbarProps {
   onOpenSearch: () => void
-  activeSection: string
+  activePage: PageId
+  onNavigatePage: (page: PageId) => void
 }
 
-export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
+export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const navLinks = [
-    { id: 'hero', label: 'Beranda' },
-    { id: 'teori-section', label: 'Materi Teori' },
-    { id: 'lab-section', label: 'Lab Virtual' },
-    { id: 'skala-section', label: 'Skala pH' },
-    { id: 'kalkulator-section', label: 'Kalkulator pH' },
-    { id: 'kuis-section', label: 'Kuis & Skor' },
-    { id: 'refleksi-section', label: 'Refleksi' },
-  ]
-
-  const handleNavClick = (id: string) => {
+  const handleNavClick = (pageId: PageId) => {
     setMobileMenuOpen(false)
-    const element = document.getElementById(id)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    onNavigatePage(pageId)
   }
 
   return (
@@ -33,7 +23,7 @@ export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
         <button
           type="button"
           className="brand-logo"
-          onClick={() => handleNavClick('hero')}
+          onClick={() => handleNavClick('beranda')}
           aria-label="Kembali ke Beranda AsamBasa Lab"
         >
           <div className="brand-icon-wrapper">
@@ -61,20 +51,20 @@ export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
           </div>
         </button>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation — 7 Menu Utama */}
         <nav className="desktop-nav" aria-label="Navigasi Utama">
           <ul className="nav-list">
-            {navLinks.map((link) => {
-              const isActive = activeSection === link.id
+            {MAIN_NAV_ITEMS.map((item) => {
+              const isActive = activePage === item.id
               return (
-                <li key={link.id}>
+                <li key={item.id}>
                   <button
                     type="button"
                     className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
-                    onClick={() => handleNavClick(link.id)}
+                    onClick={() => handleNavClick(item.id)}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    {link.label}
+                    {item.label}
                   </button>
                 </li>
               )
@@ -82,13 +72,13 @@ export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
           </ul>
         </nav>
 
-        {/* Actions (Search + Mobile Toggle) */}
+        {/* Actions (Pencarian + Tombol Mobile Menu) */}
         <div className="navbar-actions">
           <button
             type="button"
             className="search-trigger-btn"
             onClick={onOpenSearch}
-            title="Cari materi asam-basa (Ctrl+K)"
+            title="Cari topik pembelajaran (Ctrl+K)"
             aria-label="Buka pencarian materi"
           >
             <svg
@@ -113,7 +103,7 @@ export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
             type="button"
             className="mobile-hamburger-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
+            aria-label={mobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
             aria-expanded={mobileMenuOpen}
           >
             <svg
@@ -145,21 +135,28 @@ export function Navbar({ onOpenSearch, activeSection }: NavbarProps) {
 
       {/* Mobile Dropdown Drawer */}
       {mobileMenuOpen && (
-        <div className="mobile-nav-drawer" role="dialog" aria-modal="true">
+        <div className="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Menu Navigasi Mobile">
           <ul className="mobile-nav-list">
-            {navLinks.map((link) => (
-              <li key={link.id}>
-                <button
-                  type="button"
-                  className={`mobile-nav-link ${
-                    activeSection === link.id ? 'mobile-nav-link-active' : ''
-                  }`}
-                  onClick={() => handleNavClick(link.id)}
-                >
-                  {link.label}
-                </button>
-              </li>
-            ))}
+            {MAIN_NAV_ITEMS.map((item) => {
+              const isActive = activePage === item.id
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`mobile-nav-link ${
+                      isActive ? 'mobile-nav-link-active' : ''
+                    }`}
+                    onClick={() => handleNavClick(item.id)}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <span>{item.label}</span>
+                    {item.shortDescription && (
+                      <span className="mobile-nav-desc">{item.shortDescription}</span>
+                    )}
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

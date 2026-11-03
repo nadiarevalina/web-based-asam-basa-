@@ -1,10 +1,12 @@
+import type { PageId } from '../types/navigation'
+
 const CURRENT_YEAR = new Date().getFullYear()
 
 interface FooterProps {
-  onNavigateToSection: (sectionId: string) => void
+  onNavigateToPage: (pageId: PageId) => void
 }
 
-export function Footer({ onNavigateToSection }: FooterProps) {
+export function Footer({ onNavigateToPage }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -13,7 +15,12 @@ export function Footer({ onNavigateToSection }: FooterProps) {
     <footer className="footer-container" role="contentinfo">
       <div className="footer-inner">
         <div className="footer-brand-column">
-          <div className="footer-logo">
+          <button
+            type="button"
+            className="footer-logo btn-ghost"
+            onClick={() => onNavigateToPage('beranda')}
+            aria-label="Kembali ke Beranda"
+          >
             <svg
               className="footer-svg"
               viewBox="0 0 24 24"
@@ -30,7 +37,7 @@ export function Footer({ onNavigateToSection }: FooterProps) {
             <span className="footer-brand-text">
               AsamBasa<span className="brand-highlight">Lab</span>
             </span>
-          </div>
+          </button>
           <p className="footer-desc">
             Media pembelajaran sains kimia berbasis web interaktif dengan pendekatan inkuiri terbimbing
             untuk siswa SMA/MA Kelas XI.
@@ -41,60 +48,69 @@ export function Footer({ onNavigateToSection }: FooterProps) {
         </div>
 
         <div className="footer-nav-column">
-          <h4 className="footer-col-title">Navigasi Modul</h4>
+          <h4 className="footer-col-title">Navigasi 7 Bagian Pembelajaran</h4>
           <ul className="footer-link-list">
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('teori-section')}
+                onClick={() => onNavigateToPage('beranda')}
               >
-                Modul 1: Teori Asam &amp; Basa
+                1. Beranda
               </button>
             </li>
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('lab-section')}
+                onClick={() => onNavigateToPage('teori')}
               >
-                Modul 2: Lab Virtual Indikator
+                2. Materi Teori
               </button>
             </li>
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('skala-section')}
+                onClick={() => onNavigateToPage('lab')}
               >
-                Visualisasi Skala pH 0–14
+                3. Lab Virtual
               </button>
             </li>
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('kalkulator-section')}
+                onClick={() => onNavigateToPage('skala')}
               >
-                Modul 3: Kalkulator pH Monovalen
+                4. Skala pH
               </button>
             </li>
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('kuis-section')}
+                onClick={() => onNavigateToPage('kalkulator')}
               >
-                Kuis &amp; Evaluasi Formatif
+                5. Kalkulator pH
               </button>
             </li>
             <li>
               <button
                 type="button"
                 className="footer-link"
-                onClick={() => onNavigateToSection('refleksi-section')}
+                onClick={() => onNavigateToPage('kuis')}
               >
-                Lembar Refleksi Pembelajaran
+                6. Kuis dan Skor
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="footer-link"
+                onClick={() => onNavigateToPage('refleksi')}
+              >
+                7. Refleksi
               </button>
             </li>
           </ul>
@@ -110,14 +126,14 @@ export function Footer({ onNavigateToSection }: FooterProps) {
             <code>[OH⁻] = M × b &nbsp; (Basa Kuat)</code>
           </div>
           <p className="formula-caption">
-            Suhu standar 25°C • Kw = 1.0 × 10⁻¹⁴
+            Suhu standar 25°C &bull; Kw = 1.0 &times; 10⁻¹⁴
           </p>
         </div>
       </div>
 
       <div className="footer-bottom-bar">
         <p className="footer-copyright">
-          © {CURRENT_YEAR} AsamBasa Lab. Dirancang untuk pendidikan kimia interaktif Indonesia.
+          &copy; {CURRENT_YEAR} AsamBasa Lab. Dirancang untuk pendidikan kimia interaktif Indonesia.
         </p>
         <button
           type="button"

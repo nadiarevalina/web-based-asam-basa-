@@ -781,3 +781,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       'Kunyit mengandung senyawa polifenol alami bernama kurkumin yang bersifat sebagai indikator asam-basa. Kurkumin berwarna kuning cerah pada kondisi asam dan netral (pH < 7.5), tetapi mengalami deprotonasi dan perubahan struktur menjadi warna merah kecokelatan saat terpapar larutan basa sabun (pH > 8.5).',
   },
 ]
+
+export { MODULE_1_HOTS_QUESTIONS } from './module1QuizData'
+
+
