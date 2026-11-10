@@ -9,6 +9,7 @@ import type {
   StorageStatus,
 } from '../types/quiz'
 import { QUIZ_MODULE_ID, QUIZ_QUESTION_VERSION } from '../types/quiz'
+import { addQuizExperimentRecord } from './authStorage'
 
 const DRAFT_STORAGE_KEY = 'asambasa_quiz_m1_draft_v2'
 const HISTORY_STORAGE_KEY = 'asambasa_quiz_m1_history_v2'
@@ -382,6 +383,19 @@ export function saveCompletedAttempt(attempt: QuizAttemptHistory): {
     // Bersihkan draf aktif setelah sukses disimpan ke riwayat
     if (writeRes.success) {
       removeRawStorage(DRAFT_STORAGE_KEY)
+      // Simpan juga ke repositori eksperimen akun/antrean server dengan attemptId yang dipertahankan
+      try {
+        addQuizExperimentRecord({
+          attemptId: completeData.attemptId,
+          score: completeData.score,
+          correctCount: completeData.correctCount,
+          wrongCount: completeData.wrongCount,
+          totalQuestions: completeData.totalQuestions,
+          moduleTitle: 'Kuis Evaluasi Modul 1 Asam Basa',
+        })
+      } catch (e) {
+        console.error('Failed to register quiz attempt to auth experiments:', e)
+      }
     }
 
     return writeRes

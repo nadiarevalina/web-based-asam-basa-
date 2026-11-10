@@ -10,6 +10,7 @@ import { PhScaleSection } from './components/PhScaleSection'
 import { PhCalculator } from './components/PhCalculator'
 import { QuizSection } from './components/QuizSection'
 import { ReflectionSection } from './components/ReflectionSection'
+import { LoginPortal } from './components/LoginPortal'
 import { SearchModal } from './components/SearchModal'
 import { Breadcrumb } from './components/Breadcrumb'
 import { PageBottomNav } from './components/PageBottomNav'
@@ -218,6 +219,23 @@ export default function App() {
           <Breadcrumb currentPage="refleksi" onNavigate={navigateToPage} />
           <ReflectionSection />
           <PageBottomNav currentPage="refleksi" onNavigate={navigateToPage} />
+        </div>
+
+        {/* 8. Portal Akun & Server */}
+        <div
+          id="page-login"
+          className={`page-view ${activePage === 'login' ? 'page-view-active' : 'page-view-hidden'}`}
+          role="region"
+          aria-label="Halaman Portal Akun dan Server"
+          hidden={activePage !== 'login'}
+        >
+          <Breadcrumb currentPage="login" onNavigate={navigateToPage} />
+          <LoginPortal
+            onNavigateHome={() => navigateToPage('beranda')}
+            onNavigateLab={() => navigateToPage('lab')}
+            onNavigateQuiz={() => navigateToPage('kuis')}
+          />
+          <PageBottomNav currentPage="login" onNavigate={navigateToPage} />
         </div>
       </main>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CHEMICAL_SAMPLES, INDICATORS } from '../data/chemistryData'
 import type { ChemicalSample, Indicator, SimulationRecord } from '../types/chemistry'
+import { addLabExperimentRecord } from '../services/authStorage'
 
 let recordCounter = 0
 
@@ -76,6 +77,16 @@ export function VirtualLab() {
       getNatureLabel(currentSample.approximatePh)
     )
     setHistory([newRecord, ...history])
+
+    // Daftarkan ke sistem antrean/tautan akun eksperimen
+    addLabExperimentRecord({
+      sampleName: currentSample.name,
+      indicatorName: currentIndicator.name,
+      ph: currentSample.approximatePh,
+      colorName: colorResult.colorName,
+      colorHex: colorResult.colorHex,
+      natureLabel: getNatureLabel(currentSample.approximatePh),
+    })
   }
 
   const handleClearHistory = () => {

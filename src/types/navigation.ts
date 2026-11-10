@@ -6,6 +6,7 @@ export type PageId =
   | 'kalkulator'
   | 'kuis'
   | 'refleksi'
+  | 'login'
 
 export interface NavItem {
   id: PageId
@@ -30,6 +31,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { id: 'kalkulator', label: 'Kalkulator pH', shortDescription: 'Hitung pH Asam & Basa Kuat' },
   { id: 'kuis', label: 'Kuis dan Skor', shortDescription: 'Evaluasi Formatif 10 Soal HOTS' },
   { id: 'refleksi', label: 'Refleksi', shortDescription: 'Jurnal Metakognisi & Cetak PDF' },
+  { id: 'login', label: 'Portal Akun & Server', shortDescription: 'Login Siswa/Guru & Antrean Server' },
 ]
 
 export const PAGE_METADATA: Record<PageId, PageMeta> = {
@@ -89,6 +91,14 @@ export const PAGE_METADATA: Record<PageId, PageMeta> = {
     shortDescription: 'Tuliskan capaian pemahaman, kendala, rencana aksi, dan cetak lembar PDF.',
     badge: 'Metakognisi & Tindak Lanjut',
   },
+  login: {
+    id: 'login',
+    number: 8,
+    label: 'Portal Akun & Server',
+    subtitle: 'Autentikasi Siswa & Guru, Tautkan Hasil, dan Antrean Server',
+    shortDescription: 'Kelola akun, pilih & kaitkan hasil percobaan, kirim ke server, dan tinjau evaluasi guru.',
+    badge: 'Akun & Antrean Server',
+  },
 }
 
 export function getAdjacentPages(currentPage: PageId): {
@@ -103,6 +113,7 @@ export function getAdjacentPages(currentPage: PageId): {
     'kalkulator',
     'kuis',
     'refleksi',
+    'login',
   ]
   const currentIndex = pageOrder.indexOf(currentPage)
   if (currentIndex === -1) return { prev: null, next: null }
@@ -137,6 +148,12 @@ export function normalizePageId(rawId: string): PageId {
       return 'kuis'
     case 'refleksi':
       return 'refleksi'
+    case 'login':
+    case 'akun':
+    case 'auth':
+    case 'portal':
+    case 'server':
+      return 'login'
     default:
       return 'beranda'
   }

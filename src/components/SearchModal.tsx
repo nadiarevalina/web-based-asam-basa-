@@ -148,6 +148,15 @@ const SEARCH_DATABASE: SearchItem[] = [
     description: 'Tuliskan pemahaman, kesulitan, rencana belajar, serta cetak PDF.',
     keywords: ['refleksi', 'jurnal', 'cetak', 'pdf', 'lembar kerja', 'metakognisi'],
   },
+  {
+    id: 's-login',
+    title: 'Portal Akun, Tautan Hasil, & Antrean Server',
+    sectionId: 'login-portal-section',
+    pageId: 'login',
+    category: 'Akun & Server',
+    description: 'Masuk akun Siswa/Guru, pilih & kaitkan hasil percobaan, antrekan kirim ke server, dan tinjau evaluasi guru.',
+    keywords: ['login', 'masuk', 'akun', 'siswa', 'guru', 'antrean', 'server', 'tautkan', 'evaluasi', 'nilai'],
+  },
 ]
 
 interface SearchModalProps {

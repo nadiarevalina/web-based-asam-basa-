@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { PageId } from '../types/navigation'
 import { MAIN_NAV_ITEMS } from '../types/navigation'
+import { getCurrentUser } from '../services/authStorage'
+import type { UserAccount } from '../types/auth'
 
 interface NavbarProps {
   onOpenSearch: () => void
@@ -10,6 +12,7 @@ interface NavbarProps {
 
 export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const currentUser: UserAccount | null = getCurrentUser()
 
   const handleNavClick = (pageId: PageId) => {
     setMobileMenuOpen(false)
@@ -96,6 +99,47 @@ export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps
             </svg>
             <span className="search-text-desktop">Cari Topik...</span>
             <kbd className="search-kbd">⌘K</kbd>
+          </button>
+
+          {/* User Account Portal Quick Button */}
+          <button
+            type="button"
+            className={`user-nav-btn ${activePage === 'login' ? 'user-nav-btn-active' : ''}`}
+            onClick={() => handleNavClick('login')}
+            title={currentUser ? `Akun: ${currentUser.fullName} (${currentUser.role === 'guru' ? 'Guru' : 'Siswa'})` : 'Masuk ke Portal Akun'}
+            aria-label="Buka portal akun dan server"
+          >
+            {currentUser ? (
+              <span className="user-nav-badge">
+                <span
+                  className="user-nav-avatar"
+                  style={{ backgroundColor: currentUser.avatarColor }}
+                >
+                  {currentUser.fullName.charAt(0)}
+                </span>
+                <span className="user-nav-name">{currentUser.fullName.split(' ')[0]}</span>
+                <span className={`user-nav-role-tag ${currentUser.role}`}>
+                  {currentUser.role === 'guru' ? 'Guru' : 'Siswa'}
+                </span>
+              </span>
+            ) : (
+              <span className="user-nav-guest">
+                <svg
+                  className="action-svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="user-nav-login-text">Masuk</span>
+              </span>
+            )}
           </button>
 
           {/* Mobile Hamburger Toggle */}
