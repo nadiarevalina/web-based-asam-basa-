@@ -9,7 +9,7 @@
 * **Mata Pelajaran:** Kimia SMA / MA Fase F (Kelas XI)
 * **Metode Prioritisasi:** MoSCoW (*Must Have, Should Have, Could Have, Won't Have*)
 * **Skala Estimasi:** Story Points (Deret Fibonacci: 1, 2, 3, 5, 8)
-* **Status Keseluruhan Proyek:** Sprint 1–4 Tuntas (100% Fitur Inti Selesai Diuji)
+* **Status Keseluruhan Proyek:** Sprint 1–4 telah diimplementasikan secara bertahap. Validasi fungsional dan pengujian menyeluruh masih perlu dilakukan.
 
 ---
 
@@ -24,7 +24,7 @@ pie title Distribusi Status Backlog AsamBasa Lab
 
 | Sprint | Fokus Pembelajaran & Rekayasa | Rentang Waktu | Poin Selesai | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Sprint 1** | Fondasi Arsitektur, Sistem Desain Gelap Sains, & Beranda | 27 Okt 2026 | 21 Poin | ✅ **Done** |
+| **Sprint 1** | Fondasi Arsitektur, Sistem Desain Bright Science Learning, & Beranda | 27 Okt 2026 | 21 Poin | ✅ **Done** |
 | **Sprint 2** | Pemisahan Modular 7 Bagian & Evaluasi Kuis HOTS | 03 Nov 2026 | 34 Poin | ✅ **Done** |
 | **Sprint 3** | Lab Virtual Inkuiri, Spektrum pH, Kalkulator, & Refleksi | 08 Nov 2026 | 29 Poin | ✅ **Done** |
 | **Sprint 4** | Autentikasi Multi-Peran, Tautan Hasil, Antrean Server & Guru | 10 Nov 2026 | 40 Poin | ✅ **Done** |
@@ -40,8 +40,8 @@ pie title Distribusi Status Backlog AsamBasa Lab
 
 | ID | User Story (Kebutuhan Pengguna) | Prioritas | Bobot | Status | Kriteria Penerimaan (Acceptance Criteria) |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **US-01** | **Sebagai siswa**, saya ingin tampilan platform bertema sains modern dan nyaman di mata agar tidak cepat lelah saat belajar mandiri. | Must | 5 | ✅ Done | Desain tema *Deep Dark Science* dengan token CSS, kontras rasio WCAG 2.1 AA, dan tipografi Plus Jakarta Sans. |
-| **US-02** | **Sebagai pengguna**, saya ingin navigasi halaman dipisah ke 8 bagian modular via hash URL agar tidak perlu menumpuk scroll panjang. | Must | 8 | ✅ Done | Rute `#/beranda`, `#/teori`, `#/lab`, `#/skala`, `#/kalkulator`, `#/kuis`, `#/refleksi`, `#/login` aktif dan sinkron tombol peramban. |
+| **US-01** | **Sebagai siswa**, saya ingin tampilan platform bertema sains modern dan nyaman di mata agar tidak cepat lelah saat belajar mandiri. | Must | 5 | ✅ Done | Desain tema Menggunakan sistem desain Bright Science Learning dengan token CSS, palet warna cerah, tipografi Plus Jakarta Sans, dan kontras yang ditargetkan memenuhi WCAG 2.1 AA setelah diverifikasi melalui pengujian. |
+| **US-02** | **Sebagai pengguna**, saya ingin mengakses delapan halaman utama melalui navigasi berbasis hash URL agar dapat berpindah antarfitur pembelajaran dan portal akun dengan mudah. | Must | 8 | ✅ Done | Rute `#/beranda`, `#/teori`, `#/lab`, `#/skala`, `#/kalkulator`, `#/kuis`, `#/refleksi`, `#/login` aktif dan sinkron tombol peramban. |
 | **US-03** | **Sebagai siswa**, saya ingin penunjuk rekam jejak (*Breadcrumb*) dan tombol navigasi berurutan (*PageBottomNav*) agar alur belajar tetap runtut. | Should | 3 | ✅ Done | Breadcrumb dinamis muncul di bagian atas tiap modul; tombol Sebelum/Selanjutnya di bagian bawah kartu. |
 | **US-04** | **Sebagai siswa/guru**, saya ingin fitur pencarian cepat materi dengan shortcut keyboard `Ctrl+K` agar topik dapat ditemukan secara instan. | Should | 5 | ✅ Done | Dialog modal Command Palette terbuka dengan `Ctrl+K` / `⌘K` dan mengarahkan navigasi langsung ke modul yang dipilih. |
 
@@ -72,7 +72,7 @@ pie title Distribusi Status Backlog AsamBasa Lab
 | ID | User Story (Kebutuhan Pengguna) | Prioritas | Bobot | Status | Kriteria Penerimaan (Acceptance Criteria) |
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | **US-11** | **Sebagai siswa**, saya ingin melihat spektrum visual skala pH 0–14 interaktif agar memahami rentang keasaman dan tetapan $K_w = 10^{-14}$. | Must | 5 | ✅ Done | Slider interaktif skala pH 0–14 menampilkan spektrum warna universal dan gradien ion $[H^+]$ vs $[OH^-]$. |
-| **US-12** | **Sebagai siswa**, saya ingin menghitung pH asam kuat dan basa kuat secara matematis beserta langkah rincian pengerjaannya. | Must | 5 | ✅ Done | Kalkulator memproses konsentrasi Molaritas, rumus $-\log[H^+]$ atau $14 - \text{pOH}$, dan menyajikan tahapan perhitungannya. |
+| **US-12** | **Sebagai siswa**, saya ingin menghitung pH asam kuat monoprotik dan basa kuat yang menghasilkan satu ion OH⁻ agar dapat memahami penerapan perhitungan pH secara matematis. | Must | 5 | ✅ Done | Kalkulator memproses konsentrasi Molaritas, rumus $-\log[H^+]$ atau $14 - \text{pOH}$, dan menyajikan tahapan perhitungannya. |
 
 ---
 
@@ -99,7 +99,7 @@ pie title Distribusi Status Backlog AsamBasa Lab
 
 | ID | User Story (Kebutuhan Pengguna) | Prioritas | Bobot | Status | Kriteria Penerimaan (Acceptance Criteria) |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **US-18** | **Sebagai pengguna**, saya ingin dapat masuk sebagai Siswa atau Guru, serta mendaftar akun baru dengan NIS / NIP yang jelas. | Must | 5 | ✅ Done | Formulir login/register mendukung peran `siswa` (dengan NIS & Kelas) dan `guru` (dengan NIP & Mapel). |
+| **US-18** | **Sebagai pengguna**, saya ingin dapat masuk sebagai Siswa atau Guru, serta mendaftar akun baru dengan NIS / NIP yang jelas. | Must | 5 | ✅ Done | Tersedia antarmuka login dan registrasi untuk peran siswa dan guru, termasuk data NIS/kelas untuk siswa dan NIP/mapel untuk guru. Jika autentikasi masih menggunakan penyimpanan lokal dan akun demo, fitur harus dinyatakan sebagai simulasi dan tidak diklaim sebagai autentikasi produksi yang aman. 
 | **US-19** | **Sebagai penguji/pengguna**, saya ingin tombol *1-Click Demo Login* (Budi, Nadia, Bu Sri) agar dapat mencoba seluruh alur tanpa mengetik berulang. | Should | 3 | ✅ Done | Tombol demo cepat tersedia untuk 2 siswa dan 1 guru pembimbing kimia. |
 | **US-20** | **Sebagai siswa**, saya ingin memilih hasil percobaan lokal yang belum bertuan dan menautkannya ke akun saya dengan **ID Percobaan yang tetap dipertahankan**. | Must | 8 | ✅ Done | Tab *"Pilih & Tautkan"* menampilkan checklist; pengaitan menetapkan nama pemilik tanpa mengubah sedikitpun ID percobaan unik. |
 
@@ -109,8 +109,8 @@ pie title Distribusi Status Backlog AsamBasa Lab
 
 | ID | User Story (Kebutuhan Pengguna) | Prioritas | Bobot | Status | Kriteria Penerimaan (Acceptance Criteria) |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **US-21** | **Sebagai siswa**, saya ingin mengantrekan percobaan dan mengirimkannya ke server dengan respons konfirmasi penerimaan server yang jelas. | Must | 8 | ✅ Done | Tab Antrean memuat ID Percobaan, Pemilik, dan tombol *"Kirim ke Server"* dengan balasan simulasi HTTP 200 OK & tiket ACK. |
-| **US-22** | **Sebagai siswa**, saya ingin memantau konsol log server secara transparan untuk memverifikasi stempel waktu pengiriman tugas saya. | Should | 3 | ✅ Done | Tampilan terminal log konsol server menampilkan rincian transaksi pengiriman dan pembacaan tugas. |
+| **US-21** | **Sebagai siswa**, saya ingin mengantrekan percobaan dan mengirimkannya ke server dengan respons konfirmasi penerimaan server yang jelas. | Must | 8 | ✅ Done | Tab Antrean menampilkan ID Percobaan, pemilik, dan tombol pengiriman. Pada implementasi saat ini, proses pengiriman menggunakan simulasi respons HTTP 200 OK dan tiket ACK. Status tersebut tidak boleh diklaim sebagai penerimaan server eksternal yang sesungguhnya sebelum REST API riil diintegrasikan. |
+| **US-22** | **Sebagai siswa**, saya ingin melihat status pengiriman hasil percobaan agar mengetahui apakah hasil belajar saya sudah berhasil diproses atau masih menunggu. | Should | 3 | Done | Halaman antrean menampilkan status pengiriman, waktu proses, dan informasi konfirmasi. Jika masih berupa simulasi, status tersebut diberi label simulasi. |
 | **US-23** | **Sebagai guru**, saya ingin melihat dashboard evaluasi kelas yang merangkum seluruh kiriman percobaan siswa beserta metrik statistiknya. | Must | 8 | ✅ Done | Dashboard Guru menyajikan 4 metrik ringkasan, filter nama siswa, filter status review, dan pencarian cepat ID Percobaan. |
 | **US-24** | **Sebagai guru**, saya ingin membaca rincian pengujian sains siswa dan memberikan umpan balik kualitatif serta predikat penilaian. | Must | 8 | ✅ Done | Modal evaluasi guru memuat form predikat (Sangat Baik / Baik / Perlu Perbaikan), textarea umpan balik, dan tombol simpan. |
 | **US-25** | **Sebagai siswa**, saya ingin membaca catatan pembimbing dan predikat evaluasi yang diberikan guru langsung di halaman riwayat akun saya. | Must | 5 | ✅ Done | Kartu riwayat siswa menampilkan kotak khusus berlatar hijau zamrud berisi catatan kualitatif dari guru. |

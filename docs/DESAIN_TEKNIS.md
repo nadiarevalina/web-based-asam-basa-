@@ -19,13 +19,13 @@
 **AsamBasa Lab** dirancang sebagai media pembelajaran interaktif berbasis web yang memadukan keunggulan tiga platform pembelajaran digital terkemuka:
 1. **Google Classroom:** Kesederhanaan alur kerja, kemudahan penyerahan tugas (*submission stream*), kartu materi terstruktur, dan komunikasi umpan balik dua arah antara siswa dan guru secara langsung.
 2. **Moodle LMS:** Ketelitian hierarki akademik, pelacakan kompetensi berbasis inkuiri terbimbing, buku catatan jurnal praktikum (*inquiry log*), serta rubrik penilaian formatif yang transparan.
-3. **Modern EdTech Dashboard (Coursera/Canvas):** Pengalaman visual imersif dengan tema *Deep Dark Science*, tipografi akademik berketerbacaan tinggi (*Plus Jakarta Sans* & *JetBrains Mono*), kartu metrik statistik, dan penanda status data *real-time*.
+3. **Modern EdTech Dashboard:** Pengalaman visual pembelajaran yang cerah, bersih, ramah siswa, dan modern dengan gaya Bright Science Learning. Antarmuka menggunakan latar belakang terang, kartu dengan permukaan putih, aksen warna kimia yang lembut, tipografi akademik berketerbacaan tinggi, ilustrasi edukatif, serta komponen interaktif dengan hierarki visual yang jelas. Gunakan Plus Jakarta Sans untuk teks utama dan JetBrains Mono secara terbatas untuk angka pH, konsentrasi larutan, serta ID eksperimen.
 
 ### 1.2 Prinsip Desain Edukatif
 * **Cognitive Load Reduction:** Informasi disajikan secara berjenjang melalui 8 modul terpisah (*hash-routed views*), navigasi rekam jejak (*Breadcrumb*), dan navigasi halaman berurutan (*PageBottomNav*) agar siswa tidak kewalahan.
 * **Preservation of Experiment Identity:** Setiap aktivitas eksperimen virtual dan pengerjaan kuis memiliki **ID Percobaan yang kekal (immutable)**, memastikan integritas data ilmiah saat ditautkan ke akun pengguna maupun dikirimkan ke server.
 * **Transparent Feedback Loop:** Guru dapat membaca seluruh data kuantitatif dan kualitatif siswa, kemudian menyematkan catatan pembimbing saintifik yang langsung tampil di dashboard siswa.
-* **Inclusive & Accessible (WCAG 2.1 AA):** Skema warna memiliki rasio kontras tinggi, navigasi keyboard penuh (`Ctrl+K` untuk pencarian global, tab fokus jelas), dan pembaca layar (*screen reader friendly*) dengan atribut ARIA semantik.
+* **Inclusive & Accessible:** Antarmuka dirancang dengan warna cerah yang tetap memiliki kontras memadai, navigasi keyboard, indikator fokus yang terlihat, dukungan screen reader, serta atribut ARIA semantik. WCAG 2.1 AA digunakan sebagai target standar aksesibilitas yang harus diverifikasi melalui pengujian.
 
 ---
 
@@ -232,7 +232,7 @@ src/
    * Tombol aksi *"🚀 Kirim Antrean ke Server"* dilengkapi simulasi latensi jaringan, pembaruan status `HTTP 200 OK`, serta penerbitan stempel bukti terima.
 3. **Hasil Saya & Umpan Balik Guru (Feedback Stream):**
    * Kartu pengamatan menyajikan hasil uji larutan secara visual (lingkaran warna reaksi kimia, nilai pH, dan kategori asam-basa).
-   * Kotak apresiasi bertema hijau zamrud (*Emerald Glow*) menampilkan **Catatan Evaluasi Guru** dan predikat nilai segera setelah guru memeriksa hasil.
+   * Kotak apresiasi menggunakan latar hijau mint yang lembut dengan teks berkontras tinggi untuk menampilkan Catatan Evaluasi Guru dan predikat nilai setelah guru memberikan penilaian. Desain dibuat ringan, bersih, dan mudah dibaca.
 
 ### 6.2 Dashboard Evaluasi Guru (Teacher Grading Hub)
 1. **Statistik Kelas Terpadu:**
@@ -249,39 +249,108 @@ src/
 
 ---
 
-## 7. Sistem Desain & Token Visual (Academic Design Tokens)
+## 7. Sistem Desain & Token Visual (Bright Science Learning)
 
-Platform menerapkan palet warna bertema sains gelap (*Deep Dark Science Theme*) dengan tingkat keterbacaan tinggi:
+Platform menerapkan sistem desain **Bright Science Learning Theme** dengan pendekatan visual yang cerah, modern, bersih, dan ramah bagi siswa SMA/MA kelas XI.
+
+Desain mengutamakan kenyamanan membaca, hierarki visual yang jelas, penggunaan warna yang konsisten, serta ilustrasi yang mendukung pemahaman konsep kimia.
+
+### 7.1 Palet Warna Utama
 
 ```css
 :root {
-  /* Latar Belakang & Permukaan Akademik */
-  --bg-body: #0b0f19;              /* Slate hitam pekat */
-  --bg-surface: #111827;           /* Permukaan kartu elevasi rendah */
-  --bg-surface-elevated: #1f2937;  /* Permukaan kartu interaktif */
-  --bg-surface-hover: #374151;     /* Status hover komponen */
-  
-  /* Garis Batas & Separator */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.16);
-  --border-strong: rgba(255, 255, 255, 0.28);
-  
+  /* Latar Belakang */
+  --bg-body: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F1F5F9;
+  --bg-surface-hover: #EAF4FF;
+
+  /* Garis Batas */
+  --border-subtle: #E2E8F0;
+  --border-medium: #CBD5E1;
+  --border-strong: #94A3B8;
+
   /* Tipografi */
-  --text-primary: #f9fafb;         /* Putih terang untuk judul */
-  --text-secondary: #cbd5e1;       /* Abu-abu terang untuk paragraf utama */
-  --text-muted: #94a3b8;           /* Keterangan sekunder & stempel waktu */
-  
-  /* Aksen Kimia & Indikator Status */
-  --accent-cyan: #06b6d4;          /* Identitas platform & ID percobaan */
-  --acid-red: #ef4444;             /* Larutan asam & tombol pembatalan */
-  --base-blue: #3b82f6;            /* Larutan basa & modul eksperimen */
-  --neutral-green: #10b981;        /* Reaksi netral & status sukses diterima */
-  --accent-amber: #f59e0b;         /* Peringatan antrean belum terkirim */
-  --role-teacher-purple: #8b5cf6;  /* Aksen khusus Guru & pembimbing */
+  --text-primary: #172554;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-on-accent: #FFFFFF;
+
+  /* Identitas AsamBasa Lab */
+  --accent-primary: #0891B2;
+  --accent-primary-hover: #0E7490;
+  --accent-secondary: #3B82F6;
+
+  /* Warna Kimia */
+  --acid-red: #E85D75;
+  --base-blue: #3B82F6;
+  --neutral-green: #10B981;
+  --accent-cyan: #06B6D4;
+  --accent-amber: #D97706;
+  --role-teacher-purple: #7C3AED;
+
+  /* Permukaan Kartu Modul */
+  --module-one-bg: #FFF1F2;
+  --module-two-bg: #ECFEFF;
+  --module-three-bg: #EFF6FF;
+
+  /* Status */
+  --status-success: #15803D;
+  --status-warning: #B45309;
+  --status-error: #B91C1C;
+  --status-info: #0369A1;
+
+  /* Bayangan */
+  --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.05);
+  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.09);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
 }
 ```
 
----
+### 7.2 Pedoman Penggunaan Warna
+
+1. Gunakan warna putih dan abu-abu sangat muda sebagai latar utama halaman.
+2. Gunakan cyan dan biru sebagai warna identitas utama AsamBasa Lab.
+3. Gunakan coral atau merah lembut untuk merepresentasikan larutan asam.
+4. Gunakan biru untuk merepresentasikan larutan basa.
+5. Gunakan hijau untuk merepresentasikan kondisi netral dan status keberhasilan.
+6. Gunakan ungu sebagai aksen khusus fitur guru.
+7. Gunakan warna amber untuk peringatan dan informasi yang membutuhkan perhatian.
+8. Gunakan warna teks biru tua atau slate gelap untuk menjaga keterbacaan.
+9. Hindari penggunaan gradien yang terlalu kuat, warna neon berlebihan, dan dekorasi yang mengganggu konsentrasi.
+
+### 7.3 Tipografi
+
+- Font utama: Plus Jakarta Sans.
+- Font angka dan data teknis: JetBrains Mono.
+- Judul halaman: tegas, jelas, dan memiliki hierarki ukuran yang konsisten.
+- Isi materi: nyaman dibaca dengan ukuran yang sesuai untuk perangkat desktop dan seluler.
+- Angka pH, konsentrasi ion, dan hasil perhitungan menggunakan tipografi monospaced apabila diperlukan.
+
+### 7.4 Gaya Komponen Antarmuka
+
+- Navbar menggunakan latar putih, teks gelap, dan aksen cyan atau biru pada menu aktif.
+- Hero Section menggunakan komposisi ringan dengan ilustrasi sains, latar lembut, dan tombol CTA yang mudah dikenali.
+- Topic Cards menggunakan permukaan putih dengan ilustrasi atau aksen warna berbeda untuk setiap modul.
+- Kartu materi memiliki sudut membulat, bayangan lembut, dan efek hover yang tidak berlebihan.
+- Tombol utama menggunakan warna cyan atau biru dengan kontras teks yang memadai.
+- Simulasi laboratorium menggunakan warna indikator yang representatif dan dapat dibedakan.
+- Dashboard guru dan portal siswa menggunakan kartu informasi yang bersih dan mudah dipindai.
+
+### 7.5 Prinsip Responsivitas dan Aksesibilitas
+
+- Desktop, tablet, dan smartphone harus memiliki tata letak yang sesuai dengan ukuran layar.
+- Kontras teks dan latar belakang harus memenuhi rasio WCAG 2.1 AA.
+- Warna tidak boleh menjadi satu-satunya penanda informasi; gunakan teks, ikon, atau label pendukung.
+- Semua tombol dan tautan harus dapat diakses menggunakan keyboard.
+- Indikator fokus harus terlihat jelas.
+- Hindari animasi berlebihan dan hormati preferensi reduced motion.
+- Pastikan komponen interaktif memiliki label aksesibilitas yang sesuai.
 
 ## 8. Keamanan, Validasi, & Aksesibilitas
 

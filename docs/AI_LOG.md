@@ -6,7 +6,7 @@
 ### Informasi Proyek & Standar Dokumentasi
 * **Nama Media:** AsamBasa Lab – Media Pembelajaran Asam Basa Berbasis Inkuiri Terbimbing
 * **Mata Pelajaran:** Kimia SMA / MA Fase F (Kelas XI)
-* **Pengembang Utama:** Tim Pengembang Media Pembelajaran Kimia & Asisten Rekayasa Perangkat Lunak AI (Antigravity - Google DeepMind)
+* **Pengembang Utama:** Tim Pengembang Media Pembelajaran Kimia dengan dukungan AI Coding Assistant (Google Antigravity).
 * **Tujuan Log:** Mendokumentasikan transparansi kolaborasi manusia dan AI dalam perancangan arsitektur, penulisan kode, pemecahan masalah teknis, serta validasi konsep sains kimia sesuai ketentuan akademik.
 
 ---

@@ -35,51 +35,68 @@ flowchart TD
 ## 2. Alur Pengguna Siswa (Student User Flow)
 
 ### 2.1 Ringkasan Alur Perjalanan Siswa
-Siswa memulai dari eksplorasi teori atau laboratorium virtual, mencatat hasil pengujian dengan **ID Percobaan yang unik**, mengaitkan hasil ke akun pribadi, mengantrekan pengiriman ke server pendidikan, dan membaca umpan balik kualitatif dari guru.
-
-```mermaid
 flowchart TD
-    START([Siswa Membuka Platform]) --> LOGIN_CHECK{Sudah Masuk Akun?}
-    
-    LOGIN_CHECK -- Belum (Mode Tamu) --> EXPLORE[Eksplorasi Modul 1-6 & Praktikum]
-    LOGIN_CHECK -- Sudah Masuk --> EXPLORE
-    
-    EXPLORE --> LAB_EXP[Praktikum Lab Virtual / Kuis]
-    LAB_EXP --> SAVE_JOURNAL[Simpan ke Jurnal / Submit Kuis]
-    SAVE_JOURNAL --> ID_GEN[Sistem Membuat ID Percobaan Unik<br/>Contoh: EXP-LAB-CH3COOH-8291]
-    
-    ID_GEN --> PORTAL[Buka Portal Akun '#/login']
-    PORTAL --> AUTH_STEP{Autentikasi Siswa}
-    AUTH_STEP -- Login / Daftar / Quick Demo --> LOGGED_IN[Masuk Sebagai Siswa e.g. Budi]
-    
-    LOGGED_IN --> TAB_LINK[Tab: Pilih & Tautkan Hasil]
-    TAB_LINK --> SELECT_EXP[Pilih Checkbox Hasil Percobaan]
-    SELECT_EXP --> BIND_ACC[Klik: Kaitkan Hasil ke Akun Saya<br/>ID Percobaan Tetap Dipertahankan!]
-    
-    BIND_ACC --> TAB_QUEUE[Tab: Antrean Kirim ke Server]
-    TAB_QUEUE --> SEND_SRV[Klik: Kirim Antrean ke Server]
-    SEND_SRV --> SRV_RESPONSE[Server Menerima Payload: HTTP 200 OK<br/>Terbit Tiket Bukti Terima SRV-ACK]
-    
-    SRV_RESPONSE --> WAIT_TEACHER[Menunggu Pemeriksaan Guru]
-    WAIT_TEACHER --> TAB_RESULT[Tab: Hasil Saya & Umpan Balik Guru]
-    TAB_RESULT --> READ_FEEDBACK[Siswa Membaca Nilai & Catatan Guru]
-    READ_FEEDBACK --> FINISH([Refleksi Pembelajaran Tuntas])
-```
+    A([Siswa Membuka AsamBasa Lab]) --> B[Beranda]
+    B --> C{Memilih Aktivitas}
 
----
+    C --> D[Materi Teori]
+    C --> E[Lab Virtual]
+    C --> F[Skala pH]
+    C --> G[Kalkulator pH]
+    C --> H[Kuis]
+    C --> I[Refleksi]
+
+    D --> J[Memahami Konsep Asam-Basa]
+    J --> C
+
+    E --> K[Orientasi Masalah]
+    K --> L[Merumuskan Pertanyaan]
+    L --> M[Menyusun Hipotesis]
+    M --> N[Melakukan Percobaan Virtual]
+    N --> O[Mengamati dan Mengumpulkan Data]
+    O --> P[Menganalisis Hasil]
+    P --> Q[Menarik Kesimpulan]
+    Q --> R[Menyimpan Hasil Pengamatan]
+
+    F --> C
+    G --> C
+
+    H --> S[Mengerjakan Soal Evaluasi]
+    S --> T[Mendapatkan Skor dan Pembahasan]
+
+    R --> U{Ingin Menyimpan ke Akun?}
+    T --> U
+
+    U -->|Tidak| V[Hasil Tersimpan Lokal]
+    U -->|Ya| W[Login atau Daftar]
+    W --> X[Mengaitkan Hasil ke Akun]
+    X --> Y[Mengirim Hasil Jika Fitur Tersedia]
+    Y --> Z[Melihat Riwayat dan Umpan Balik Guru]
+
+    I --> AA[Menulis Refleksi Pembelajaran]
+    AA --> V
 
 ### 2.2 Rincian Tahapan Alur Siswa
 
 #### Alur S-1: Eksplorasi Inkuiri di Lab Virtual (`#/lab`)
-1. Siswa mengakses modul Lab Virtual.
-2. Memilih kategori larutan: *Bahan Sehari-hari* (misal Asam Cuka, Air Jeruk, Sabun) atau *Larutan Laboratorium* (misal HCl, NaOH).
-3. Memilih indikator asam-basa (Kertas Lakmus Merah/Biru, Fenolftalein, Bromtimol Biru, Metil Oranye, atau Ekstrak Bahan Alam).
-4. Menekan tombol interaksi: *"Celupkan Kertas Uji"* atau *"Teteskan Indikator"*.
-5. Mengamati animasi cairan tabung reaksi SVG dan perubahan warna larutan.
-6. Membaca hasil analisis saintifik: deskripsi warna, estimasi nilai pH, dan kategori sifat asam/basa.
-7. Menekan tombol **"Simpan ke Jurnal"**:
-   * Data masuk ke tabel jurnal pengamatan lokal.
-   * Sistem otomatis mendaftarkan catatan eksperimen ke repositori dengan **ID Percobaan unik** (misal: `EXP-LAB-CH3COOH-8291`) berstatus awal `belum_dikaitkan`.
+
+1. Siswa membuka menu Laboratorium Virtual.
+2. Sistem menampilkan pengantar praktikum dan tujuan pembelajaran.
+3. Siswa mengamati permasalahan kontekstual mengenai sifat asam dan basa.
+4. Siswa merumuskan pertanyaan berdasarkan permasalahan yang disajikan.
+5. Siswa menyusun hipotesis atau dugaan sementara.
+6. Siswa memilih kategori larutan:
+   - Bahan sehari-hari, seperti asam cuka, air jeruk, dan sabun.
+   - Larutan laboratorium, seperti HCl dan NaOH.
+7. Siswa memilih indikator asam-basa yang akan digunakan.
+8. Siswa melakukan percobaan virtual melalui interaksi yang tersedia.
+9. Sistem menampilkan animasi dan perubahan warna indikator.
+10. Siswa mengamati serta mencatat hasil percobaan.
+11. Sistem menampilkan data pengamatan berupa warna indikator, estimasi pH, dan sifat larutan.
+12. Siswa menganalisis data dan membandingkannya dengan hipotesis awal.
+13. Siswa menyusun kesimpulan berdasarkan hasil percobaan.
+14. Siswa menyimpan hasil pengamatan ke jurnal.
+15. Sistem menyimpan data percobaan beserta ID unik jika fitur penyimpanan berhasil.
 
 #### Alur S-2: Pengerjaan Kuis Formatif HOTS (`#/kuis`)
 1. Siswa membuka menu Kuis dan Skor.
@@ -108,7 +125,9 @@ flowchart TD
    * Tombol menampilkan animasi indikator proses (*spinner*): *"Mengirim ke Server..."*.
    * Terjadi simulasi transmisi data jaringan.
    * Server memvalidasi bahwa `ID Percobaan` dan `Pemilik` sah.
-   * Server merespons dengan **`HTTP 200 OK`** dan stempel tiket konfirmasi (misal: `SRV-ACK-9021`).
+   * Sistem menjalankan simulasi proses pengiriman data dan menampilkan
+status konfirmasi simulasi. Status ini tidak menunjukkan bahwa data
+telah diterima oleh server eksternal yang sesungguhnya. (misal: `SRV-ACK-9021`).
    * Log transaksi real-time dicatat di konsol server.
    * Status eksperimen kini berubah menjadi `diterima_server` dan siap diperiksa oleh Guru.
 
@@ -125,29 +144,26 @@ flowchart TD
 ## 3. Alur Pengguna Guru (Teacher User Flow)
 
 ### 3.1 Ringkasan Alur Perjalanan Guru
-Guru bertindak sebagai evaluator akademik dan pembimbing sains. Guru memantau antrean kiriman server dari seluruh siswa di kelas, membuka detail eksperimen, dan menyematkan umpan balik kualitatif serta predikat nilai.
-
-```mermaid
 flowchart TD
-    G_START([Guru Membuka Portal Akun '#/login']) --> G_LOGIN[Masuk Sebagai Guru Kimia<br/>e.g. Ibu Sri Wahyuni, M.Pd]
-    G_LOGIN --> G_DASHBOARD[Otomatis Beralih ke Tab:<br/>Dashboard Penilaian & Evaluasi Siswa]
-    
-    G_DASHBOARD --> G_METRICS[Tinjau 4 Kartu Metrik Kelas:<br/>Total Masuk, Perlu Diperiksa, Sudah Dinilai, Antrean]
-    G_METRICS --> G_FILTER{Filter Kiriman Siswa}
-    
-    G_FILTER --> G_TABLE[Tabel Menampilkan Data Percobaan:<br/>ID Percobaan Tetap, Nama Siswa, Kelas, Hasil]
-    G_TABLE --> G_ACTION[Klik: 'Periksa & Nilai']
-    
-    G_ACTION --> G_MODAL[Modal Evaluasi Guru Terbuka:<br/>Rincian Sampel, Indikator, pH, Perubahan Warna, Skor Kuis]
-    G_MODAL --> G_INPUT[Pilih Predikat Nilai & Tulis Catatan Pembimbing]
-    G_INPUT --> G_SAVE[Klik: 'Simpan & Tandai Telah Dibaca']
-    
-    G_SAVE --> G_UPDATE[Status Diperbarui ke 'dibaca_guru'<br/>Log Tercatat di Server Console]
-    G_UPDATE --> G_NOTIFY[Hasil Langsung Terbaca di Akun Siswa]
-    G_NOTIFY --> G_FINISH([Evaluasi Siswa Selesai])
-```
+    A([Guru Membuka Platform]) --> B[Beranda]
+    B --> C[Memilih Portal Guru]
+    C --> D[Login Guru]
+    D --> E{Autentikasi Berhasil?}
 
----
+    E -->|Tidak| F[Menampilkan Pesan Kesalahan]
+    F --> D
+
+    E -->|Ya| G[Dashboard Guru]
+    G --> H[Melihat Ringkasan Hasil Belajar]
+    H --> I[Memilih Data Siswa]
+    I --> J[Membuka Detail Percobaan atau Kuis]
+    J --> K[Memeriksa Data dan Jawaban Siswa]
+    K --> L[Memberikan Penilaian]
+    L --> M[Menulis Umpan Balik]
+    M --> N[Menyimpan Evaluasi]
+    N --> O[Status Evaluasi Diperbarui]
+    O --> P[Siswa Dapat Melihat Umpan Balik]
+    P --> Q([Evaluasi Selesai])
 
 ### 3.2 Rincian Tahapan Alur Guru
 

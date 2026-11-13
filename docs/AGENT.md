@@ -11,7 +11,7 @@ Halaman Beranda harus memuat:
 1. **Navbar**
    - Identitas media berupa logo atau nama `AsamBasa Lab`.
    - Menu navigasi Beranda, Materi, Laboratorium Virtual, Kuis, dan Kalkulator pH.
-   - Tombol navigasi yang berfungsi sesuai struktur proyek.
+   - Sebelum membuat tautan navigasi, periksa terlebih dahulu routing dan halaman yang sudah tersedia. Pastikan setiap tombol mengarah ke tujuan yang benar-benar tersedia. Jangan membuat rute palsu atau mengarahkan pengguna ke halaman kosong. Jika halaman tujuan belum tersedia, gunakan solusi navigasi yang sesuai tanpa membuat fitur baru di luar cakupan pekerjaan. 
    - Tampilan responsif untuk desktop maupun perangkat seluler.
 
 2. **Hero Section**
@@ -29,16 +29,22 @@ Halaman Beranda harus memuat:
 
    Setiap kartu harus memiliki ikon atau ilustrasi yang relevan, judul, deskripsi singkat, dan tombol **“Pelajari Materi”** yang mengarahkan siswa ke modul terkait.
 
-Pecah antarmuka menjadi tiga komponen React terpisah:
+Pecah antarmuka menjadi tiga komponen React modular:
 
-- `Navbar.jsx`
-- `HeroSection.jsx`
-- `TopicCards.jsx`
+- Navbar
+- HeroSection
+- TopicCards
 
-Integrasikan ketiga komponen tersebut ke halaman utama yang sesuai dengan struktur proyek yang sudah ada. Jika proyek menggunakan TypeScript atau struktur komponen berbeda, ikuti konvensi yang sudah digunakan di workspace dan sesuaikan nama file tanpa merusak konfigurasi yang ada.
+Gunakan ekstensi file dan konvensi penamaan sesuai teknologi yang sudah digunakan proyek, baik JSX maupun TSX.
+
+Integrasikan ketiga komponen tersebut ke halaman Beranda sesuai struktur proyek yang sudah ada. Jangan mengubah konfigurasi atau struktur proyek tanpa alasan yang diperlukan. Jika proyek menggunakan TypeScript atau struktur komponen berbeda, ikuti konvensi yang sudah digunakan di workspace dan sesuaikan nama file tanpa merusak konfigurasi yang ada.
 
 ### Ketentuan desain dan pengembangan
-
+- Fokus pengerjaan hanya pada halaman Beranda. Jangan mengembangkan ulang atau menghapus fitur Materi, Laboratorium Virtual, Kuis, dan Kalkulator pH yang sudah tersedia.
+- Periksa sistem desain yang sudah digunakan, termasuk warna, tipografi, spacing, dan komponen UI. Pertahankan konsistensi identitas visual proyek.
+- Hindari desain website yang terlalu generik. Gunakan karakter visual edukasi sains yang menyenangkan, modern, bersih, dan nyaman untuk siswa SMA.
+- Gunakan kembali aset, ikon, ilustrasi, dan dependensi yang sudah tersedia sebelum menambahkan yang baru.
+- Pastikan seluruh tautan, tombol, dan navigasi memiliki tujuan yang jelas dan dapat digunakan. 
 - Gunakan React dan teknologi yang sudah tersedia di proyek.
 - Terapkan prinsip UI/UX untuk pembelajaran sains: hierarki visual yang jelas, keterbacaan tinggi, navigasi intuitif, dan konsistensi warna.
 - Gunakan bahasa Indonesia yang komunikatif dan sesuai untuk siswa kelas XI.
