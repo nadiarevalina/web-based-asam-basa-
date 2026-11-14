@@ -20,21 +20,21 @@
 }
 
 .portal-alert-box.alert-success {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #34d399;
+  background: #d1fae5;
+  border-color: #6ee7b7;
+  color: #065f46;
 }
 
 .portal-alert-box.alert-info {
-  background: rgba(6, 182, 212, 0.12);
-  border-color: rgba(6, 182, 212, 0.35);
-  color: #38bdf8;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+  color: #0369a1;
 }
 
 .portal-alert-box.alert-error {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #f87171;
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
 }
 
 .alert-content {
@@ -62,12 +62,12 @@
 
 /* User Status Card */
 .user-status-card {
-  background: var(--bg-surface-elevated);
+  background: #ffffff;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-lg);
   padding: 24px;
   margin-bottom: 30px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .current-user-info-row {
@@ -128,15 +128,15 @@
 }
 
 .role-badge.role-siswa {
-  background: rgba(14, 165, 233, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(14, 165, 233, 0.35);
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
 }
 
 .role-badge.role-guru {
-  background: rgba(139, 92, 246, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(139, 92, 246, 0.35);
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
 }
 
 .user-meta-row {
@@ -150,7 +150,8 @@
 
 .user-id-code {
   font-family: var(--font-mono);
-  background: rgba(0, 0, 0, 0.25);
+  background: #e2e8f0;
+  color: #334155;
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -207,24 +208,24 @@
 }
 
 .btn-chip-student {
-  background: rgba(14, 165, 233, 0.12);
-  color: #38bdf8;
-  border-color: rgba(14, 165, 233, 0.3);
+  background: #e0f2fe;
+  color: #0284c7;
+  border-color: #bae6fd;
 }
 
 .btn-chip-student:hover {
-  background: rgba(14, 165, 233, 0.25);
+  background: #bae6fd;
   transform: translateY(-1px);
 }
 
 .btn-chip-teacher {
-  background: rgba(139, 92, 246, 0.15);
-  color: #c084fc;
-  border-color: rgba(139, 92, 246, 0.35);
+  background: #f3e8ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
 }
 
 .btn-chip-teacher:hover {
-  background: rgba(139, 92, 246, 0.25);
+  background: #ddd6fe;
   transform: translateY(-1px);
 }
 
@@ -232,16 +233,17 @@
 .auth-form-card {
   max-width: 580px;
   margin: 0 auto 36px;
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .auth-tab-switch {
   display: flex;
-  background: var(--bg-surface-elevated);
+  background: #f1f5f9;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 4px;
   margin-bottom: 24px;
@@ -267,9 +269,9 @@
 }
 
 .form-error-banner {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: #f87171;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
@@ -277,9 +279,9 @@
 }
 
 .form-success-banner {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #34d399;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
@@ -388,16 +390,16 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  background: rgba(6, 182, 212, 0.08);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
   border-radius: var(--radius-md);
   padding: 18px 24px;
   margin-bottom: 24px;
 }
 
 .feature-intro-card.teacher-theme {
-  background: rgba(139, 92, 246, 0.08);
-  border-color: rgba(139, 92, 246, 0.25);
+  background: #faf5ff;
+  border-color: #e9d5ff;
 }
 
 .feature-intro-icon {
@@ -421,11 +423,11 @@
 
 /* Portal Card */
 .portal-card {
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 30px;
 }
 
@@ -508,22 +510,24 @@
 }
 
 .portal-table th {
-  background: var(--bg-surface-elevated);
+  background: #f8fafc;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-medium);
 }
 
 .portal-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f1f5f9;
 }
 
 .portal-table tbody tr.row-selected {
-  background: rgba(6, 182, 212, 0.08);
+  background: #e0f2fe;
 }
 
 .experiment-id-tag {
-  background: rgba(0, 0, 0, 0.35);
-  color: var(--accent-cyan);
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -544,7 +548,8 @@
   font-weight: 600;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
+  background: #f1f5f9;
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -566,10 +571,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.2);
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
   padding: 3px 8px;
   border-radius: var(--radius-pill);
   font-size: 12px;
+  color: var(--text-secondary);
 }
 
 .color-dot {
@@ -583,8 +590,8 @@
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  background: rgba(14, 165, 233, 0.15);
-  color: #38bdf8;
+  background: #e0f2fe;
+  color: #0284c7;
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -593,15 +600,17 @@
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #f1f5f9;
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
 }
 
 .score-badge {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.15);
+  color: #065f46;
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
@@ -612,8 +621,9 @@
 .owner-status-tag.unassigned {
   font-size: 11px;
   font-weight: 600;
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.12);
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
   padding: 3px 8px;
   border-radius: var(--radius-pill);
 }
@@ -640,33 +650,33 @@
 }
 
 .status-badge.status-unlinked {
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
 }
 
 .status-badge.status-linked {
-  background: rgba(6, 182, 212, 0.12);
-  color: #22d3ee;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
 }
 
 .status-badge.status-queued {
-  background: rgba(234, 179, 8, 0.15);
-  color: #facc15;
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #fef08a;
 }
 
 .status-badge.status-received {
-  background: rgba(14, 165, 233, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(14, 165, 233, 0.3);
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
 }
 
 .status-badge.status-reviewed {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
 }
 
 /* Student Results Grid */
@@ -683,13 +693,14 @@
 }
 
 .result-detail-card {
-  background: var(--bg-surface-elevated);
+  background: #ffffff;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-shadow: var(--shadow-sm);
 }
 
 .result-card-top {
@@ -735,7 +746,8 @@
 }
 
 .result-science-box {
-  background: rgba(0, 0, 0, 0.2);
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
 }
@@ -763,8 +775,9 @@
 }
 
 .score-highlight {
-  color: #34d399;
+  color: #059669;
   font-size: 14px;
+  font-weight: 700;
 }
 
 .color-inline-swatch {
@@ -786,8 +799,8 @@
 
 /* Teacher Feedback Box */
 .teacher-feedback-box {
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
   border-radius: var(--radius-sm);
   padding: 14px;
   margin-top: 6px;
@@ -803,14 +816,14 @@
 .feedback-teacher-badge {
   font-size: 12px;
   font-weight: 700;
-  color: #34d399;
+  color: #065f46;
 }
 
 .feedback-rating-badge {
   font-size: 11px;
   font-weight: 700;
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: #dcfce7;
+  color: #15803d;
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -838,13 +851,14 @@
 }
 
 .metric-box {
-  background: var(--bg-surface-elevated);
+  background: #ffffff;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
 .metric-num {
@@ -860,15 +874,15 @@
 }
 
 .metric-warning .metric-num {
-  color: #f59e0b;
+  color: #d97706;
 }
 
 .metric-success .metric-num {
-  color: #34d399;
+  color: #059669;
 }
 
 .metric-info .metric-num {
-  color: #38bdf8;
+  color: #0284c7;
 }
 
 /* Guru Filter Row */
@@ -902,7 +916,7 @@
 .portal-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -912,8 +926,8 @@
 }
 
 .portal-modal-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-strong);
+  background: #ffffff;
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-lg);
   max-width: 650px;
   width: 100%;
@@ -962,7 +976,8 @@
 }
 
 .modal-data-summary-box {
-  background: var(--bg-surface-elevated);
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 14px 18px;
   display: grid;
@@ -984,7 +999,8 @@
 }
 
 .modal-science-details {
-  background: rgba(0, 0, 0, 0.25);
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 14px 18px;
 }
@@ -1012,13 +1028,13 @@
   gap: 12px;
   padding: 16px 24px;
   border-top: 1px solid var(--border-medium);
-  background: var(--bg-surface-elevated);
+  background: #f8fafc;
 }
 
 /* Server Console Terminal */
 .server-console-terminal {
-  background: #050811;
-  border: 1px solid var(--border-medium);
+  background: #0f172a;
+  border: 1px solid #334155;
   border-radius: var(--radius-md);
   padding: 16px;
   font-family: var(--font-mono);
@@ -1026,7 +1042,7 @@
   max-height: 380px;
   overflow-y: auto;
   line-height: 1.6;
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .terminal-empty {
@@ -1045,7 +1061,7 @@
 }
 
 .log-code.code-200 {
-  color: #34d399;
+  color: #4ade80;
   font-weight: 700;
 }
 
@@ -1054,7 +1070,7 @@
 }
 
 .log-owner {
-  color: #cbd5e1;
+  color: #f1f5f9;
 }
 
 /* Spinner */

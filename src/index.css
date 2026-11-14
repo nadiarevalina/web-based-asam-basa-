@@ -1,5 +1,6 @@
 /* ==========================================================================
    AsamBasa Lab - Global Design System & Variables
+   Bright Science Learning Theme — Modern Academic Light Mode
    ========================================================================== */
 
 :root {
@@ -7,45 +8,53 @@
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Color Palette - Deep Dark Science Theme with High Vibrancy */
-  --bg-body: #0b0f19;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1f2937;
-  --bg-surface-hover: #374151;
-  --bg-glass: rgba(17, 24, 39, 0.85);
+  /* ── Color Palette: Bright Science Learning (Light Mode) ── */
+  --bg-body: #f0f4f8;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-surface-hover: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-glass: rgba(255, 255, 255, 0.94);
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.16);
-  --border-strong: rgba(255, 255, 255, 0.28);
+  --border-subtle: rgba(0, 0, 0, 0.07);
+  --border-medium: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.20);
+  --border-card: rgba(0, 0, 0, 0.08);
 
-  --text-primary: #f9fafb;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #0b0f19;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
 
-  /* Chemical Brand Accents */
-  --acid-red: #ef4444;
-  --acid-coral: #f43f5e;
-  --acid-orange: #f97316;
-  --acid-glow: rgba(239, 68, 68, 0.25);
+  /* Primary Blue Brand Identity */
+  --primary-blue: #2563eb;
+  --primary-blue-hover: #1d4ed8;
+  --primary-blue-light: #eff6ff;
 
-  --base-blue: #3b82f6;
-  --base-indigo: #6366f1;
-  --base-purple: #8b5cf6;
-  --base-glow: rgba(59, 130, 246, 0.25);
+  /* Chemical Brand Accents — calibrated for light backgrounds */
+  --acid-red: #dc2626;
+  --acid-coral: #e11d48;
+  --acid-orange: #ea580c;
+  --acid-glow: rgba(220, 38, 38, 0.10);
 
-  --neutral-green: #10b981;
-  --neutral-glow: rgba(16, 185, 129, 0.25);
+  --base-blue: #2563eb;
+  --base-indigo: #4f46e5;
+  --base-purple: #7c3aed;
+  --base-glow: rgba(37, 99, 235, 0.10);
 
-  --accent-cyan: #06b6d4;
-  --accent-amber: #f59e0b;
+  --neutral-green: #059669;
+  --neutral-glow: rgba(5, 150, 105, 0.10);
 
-  /* Card & Shadow Elevations */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-  --shadow-glow-cyan: 0 0 20px -3px rgba(6, 182, 212, 0.35);
+  --accent-cyan: #0284c7;
+  --accent-amber: #d97706;
+
+  /* Card & Shadow Elevations — lighter for bright backgrounds */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  --shadow-glow-cyan: 0 0 20px -3px rgba(2, 132, 199, 0.18);
 
   /* Layout */
   --max-width: 1240px;
@@ -76,7 +85,7 @@
 
 html {
   font-family: var(--font-sans);
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-height) + 16px);
   -webkit-font-smoothing: antialiased;
@@ -91,9 +100,9 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-image:
-    radial-gradient(at 10% 15%, rgba(239, 68, 68, 0.08) 0px, transparent 50%),
-    radial-gradient(at 90% 15%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 60%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    radial-gradient(at 10% 10%, rgba(37, 99, 235, 0.06) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(2, 132, 199, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 65%, rgba(5, 150, 105, 0.04) 0px, transparent 50%);
   background-attachment: fixed;
 }
 
@@ -122,7 +131,7 @@ a {
 }
 
 a:hover {
-  color: #38bdf8;
+  color: #0369a1;
 }
 
 button {
