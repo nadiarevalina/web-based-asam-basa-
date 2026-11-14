@@ -284,16 +284,15 @@ export function QuizSection() {
       {/* Header Bagian Kuis */}
       <div className="section-header-left">
         <div className="section-tag-row">
-          <span className="section-module-pill">Modul 1 — Mengenal Asam &amp; Basa</span>
-          <span className="section-topic-pill">Kuis Formatif 10 Soal HOTS (C3, C4, C5)</span>
+          <span className="section-module-pill">Modul Inkuiri 5</span>
+          <span className="section-topic-pill">Tahap 7: Evaluasi Mandiri Pemahaman Konsep (HOTS C3–C5)</span>
         </div>
         <h2 id="kuis-heading" className="section-title">
-          Kuis Evaluasi Pemahaman Konsep Modul 1
+          Kuis Evaluasi Pemahaman &amp; Penalaran Konsep Asam-Basa
         </h2>
         <p className="section-description">
-          Ukur kemampuan berpikir tingkat tinggi melalui 10 soal pilihan ganda (opsi A–E) berbasis Taksonomi Bloom Revisi:
-          mengaplikasikan konsep (C3), menganalisis fenomena dan data (C4), serta mengevaluasi permasalahan kontekstual (C5).
-          Jawaban yang dikirim langsung dinilai dan dikunci untuk memberikan umpan balik diagnostik ilmiah.
+          Evaluasi hasil penyelidikan ilmiahmu melalui 10 soal penalaran HOTS (C3 Mengaplikasikan, C4 Menganalisis, C5 Mengevaluasi).
+          Gunakan fakta empiris yang kamu temukan di Lab Virtual dan pemahaman teori asam-basa untuk menyelesaikan setiap kasus.
         </p>
       </div>
 

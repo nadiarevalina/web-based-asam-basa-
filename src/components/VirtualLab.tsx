@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { CHEMICAL_SAMPLES, INDICATORS } from '../data/chemistryData'
-import type { ChemicalSample, Indicator, SimulationRecord } from '../types/chemistry'
+import type { ChemicalSample, Indicator, SimulationRecord, SampleNature } from '../types/chemistry'
 import { addLabExperimentRecord } from '../services/authStorage'
 
 let recordCounter = 0
+
+const NATURE_LABELS: Record<SampleNature, string> = {
+  asam_kuat: 'Asam Kuat',
+  asam_lemah: 'Asam Lemah',
+  netral: 'Netral',
+  basa_lemah: 'Basa Lemah / Sedang',
+  basa_kuat: 'Basa Kuat',
+}
 
 function createSimulationRecord(
   sampleName: string,
@@ -11,7 +19,10 @@ function createSimulationRecord(
   ph: number,
   colorName: string,
   colorHex: string,
-  natureLabel: string
+  natureLabel: string,
+  hypothesisNature?: string,
+  isHypothesisCorrect?: boolean,
+  studentConclusion?: string
 ): SimulationRecord {
   recordCounter += 1
   return {
@@ -23,6 +34,9 @@ function createSimulationRecord(
     colorHex,
     natureLabel,
     timestamp: 'Baru saja',
+    hypothesisNature,
+    isHypothesisCorrect,
+    studentConclusion,
   }
 }
 
@@ -33,6 +47,12 @@ export function VirtualLab() {
   const [isAnimating, setIsAnimating] = useState<boolean>(false)
   const [history, setHistory] = useState<SimulationRecord[]>([])
   const [activeFilterCategory, setActiveFilterCategory] = useState<'semua' | 'sehari-hari' | 'laboratorium'>('semua')
+  
+  // Guided Inquiry States (Tahap 3, 5, 6)
+  const [hypothesisNature, setHypothesisNature] = useState<SampleNature | null>(null)
+  const [isHypothesisLocked, setIsHypothesisLocked] = useState<boolean>(false)
+  const [studentConclusion, setStudentConclusion] = useState<string>('')
+  const [savedSuccessMessage, setSavedSuccessMessage] = useState<string | null>(null)
 
   const currentSample: ChemicalSample =
     CHEMICAL_SAMPLES.find((s) => s.id === selectedSampleId) || CHEMICAL_SAMPLES[0]
@@ -54,8 +74,24 @@ export function VirtualLab() {
     return 'Basa Kuat'
   }
 
+  const handleSampleChange = (sampleId: string) => {
+    setSelectedSampleId(sampleId)
+    setIsTested(false)
+    setHypothesisNature(null)
+    setIsHypothesisLocked(false)
+    setStudentConclusion('')
+    setSavedSuccessMessage(null)
+  }
+
+  const handleIndicatorChange = (indicatorId: string) => {
+    setSelectedIndicatorId(indicatorId)
+    setIsTested(false)
+    setSavedSuccessMessage(null)
+  }
+
   const handleTest = () => {
     setIsAnimating(true)
+    setSavedSuccessMessage(null)
     setTimeout(() => {
       setIsAnimating(false)
       setIsTested(true)
@@ -65,16 +101,24 @@ export function VirtualLab() {
   const handleReset = () => {
     setIsTested(false)
     setIsAnimating(false)
+    setSavedSuccessMessage(null)
   }
 
+  const isHypothesisCorrect = hypothesisNature ? hypothesisNature === currentSample.nature : undefined
+
   const handleSaveToJournal = () => {
+    const hypothesisLabel = hypothesisNature ? NATURE_LABELS[hypothesisNature] : undefined
+
     const newRecord = createSimulationRecord(
       currentSample.name,
       currentIndicator.name,
       currentSample.approximatePh,
       colorResult.colorName,
       colorResult.colorHex,
-      getNatureLabel(currentSample.approximatePh)
+      getNatureLabel(currentSample.approximatePh),
+      hypothesisLabel,
+      isHypothesisCorrect,
+      studentConclusion.trim() || undefined
     )
     setHistory([newRecord, ...history])
 
@@ -86,7 +130,15 @@ export function VirtualLab() {
       colorName: colorResult.colorName,
       colorHex: colorResult.colorHex,
       natureLabel: getNatureLabel(currentSample.approximatePh),
+      hypothesisNature: hypothesisLabel,
+      studentConclusion: studentConclusion.trim() || undefined,
+      isHypothesisCorrect,
     })
+
+    setSavedSuccessMessage('✓ Pengamatan & analisis berhasil dicatat ke Jurnal Pembelajaran!')
+    setTimeout(() => {
+      setSavedSuccessMessage(null)
+    }, 4000)
   }
 
   const handleClearHistory = () => {
@@ -97,20 +149,20 @@ export function VirtualLab() {
     <section id="lab-section" className="content-section" aria-labelledby="lab-heading">
       <div className="section-header-left">
         <div className="section-tag-row">
-          <span className="section-module-pill">Modul 2</span>
-          <span className="section-topic-pill">Simulasi Inkuiri Laboratorium Virtual</span>
+          <span className="section-module-pill">Modul Inkuiri 2</span>
+          <span className="section-topic-pill">Tahap 3, 4, 5, & 6: Eksperimen & Analisis</span>
         </div>
         <h2 id="lab-heading" className="section-title">
-          Laboratorium Pengujian Indikator Asam-Basa
+          Laboratorium Virtual Pengujian Asam-Basa
         </h2>
         <p className="section-description">
-          Lakukan eksplorasi inkuiri terbimbing secara mandiri! Pilih larutan sampel, teteskan atau celupkan
-          indikator pilihanmu, amati transformasi warna, dan rumuskan kesimpulan sifat larutan.
+          Praktikkan metode ilmiah secara bertahap: rumuskan hipotesis sifat larutan, kumpulkan data eksperimen indikator,
+          bandingkan hasil empiris dengan hipotesismu, dan tarik kesimpulan ilmiah.
         </p>
       </div>
 
       <div className="lab-workbench-grid">
-        {/* Left Column: Sample & Indicator Selectors */}
+        {/* Left Column: Sample, Hypothesis, & Indicator Selectors */}
         <div className="lab-controls-panel">
           {/* Step 1: Sample Selection */}
           <div className="control-group-card">
@@ -145,16 +197,13 @@ export function VirtualLab() {
 
             <div className="sample-select-wrapper">
               <label htmlFor="sample-dropdown" className="control-label">
-                Sampel yang sedang diuji:
+                Sampel yang sedang diselidiki:
               </label>
               <select
                 id="sample-dropdown"
                 className="lab-dropdown"
                 value={selectedSampleId}
-                onChange={(e) => {
-                  setSelectedSampleId(e.target.value)
-                  setIsTested(false)
-                }}
+                onChange={(e) => handleSampleChange(e.target.value)}
               >
                 {filteredSamples.map((sample) => (
                   <option key={sample.id} value={sample.id}>
@@ -171,31 +220,85 @@ export function VirtualLab() {
                 <span className="info-val font-mono">{currentSample.formula}</span>
               </div>
               <div className="sample-info-row">
+                <span className="info-key">Kategori:</span>
+                <span className="info-val" style={{ textTransform: 'capitalize' }}>{currentSample.category}</span>
+              </div>
+              <div className="sample-info-row">
                 <span className="info-key">Deskripsi:</span>
                 <span className="info-val">{currentSample.description}</span>
               </div>
             </div>
           </div>
 
-          {/* Step 2: Indicator Selection */}
+          {/* Step 2: Formulate Hypothesis (Tahap 3 Inkuiri) */}
+          <div className="control-group-card hypothesis-panel-card">
+            <div className="control-card-header">
+              <span className="step-badge" style={{ background: '#f59e0b', color: '#ffffff' }}>Tahap 3 Inkuiri</span>
+              <h3 className="control-title">Rumuskan Hipotesis Awal</h3>
+            </div>
+            <p className="hypothesis-guide-text" style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: '1.5' }}>
+              Sebelum menguji <strong>{currentSample.name}</strong>, apa dugaan ilmiahmu mengenai sifat keasaman larutan ini?
+            </p>
+
+            <div className="hypothesis-options-grid">
+              {(
+                [
+                  { key: 'asam_kuat', label: 'Asam Kuat' },
+                  { key: 'asam_lemah', label: 'Asam Lemah' },
+                  { key: 'netral', label: 'Netral' },
+                  { key: 'basa_lemah', label: 'Basa Lemah' },
+                  { key: 'basa_kuat', label: 'Basa Kuat' },
+                ] as const
+              ).map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  disabled={isHypothesisLocked}
+                  className={`hypothesis-option-btn ${hypothesisNature === opt.key ? 'selected' : ''}`}
+                  onClick={() => setHypothesisNature(opt.key)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              {hypothesisNature ? (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ fontSize: '12px', padding: '5px 12px' }}
+                  onClick={() => setIsHypothesisLocked(!isHypothesisLocked)}
+                >
+                  {isHypothesisLocked ? '🔓 Ubah Dugaan' : '🔒 Kunci Dugaan'}
+                </button>
+              ) : (
+                <span style={{ fontSize: '12px', color: '#64748b' }}>
+                  💡 Pilih salah satu dugaan sifat di atas
+                </span>
+              )}
+              {isHypothesisLocked && (
+                <span className="hypothesis-locked-badge">✓ Dugaan Terkunci</span>
+              )}
+            </div>
+          </div>
+
+          {/* Step 3: Indicator Selection & Test Execution (Tahap 4 Inkuiri) */}
           <div className="control-group-card">
             <div className="control-card-header">
-              <span className="step-badge">Langkah 2</span>
-              <h3 className="control-title">Pilih Indikator Kimia</h3>
+              <span className="step-badge">Tahap 4 Inkuiri</span>
+              <h3 className="control-title">Uji dengan Indikator</h3>
             </div>
 
             <div className="indicator-select-wrapper">
               <label htmlFor="indicator-dropdown" className="control-label">
-                Indikator asam-basa:
+                Pilih alat uji / indikator kimia:
               </label>
               <select
                 id="indicator-dropdown"
                 className="lab-dropdown"
                 value={selectedIndicatorId}
-                onChange={(e) => {
-                  setSelectedIndicatorId(e.target.value)
-                  setIsTested(false)
-                }}
+                onChange={(e) => handleIndicatorChange(e.target.value)}
               >
                 {INDICATORS.map((ind) => (
                   <option key={ind.id} value={ind.id}>
@@ -232,7 +335,7 @@ export function VirtualLab() {
                 {isAnimating ? (
                   <>
                     <span className="spinner-dots" />
-                    <span>Sedang Menguji...</span>
+                    <span>Sedang Menguji Reaksi...</span>
                   </>
                 ) : (
                   <>
@@ -275,14 +378,14 @@ export function VirtualLab() {
           </div>
         </div>
 
-        {/* Right Column: Visual Workbench & Observation Result */}
+        {/* Right Column: Visual Workbench, Observation Result, Hypothesis Evaluation, & Conclusion */}
         <div className="lab-display-panel">
           {/* Workbench Graphic */}
           <div className="bench-stage-card">
             <div className="stage-header">
               <span className="stage-tag">Tabung Reaksi Pengujian Virtual</span>
               <span className="stage-status-indicator">
-                {isTested ? '✓ Pengujian Selesai' : 'Siap Diuji'}
+                {isTested ? '✓ Pengujian Selesai (Data Terkumpul)' : 'Siap Diuji'}
               </span>
             </div>
 
@@ -412,12 +515,12 @@ export function VirtualLab() {
             </div>
           </div>
 
-          {/* Observation Result Card */}
+          {/* Observation Result & Inquiry Scaffolding Card */}
           {isTested ? (
             <div className="observation-result-card animate-fade-in" id="observation-result">
               <div className="obs-card-header">
                 <div className="obs-badge-group">
-                  <span className="obs-status-pill">Hasil Analisis Pengamatan</span>
+                  <span className="obs-status-pill">Tahap 4: Data Pengamatan</span>
                   <span
                     className={`obs-nature-pill nature-${currentSample.nature}`}
                   >
@@ -448,6 +551,13 @@ export function VirtualLab() {
                 </button>
               </div>
 
+              {savedSuccessMessage && (
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', marginBottom: '12px' }}>
+                  {savedSuccessMessage}
+                </div>
+              )}
+
+              {/* Raw Data Grid */}
               <div className="obs-result-grid">
                 <div className="obs-item">
                   <span className="obs-label">Warna Pengamatan:</span>
@@ -475,14 +585,66 @@ export function VirtualLab() {
                 </div>
 
                 <div className="obs-item">
-                  <span className="obs-label">Spesi Ionik Utama:</span>
+                  <span className="obs-label">Spesi Ionik Dominan:</span>
                   <span className="obs-value font-mono">{currentSample.ionPresent}</span>
                 </div>
               </div>
 
               <div className="obs-explanation-box">
-                <h4 className="explanation-title">Penjelasan Konsep Kimia:</h4>
+                <h4 className="explanation-title">Mekanisme Kimiawi Reaksi:</h4>
                 <p className="explanation-text">{colorResult.behaviorNote}</p>
+              </div>
+
+              {/* Tahap 5: Menganalisis Data — Komparasi Hipotesis vs Data Eksperimen */}
+              <div className="hypothesis-analysis-section" style={{ marginTop: '16px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                  Tahap 5: Analisis Komparasi Hipotesis vs Data
+                </h4>
+                {hypothesisNature ? (
+                  isHypothesisCorrect ? (
+                    <div className="hypothesis-eval-card eval-success">
+                      <div className="eval-header">
+                        <span>✅</span>
+                        <span>Hipotesis Terbukti Sesuai!</span>
+                      </div>
+                      <p className="eval-desc">
+                        Dugaanmu bahwa <strong>{currentSample.name}</strong> bersifat <strong>{NATURE_LABELS[hypothesisNature]}</strong> terbukti benar.
+                        Data eksperimen menunjukkan respon warna <strong>{colorResult.colorName}</strong> dengan estimasi pH <strong>{currentSample.approximatePh.toFixed(1)}</strong>,
+                        yang konsisten dengan dominasi spesi <code>{currentSample.ionPresent}</code>.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="hypothesis-eval-card eval-mismatch">
+                      <div className="eval-header">
+                        <span>🔍</span>
+                        <span>Refleksi Ilmiah: Hipotesis Berbeda dari Data</span>
+                      </div>
+                      <p className="eval-desc">
+                        Dugaan awalmu adalah <strong>{NATURE_LABELS[hypothesisNature]}</strong>, namun hasil uji eksperimen menunjukkan sifat <strong>{getNatureLabel(currentSample.approximatePh)}</strong> (pH ≈ {currentSample.approximatePh.toFixed(1)}).
+                        Hal ini lumrah terjadi dalam penelitian ilmiah. Faktor penentunya adalah kekuatan ionisasi: sampel ini melepaskan <code>{currentSample.ionPresent}</code>.
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', padding: '10px 14px', borderRadius: '6px', fontSize: '13px', color: '#64748b' }}>
+                    💡 <strong>Catatan Inkuiri:</strong> Kamu belum memilih hipotesis sebelum pengujian. Cobalah mengunci dugaan sifat larutan pada pengujian berikutnya untuk melatih intuisi penalaran sainsmu!
+                  </div>
+                )}
+              </div>
+
+              {/* Tahap 6: Menarik Kesimpulan Siswa */}
+              <div className="conclusion-input-box">
+                <label htmlFor="student-lab-conclusion" className="conclusion-label">
+                  Tahap 6: Rumuskan Kesimpulan Ilmiahmu
+                </label>
+                <textarea
+                  id="student-lab-conclusion"
+                  className="conclusion-textarea"
+                  rows={2}
+                  placeholder="Contoh: Berdasarkan perubahan warna indikator dan nilai pH, larutan ini tergolong asam lemah karena derajat ionisasinya kecil..."
+                  value={studentConclusion}
+                  onChange={(e) => setStudentConclusion(e.target.value)}
+                />
               </div>
             </div>
           ) : (
@@ -500,15 +662,17 @@ export function VirtualLab() {
                 <line x1="12" y1="8" x2="12.01" y2="8" />
               </svg>
               <div className="prompt-text">
-                <strong>Petunjuk Praktikum Inkuiri:</strong>
+                <strong>Alur Inkuiri Laboratorium Terbimbing:</strong>
                 <p>
-                  Pilih larutan sampel dan indikator pada panel kiri, lalu klik tombol{' '}
+                  1. Pilih sampel larutan pada panel kiri.<br />
+                  2. Rumuskan hipotesismu mengenai sifat larutan pada <strong>Tahap 3</strong>.<br />
+                  3. Pilih indikator kimia dan klik tombol{' '}
                   <em>
                     "{currentIndicator.type === 'kertas'
                       ? 'Celupkan Kertas Uji'
                       : 'Teteskan Indikator'}"
                   </em>{' '}
-                  untuk melihat perubahan warna dan analisis kimianya.
+                  untuk mengumpulkan data pengamatan.
                 </p>
               </div>
             </div>
@@ -521,9 +685,9 @@ export function VirtualLab() {
         <div className="lab-journal-section">
           <div className="journal-header">
             <div>
-              <h3 className="journal-title">Buku Jurnal Pengamatan Laboratorium</h3>
+              <h3 className="journal-title">Buku Jurnal Pengamatan Inkuiri Siswa</h3>
               <p className="journal-subtitle">
-                Catatan riwayat hasil pengujian inkuiri yang telah kamu lakukan pada sesi ini.
+                Rekam jejak penyelidikan ilmiah: sampel, hipotesis awal, data pengamatan, evaluasi kesesuaian, dan kesimpulanmu.
               </p>
             </div>
             <button
@@ -541,10 +705,11 @@ export function VirtualLab() {
                 <tr>
                   <th scope="col">Waktu</th>
                   <th scope="col">Sampel Larutan</th>
-                  <th scope="col">Indikator</th>
-                  <th scope="col">Warna Akhir</th>
+                  <th scope="col">Indikator & Hasil</th>
                   <th scope="col">Estimasi pH</th>
-                  <th scope="col">Kesimpulan Sifat</th>
+                  <th scope="col">Hipotesis Siswa</th>
+                  <th scope="col">Evaluasi & Sifat</th>
+                  <th scope="col">Kesimpulan Siswa</th>
                 </tr>
               </thead>
               <tbody>
@@ -552,21 +717,43 @@ export function VirtualLab() {
                   <tr key={record.id}>
                     <td className="font-mono text-muted">{record.timestamp}</td>
                     <td><strong>{record.sampleName}</strong></td>
-                    <td>{record.indicatorName}</td>
                     <td>
                       <div className="table-color-swatch-row">
                         <span
                           className="table-color-dot"
                           style={{ backgroundColor: record.colorHex }}
                         />
-                        <span>{record.colorName}</span>
+                        <span>{record.indicatorName} ({record.colorName})</span>
                       </div>
                     </td>
                     <td className="font-mono">{record.ph.toFixed(1)}</td>
                     <td>
-                      <span className="badge-nature-small">
-                        {record.natureLabel}
-                      </span>
+                      {record.hypothesisNature ? (
+                        <span className="font-medium">{record.hypothesisNature}</span>
+                      ) : (
+                        <span className="text-muted" style={{ fontSize: '12px' }}>Tanpa Dugaan</span>
+                      )}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        <span className="badge-nature-small">
+                          {record.natureLabel}
+                        </span>
+                        {record.isHypothesisCorrect !== undefined && (
+                          <span
+                            style={{
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              color: record.isHypothesisCorrect ? '#166534' : '#b45309',
+                            }}
+                          >
+                            {record.isHypothesisCorrect ? '✓ Sesuai' : '⚡ Perlu Refleksi'}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td style={{ maxWidth: '220px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                      {record.studentConclusion || <span className="text-muted">Belum diisi</span>}
                     </td>
                   </tr>
                 ))}

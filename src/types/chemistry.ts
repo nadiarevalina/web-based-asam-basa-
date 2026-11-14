@@ -38,6 +38,10 @@ export interface SimulationRecord {
   colorHex: string
   natureLabel: string
   timestamp: string
+  hypothesisNature?: string
+  hypothesisColor?: string
+  isHypothesisCorrect?: boolean
+  studentConclusion?: string
 }
 
 export interface QuizQuestion {

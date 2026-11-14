@@ -1108,6 +1108,25 @@ export function LoginPortal({
                               {item.details.ph?.toFixed(1)} ({item.details.natureLabel})
                             </span>
                           </div>
+                          {item.details.hypothesisNature && (
+                            <div className="attr-item">
+                              <span className="attr-label">Hipotesis Awal:</span>
+                              <span className="attr-value">
+                                {item.details.hypothesisNature}{' '}
+                                <span style={{ fontSize: '11px', color: item.details.isHypothesisCorrect ? '#166534' : '#b45309', fontWeight: 600 }}>
+                                  ({item.details.isHypothesisCorrect ? '✓ Sesuai' : '⚡ Refleksi'})
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                          {item.details.studentConclusion && (
+                            <div className="attr-item" style={{ gridColumn: '1 / -1', marginTop: '4px' }}>
+                              <span className="attr-label">Kesimpulan Inkuiri Siswa:</span>
+                              <span className="attr-value" style={{ fontStyle: 'italic' }}>
+                                "{item.details.studentConclusion}"
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="science-attributes-row">
@@ -1402,6 +1421,19 @@ export function LoginPortal({
                     <p><strong>Warna Akhir:</strong> {evaluatingItem.details.colorName}</p>
                     <p><strong>Estimasi pH:</strong> {evaluatingItem.details.ph?.toFixed(1)}</p>
                     <p><strong>Kesimpulan Sifat:</strong> {evaluatingItem.details.natureLabel}</p>
+                    {evaluatingItem.details.hypothesisNature && (
+                      <p>
+                        <strong>Hipotesis Awal Siswa:</strong> {evaluatingItem.details.hypothesisNature}{' '}
+                        <span style={{ color: evaluatingItem.details.isHypothesisCorrect ? '#166534' : '#b45309', fontWeight: 600 }}>
+                          ({evaluatingItem.details.isHypothesisCorrect ? '✓ Sesuai Data' : '⚡ Perlu Refleksi'})
+                        </span>
+                      </p>
+                    )}
+                    {evaluatingItem.details.studentConclusion && (
+                      <p style={{ gridColumn: '1 / -1', background: '#f8fafc', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', marginTop: '6px' }}>
+                        <strong>Kesimpulan Inkuiri Siswa:</strong> "{evaluatingItem.details.studentConclusion}"
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="science-table-grid">

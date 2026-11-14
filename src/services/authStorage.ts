@@ -537,6 +537,9 @@ export function addLabExperimentRecord(params: {
   colorName: string
   colorHex: string
   natureLabel: string
+  hypothesisNature?: string
+  studentConclusion?: string
+  isHypothesisCorrect?: boolean
   currentUser?: UserAccount | null
 }): ExperimentItem {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -545,11 +548,15 @@ export function addLabExperimentRecord(params: {
 
   const user = params.currentUser || getCurrentUser()
 
+  const hypothesisSummary = params.hypothesisNature
+    ? ` [Hipotesis: ${params.hypothesisNature} - ${params.isHypothesisCorrect ? 'Sesuai' : 'Perlu Refleksi'}]`
+    : ''
+
   const newExperiment: ExperimentItem = {
     id: experimentId, // ID percobaan unik
     experimentType: 'lab_simulasi',
     title: `Uji ${params.sampleName} (${params.indicatorName})`,
-    summary: `Pengujian inkuiri virtual: warna ${params.colorName}, estimasi pH ${params.ph.toFixed(1)} (${params.natureLabel}).`,
+    summary: `Pengujian inkuiri virtual: warna ${params.colorName}, estimasi pH ${params.ph.toFixed(1)} (${params.natureLabel}).${hypothesisSummary}`,
     createdAt: new Date().toISOString(),
     ownerId: user ? user.id : null,
     ownerName: user ? user.fullName : null,
@@ -563,6 +570,9 @@ export function addLabExperimentRecord(params: {
       colorName: params.colorName,
       colorHex: params.colorHex,
       natureLabel: params.natureLabel,
+      hypothesisNature: params.hypothesisNature,
+      studentConclusion: params.studentConclusion,
+      isHypothesisCorrect: params.isHypothesisCorrect,
     },
   }
 

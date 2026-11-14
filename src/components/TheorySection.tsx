@@ -3,19 +3,32 @@ import { useState } from 'react'
 export function TheorySection() {
   const [activeTab, setActiveTab] = useState<'teori' | 'sifat' | 'kehidupan' | 'netralisasi'>('teori')
 
+  // Interactive Inquiry Check State for each tab
+  const [quiz1Answer, setQuiz1Answer] = useState<string | null>(null)
+  const [quiz1Submitted, setQuiz1Submitted] = useState<boolean>(false)
+
+  const [quiz2Answer, setQuiz2Answer] = useState<string | null>(null)
+  const [quiz2Submitted, setQuiz2Submitted] = useState<boolean>(false)
+
+  const [quiz3Answer, setQuiz3Answer] = useState<string | null>(null)
+  const [quiz3Submitted, setQuiz3Submitted] = useState<boolean>(false)
+
+  const [quiz4Answer, setQuiz4Answer] = useState<string | null>(null)
+  const [quiz4Submitted, setQuiz4Submitted] = useState<boolean>(false)
+
   return (
     <section id="teori-section" className="content-section" aria-labelledby="teori-heading">
       <div className="section-header-left">
         <div className="section-tag-row">
-          <span className="section-module-pill">Modul 1</span>
-          <span className="section-topic-pill">Teori & Konsep Fundamental</span>
+          <span className="section-module-pill">Modul 1 • Tahap 2 Inkuiri</span>
+          <span className="section-topic-pill">Merumuskan Masalah & Eksplorasi Konseptual</span>
         </div>
         <h2 id="teori-heading" className="section-title">
           Mengenal Asam, Basa, dan Karakteristiknya
         </h2>
         <p className="section-description">
           Pahami evolusi pemikiran para kimiawan dalam mendefinisikan asam dan basa,
-          pelajari sifat fisis-kimia larutan, serta eksplorasi peran krusialnya dalam kehidupan sehari-hari.
+          pelajari sifat fisis-kimia larutan, serta eksplorasi peran krusialnya dalam kehidupan sehari-hari melalui penyelidikan ilmiah terbimbing.
         </p>
       </div>
 
@@ -113,7 +126,7 @@ export function TheorySection() {
                   <div className="theory-limitation-box">
                     <strong>Kelemahan:</strong> Hanya terbatas pada pelarut air dan tidak
                     dapat menjelaskan mengapa senyawa seperti <code>NH₃</code> (amonia)
-                    bersifat basa padat maupun dalam pelarut non-air.
+                    bersifat basa padahal tidak memiliki gugus hidroksida pada rumusnya.
                   </div>
                 </div>
               </div>
@@ -222,6 +235,51 @@ export function TheorySection() {
                 </table>
               </div>
             </div>
+
+            {/* Uji Pemahaman Inkuiri Tab 1 */}
+            <div className="theory-check-box">
+              <div className="check-box-header">
+                <span className="check-box-badge">Uji Nalar Inkuiri</span>
+                <h4 className="check-box-title">Pemantik Konsep 1: Donor & Akseptor Proton</h4>
+              </div>
+              <p className="check-question-text">
+                Dalam reaksi kesetimbangan: <code>CH₃COOH(aq) + H₂O(l) ⇌ CH₃COO⁻(aq) + H₃O⁺(aq)</code>,
+                manakah spesi yang bertindak sebagai basa Brønsted–Lowry beserta pasangan asam konjugasinya?
+              </p>
+              <div className="check-options-list">
+                {[
+                  { key: 'A', text: 'CH₃COOH (basa) dan CH₃COO⁻ (asam konjugasi)' },
+                  { key: 'B', text: 'H₂O (basa) dan H₃O⁺ (asam konjugasi)' },
+                  { key: 'C', text: 'CH₃COO⁻ (basa) dan H₂O (asam konjugasi)' },
+                ].map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`check-option-item ${quiz1Answer === opt.key ? 'selected' : ''}`}
+                    onClick={() => {
+                      setQuiz1Answer(opt.key)
+                      setQuiz1Submitted(true)
+                    }}
+                  >
+                    <strong>{opt.key}.</strong>
+                    <span>{opt.text}</span>
+                  </button>
+                ))}
+              </div>
+              {quiz1Submitted && (
+                <div className={`check-feedback-box ${quiz1Answer === 'B' ? 'correct' : 'incorrect'}`}>
+                  {quiz1Answer === 'B' ? (
+                    <div>
+                      <strong>✓ Tepat Sekali!</strong> Molekul air (<code>H₂O</code>) menerima satu proton <code>H⁺</code> dari asam asetat sehingga bertindak sebagai basa Brønsted–Lowry. Spesi <code>H₃O⁺</code> yang terbentuk setelah menerima proton merupakan pasangan asam konjugasinya.
+                    </div>
+                  ) : (
+                    <div>
+                      <strong>Perlu Refleksi:</strong> Perhatikan arah transfer proton. <code>CH₃COOH</code> melepaskan <code>H⁺</code> (donor proton = asam), sedangkan <code>H₂O</code> menerima <code>H⁺</code> tersebut (akseptor proton = basa). Jawaban yang tepat adalah <strong>B</strong>.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -285,6 +343,50 @@ export function TheorySection() {
                   </li>
                 </ul>
               </div>
+            </div>
+
+            {/* Uji Pemahaman Inkuiri Tab 2 */}
+            <div className="theory-check-box">
+              <div className="check-box-header">
+                <span className="check-box-badge">Uji Nalar Inkuiri</span>
+                <h4 className="check-box-title">Pemantik Konsep 2: Daya Hantar & Derajat Ionisasi</h4>
+              </div>
+              <p className="check-question-text">
+                Larutan HCl 0.1 M dan larutan CH₃COOH 0.1 M sama-sama bersifat asam dan memiliki molaritas yang identik. Namun, mengapa lampu alat uji elektrolit menyala jauh lebih terang pada larutan HCl dibanding CH₃COOH?
+              </p>
+              <div className="check-options-list">
+                {[
+                  { key: 'A', text: 'HCl terionisasi sempurna (α = 1) menghasilkan konsentrasi ion H⁺ melimpah, sedangkan CH₃COOH asam lemah (α << 1)' },
+                  { key: 'B', text: 'HCl memiliki massa molar yang jauh lebih besar daripada CH₃COOH' },
+                  { key: 'C', text: 'Asam asetat tidak menghasilkan ion sama sekali dalam air' },
+                ].map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`check-option-item ${quiz2Answer === opt.key ? 'selected' : ''}`}
+                    onClick={() => {
+                      setQuiz2Answer(opt.key)
+                      setQuiz2Submitted(true)
+                    }}
+                  >
+                    <strong>{opt.key}.</strong>
+                    <span>{opt.text}</span>
+                  </button>
+                ))}
+              </div>
+              {quiz2Submitted && (
+                <div className={`check-feedback-box ${quiz2Answer === 'A' ? 'correct' : 'incorrect'}`}>
+                  {quiz2Answer === 'A' ? (
+                    <div>
+                      <strong>✓ Analisis Tepat!</strong> HCl adalah asam kuat yang terurai 100% menjadi ion-ion bebas (<code>H⁺</code> dan <code>Cl⁻</code>). Semakin rapat muatan ion bebas per satuan volume, semakin tinggi konduktivitas listrik larutan. Asam asetat hanya terionisasi sekitar 1%, sehingga ion penghantar listriknya sedikit.
+                    </div>
+                  ) : (
+                    <div>
+                      <strong>Perlu Refleksi:</strong> Daya hantar listrik larutan ditentukan oleh konsentrasi ion bebas yang bergerak, bukan oleh massa molar molekul. Jawaban yang tepat adalah <strong>A</strong>.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -375,6 +477,50 @@ export function TheorySection() {
                 </div>
               </div>
             </div>
+
+            {/* Uji Pemahaman Inkuiri Tab 3 */}
+            <div className="theory-check-box">
+              <div className="check-box-header">
+                <span className="check-box-badge">Uji Nalar Inkuiri</span>
+                <h4 className="check-box-title">Pemantik Konsep 3: Mengapa Antasida Menggunakan Mg(OH)₂?</h4>
+              </div>
+              <p className="check-question-text">
+                Baik NaOH maupun Mg(OH)₂ sama-sama merupakan basa. Mengapa formulasi obat sakit maag menggunakan Mg(OH)₂ yang sukar larut, bukan larutan NaOH?
+              </p>
+              <div className="check-options-list">
+                {[
+                  { key: 'A', text: 'NaOH sangat kaustik dan merusak dinding lambung, sedangkan Mg(OH)₂ melepaskan OH⁻ secara terkontrol saat bereaksi dengan kelebihan H⁺' },
+                  { key: 'B', text: 'NaOH tidak mampu bereaksi dengan asam klorida lambung' },
+                  { key: 'C', text: 'Mg(OH)₂ memiliki rasa manis sedangkan NaOH tidak' },
+                ].map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`check-option-item ${quiz3Answer === opt.key ? 'selected' : ''}`}
+                    onClick={() => {
+                      setQuiz3Answer(opt.key)
+                      setQuiz3Submitted(true)
+                    }}
+                  >
+                    <strong>{opt.key}.</strong>
+                    <span>{opt.text}</span>
+                  </button>
+                ))}
+              </div>
+              {quiz3Submitted && (
+                <div className={`check-feedback-box ${quiz3Answer === 'A' ? 'correct' : 'incorrect'}`}>
+                  {quiz3Answer === 'A' ? (
+                    <div>
+                      <strong>✓ Tepat Sekali!</strong> NaOH adalah basa kuat yang sangat mudah larut dan bersifat kaustik ekstrem sehingga dapat merusak mukosa lambung dan memicu perforasi. Mg(OH)₂ berupa suspensi basa sukar larut yang bertindak sebagai penyangga (*buffer-like action*), hanya bereaksi ketika asam berlebih hadir.
+                    </div>
+                  ) : (
+                    <div>
+                      <strong>Perlu Refleksi:</strong> NaOH bereaksi sangat cepat dan eksotermik dengan asam lambung, tetapi sifat kaustiknya mematikan sel jaringan. Pilihan tepat adalah <strong>A</strong>.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -438,6 +584,50 @@ export function TheorySection() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Uji Pemahaman Inkuiri Tab 4 */}
+            <div className="theory-check-box">
+              <div className="check-box-header">
+                <span className="check-box-badge">Uji Nalar Inkuiri</span>
+                <h4 className="check-box-title">Pemantik Konsep 4: Hakikat Reaksi Penetralan</h4>
+              </div>
+              <p className="check-question-text">
+                Pada reaksi antara asam nitrat (HNO₃) dan kalium hidroksida (KOH), persamaan reaksi ion bersih (net ionic equation) yang menggambarkan proses kimia yang sesungguhnya terjadi adalah...
+              </p>
+              <div className="check-options-list">
+                {[
+                  { key: 'A', text: 'K⁺(aq) + NO₃⁻(aq) → KNO₃(aq)' },
+                  { key: 'B', text: 'H⁺(aq) + OH⁻(aq) → H₂O(l)' },
+                  { key: 'C', text: 'HNO₃(aq) + KOH(aq) → KNO₃(s) + H₂O(l)' },
+                ].map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`check-option-item ${quiz4Answer === opt.key ? 'selected' : ''}`}
+                    onClick={() => {
+                      setQuiz4Answer(opt.key)
+                      setQuiz4Submitted(true)
+                    }}
+                  >
+                    <strong>{opt.key}.</strong>
+                    <span>{opt.text}</span>
+                  </button>
+                ))}
+              </div>
+              {quiz4Submitted && (
+                <div className={`check-feedback-box ${quiz4Answer === 'B' ? 'correct' : 'incorrect'}`}>
+                  {quiz4Answer === 'B' ? (
+                    <div>
+                      <strong>✓ Sempurna!</strong> Ion <code>K⁺</code> dan <code>NO₃⁻</code> hanyalah ion penonton (*spectator ions*) yang tetap terlarut dan tidak mengalami perubahan kimia. Hakikat reaksi penetralan asam-basa kuat adalah pembentukan molekul air netral dari ion <code>H⁺</code> dan <code>OH⁻</code>.
+                    </div>
+                  ) : (
+                    <div>
+                      <strong>Perlu Refleksi:</strong> Garam KNO₃ tetap terurai sebagai ion-ion bebas dalam air dan tidak mengendap. Inti reaksi netralisasi adalah <code>H⁺ + OH⁻ → H₂O</code>. Pilihan tepat adalah <strong>B</strong>.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

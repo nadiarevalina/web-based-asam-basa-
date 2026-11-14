@@ -54,6 +54,11 @@ export function HeroSection({
       <div className="hero-grid">
         {/* Left Column: Headlines & Call-to-actions */}
         <div className="hero-content">
+          <div className="section-tag-row">
+            <span className="section-module-pill">Tahap 1 Inkuiri</span>
+            <span className="section-topic-pill">Orientasi Fenomena Kehidupan Nyata</span>
+          </div>
+
           <h1 id="hero-title" className="hero-main-title">
             Jelajahi Dunia <span className="text-gradient-acid">Asam</span> dan{' '}
             <span className="text-gradient-base">Basa!</span>
@@ -62,8 +67,19 @@ export function HeroSection({
           <p className="hero-lead-text">
             Pahami fenomena keasaman dan kebasaan di sekitarmu—dari rasa masam buah
             lemon, keajaiban obat maag antasida, hingga rahasia perubahan warna
-            indikator laboratorium—secara visual, mendalam, dan interaktif.
+            indikator laboratorium—secara visual, mendalam, dan berbasis inkuiri terbimbing.
           </p>
+
+          {/* Guiding Orientation Question Card */}
+          <div className="guiding-question-card" style={{ marginBottom: '24px' }}>
+            <div className="guiding-q-header">
+              <span className="guiding-q-icon">💡</span>
+              <strong className="guiding-q-title">Pertanyaan Pemantik Orientasi:</strong>
+            </div>
+            <p className="guiding-q-text">
+              "Mengapa sengatan lebah (bersifat asam) diobati dengan soda kue (basa), namun sengatan tawon (bersifat basa) justru dibilas dengan asam cuka? Bagaimana kita dapat membuktikan sifat suatu larutan tanpa mencicipinya?"
+            </p>
+          </div>
 
           <div className="hero-button-group">
             <button

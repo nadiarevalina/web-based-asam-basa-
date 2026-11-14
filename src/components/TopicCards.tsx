@@ -156,6 +156,81 @@ export function TopicCards({ onSelectModule }: TopicCardsProps) {
           )
         })}
       </div>
+
+      {/* Petunjuk & Diagram 7 Tahapan Inkuiri Terbimbing */}
+      <div className="inquiry-roadmap-card" style={{
+        marginTop: '36px',
+        background: '#ffffff',
+        border: '1px solid var(--border-medium)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '28px',
+        boxShadow: 'var(--shadow-sm)'
+      }}>
+        <div className="section-tag-row" style={{ marginBottom: '10px' }}>
+          <span className="section-module-pill">Metodologi Belajar</span>
+          <span className="section-topic-pill">Model Pembelajaran Inkuiri Terbimbing (Guided Inquiry)</span>
+        </div>
+        <h3 style={{ fontSize: '20px', color: 'var(--text-primary)', marginBottom: '8px' }}>
+          7 Langkah Penyelidikan Sains yang Akan Kamu Lalui
+        </h3>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px', maxWidth: '850px' }}>
+          Di AsamBasa Lab, kamu tidak hanya membaca teks hafalan, melainkan bertindak sebagai ilmuwan muda yang aktif mengamati, merumuskan hipotesis, menguji di laboratorium virtual, hingga menarik kesimpulan mandiri.
+        </p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '14px'
+        }}>
+          {[
+            { num: 1, title: 'Orientasi', desc: 'Amati fenomena asam-basa di sekitar (jus lemon, sabun, antasida) pada Beranda.', page: 'beranda' },
+            { num: 2, title: 'Merumuskan Masalah', desc: 'Identifikasi pertanyaan kunci tentang sifat larutan & teori asam-basa di Teori.', page: 'teori' },
+            { num: 3, title: 'Merumuskan Hipotesis', desc: 'Buat dugaan awal mengenai sifat larutan & perubahan warna sebelum menguji.', page: 'lab' },
+            { num: 4, title: 'Mengumpulkan Data', desc: 'Teteskan indikator atau celupkan kertas lakmus pada tabung reaksi virtual.', page: 'lab' },
+            { num: 5, title: 'Menganalisis Data', desc: 'Bandingkan hipotesis vs fakta pengamatan & hubungkan dengan Skala pH 0–14.', page: 'skala' },
+            { num: 6, title: 'Menarik Kesimpulan', desc: 'Rumuskan prinsip ilmiah sifat larutan dan catat ke dalam Buku Jurnal.', page: 'lab' },
+            { num: 7, title: 'Refleksi & Evaluasi', desc: 'Uji pemahamanmu lewat Kuis HOTS dan refleksikan hipotesis awalmu.', page: 'kuis' },
+          ].map((step) => (
+            <div
+              key={step.num}
+              style={{
+                background: '#f8fafc',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-md)',
+                padding: '14px 16px',
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'flex-start'
+              }}
+            >
+              <span style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                background: '#eff6ff',
+                color: '#2563eb',
+                border: '1px solid #bfdbfe',
+                fontSize: '13px',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                {step.num}
+              </span>
+              <div>
+                <strong style={{ fontSize: '14px', color: 'var(--text-primary)', display: 'block', marginBottom: '2px' }}>
+                  {step.title}
+                </strong>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.45, margin: 0 }}>
+                  {step.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }

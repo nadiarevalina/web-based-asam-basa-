@@ -106,6 +106,51 @@
 
 ---
 
+### Sesi 6: Implementasi Tema Visual Bright Science Learning
+* **Tanggal:** 14 November 2026
+* **Fokus Modul:** Migrasi Sistem Desain Seluruh Halaman ke Bright Science Learning
+* **Kebutuhan Pengembang (User Prompt):**
+  > Melakukan implementasi perubahan visual secara langsung pada kode aplikasi: terapkan tema Bright Science Learning dengan latar terang, biru sebagai warna utama, aksen sains, dan tipografi modern pada seluruh halaman tanpa merusak fitur.
+* **Strategi & Tindakan AI:**
+  1. Merekayasa token CSS global (`src/App.css`): mengganti palet gelap dengan latar terang (`#f8fafc`), permukaan putih bersih (`#ffffff`), teks primer kontras tinggi (`#0f172a`), dan biru sains (`#2563eb`).
+  2. Memperbaiki seluruh komponen (Navbar, Hero, Topic Cards, Theory, Virtual Lab, Skala pH, Kalkulator pH, Kuis HOTS, Refleksi, Login Portal, Search Modal, Breadcrumb, PageBottomNav, Footer).
+  3. Memastikan kontras rasio memenuhi standar aksesibilitas WCAG 2.1 AA pada seluruh elemen teks dan navigasi interaktif.
+
+---
+
+### Sesi 7: Implementasi Alur Pembelajaran Inkuiri Terbimbing (Guided Inquiry) 7 Tahap
+* **Tanggal:** 14 November 2026
+* **Fokus Modul:** 7 Tahapan Inkuiri Terbimbing Terintegrasi di Seluruh Halaman Pembelajaran
+* **Kebutuhan Pengembang (User Prompt):**
+  > Terapkan 7 tahapan Inkuiri Terbimbing secara nyata (Orientasi, Merumuskan Masalah, Merumuskan Hipotesis, Mengumpulkan Data, Menganalisis Data, Menarik Kesimpulan, Refleksi & Evaluasi) dengan scaffolding, pertanyaan pemantik, umpan balik interaktif, dan pencatatan jurnal tanpa mengubah tema Bright Science Learning.
+* **Strategi & Tindakan AI:**
+  1. **Komponen Navigasi Inkuiri Global (`src/components/InquiryStageBanner.tsx`):**
+     * Membangun banner interaktif 7 tahapan inkuiri dengan kartu scaffolding yang dapat diperluas (*expandable*) berisi tujuan ilmiah, pertanyaan pemantik, dan tips perancah langkah demi langkah.
+     * Mengintegrasikan banner ke seluruh 7 halaman pembelajaran utama dalam `src/App.tsx`.
+  2. **Tahap 1: Orientasi (`HeroSection.tsx` & `TopicCards.tsx`):**
+     * Menambahkan badge orientasi fenomena kontekstual, pertanyaan pemantik sengatan lebah/tawon, serta diagram alur peta jalan 7 tahapan inkuiri terbimbing.
+  3. **Tahap 2: Merumuskan Masalah (`TheorySection.tsx`):**
+     * Menyusun materi teori Arrhenius, Brønsted–Lowry, Lewis, reaksi netralisasi, dan melengkapinya dengan 4 kotak pengecekan pemahaman konsep interaktif dengan umpan balik ilmiah langsung.
+  4. **Tahap 3, 4, 5, & 6: Eksperimen & Analisis Lab Virtual (`VirtualLab.tsx`):**
+     * **Tahap 3 (Hipotesis):** Panel perumusan hipotesis awal sifat larutan (asam kuat, asam lemah, netral, basa lemah, basa kuat) lengkap dengan tombol kunci dugaan sebelum pengujian.
+     * **Tahap 4 (Kumpul Data):** Uji indikator kimia pada tabung reaksi SVG dengan animasi pipet/kertas uji interaktif dan pencatatan warna respons.
+     * **Tahap 5 (Analisis Komparasi Data vs Hipotesis):** Evaluasi otomatis real-time antara dugaan awal siswa vs data eksperimen aktual dengan umpan balik formatif.
+     * **Tahap 6 (Kesimpulan Sampel):** Input kesimpulan ilmiah mandiri yang disimpan ke dalam Buku Jurnal Pengamatan lokal dan didaftarkan ke sistem penyimpanan akun (`authStorage`).
+  5. **Tahap 5 Kuantitatif: Skala pH & Kalkulator pH (`PhScaleSection.tsx` & `PhCalculator.tsx`):**
+     * Skala pH: Memetakan sampel lab virtual langsung ke spektrum pH 0–14 interaktif dan menyajikan pertanyaan pemantik sifat logaritmik $\text{pH} = -\log[H^+]$.
+     * Kalkulator pH: Menyajikan interpretasi kualitatif hasil perhitungan ke prediksi warna indikator lab dan konsep pengenceran 10×. Tetap mematuhi batasan model asam kuat monoprotik ($a=1$) dan basa kuat monovalen ($b=1$).
+  6. **Tahap 7: Evaluasi Mandiri Kuis HOTS (`QuizSection.tsx`):**
+     * 10 butir soal penalaran tingkat tinggi Bloom C3–C5 dengan umpan balik diagnostik ilmiah dan pencatatan skor.
+  7. **Tahap 6 & 7: Refleksi Menyeluruh & Evaluasi Hipotesis Awal (`ReflectionSection.tsx`):**
+     * Lembar metakognisi terstruktur: evaluasi perbandingan hipotesis awal vs data pengamatan, penarikan kesimpulan sifat asam-basa, identifikasi tantangan belajar, dan rencana tindak lanjut mandiri.
+  8. **Integrasi Portal Akun & Evaluasi Guru (`LoginPortal.tsx`):**
+     * Menampilkan riwayat hipotesis awal siswa, status evaluasi (sesuai/refleksi), dan kesimpulan inkuiri siswa pada tabel riwayat siswa dan modal ulasan guru.
+* **Hasil Pengujian & Verifikasi:**
+  * `npm run lint` via `oxlint`: **0 warning, 0 error** (26 file).
+  * `npm run build` via `tsc -b && vite build`: **Sukses tanpa error** (39 modul).
+
+---
+
 ## Ringkasan Metrik Kolaborasi AI
 
 | Metrik Evaluasi | Nilai / Status | Catatan Teknis |

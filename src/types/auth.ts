@@ -22,13 +22,16 @@ export type ExperimentStatus =
 export type ExperimentType = 'lab_simulasi' | 'kuis_evaluasi'
 
 export interface ExperimentDetails {
-  // Untuk Lab Simulasi
+  // Untuk Lab Simulasi Inkuiri
   sampleName?: string
   indicatorName?: string
   ph?: number
   colorName?: string
   colorHex?: string
   natureLabel?: string
+  hypothesisNature?: string
+  studentConclusion?: string
+  isHypothesisCorrect?: boolean
   // Untuk Kuis Evaluasi
   score?: number
   correctCount?: number

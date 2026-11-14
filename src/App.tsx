@@ -13,6 +13,7 @@ import { ReflectionSection } from './components/ReflectionSection'
 import { LoginPortal } from './components/LoginPortal'
 import { SearchModal } from './components/SearchModal'
 import { Breadcrumb } from './components/Breadcrumb'
+import { InquiryStageBanner } from './components/InquiryStageBanner'
 import { PageBottomNav } from './components/PageBottomNav'
 import { Footer } from './components/Footer'
 import './App.css'
@@ -95,6 +96,9 @@ export default function App() {
             onOpenCalculator={() => navigateToPage('kalkulator')}
           />
 
+          {/* Banner Tahapan Inkuiri Terbimbing */}
+          <InquiryStageBanner currentPage="beranda" onNavigate={navigateToPage} />
+
           {/* 3 Core Topic Cards Pengantar */}
           <TopicCards
             onSelectModule={(targetId) => navigateToPage(normalizePageId(targetId))}
@@ -152,6 +156,7 @@ export default function App() {
           hidden={activePage !== 'teori'}
         >
           <Breadcrumb currentPage="teori" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="teori" onNavigate={navigateToPage} />
           <TheorySection />
           <PageBottomNav currentPage="teori" onNavigate={navigateToPage} />
         </div>
@@ -165,6 +170,7 @@ export default function App() {
           hidden={activePage !== 'lab'}
         >
           <Breadcrumb currentPage="lab" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="lab" onNavigate={navigateToPage} />
           <VirtualLab />
           <PageBottomNav currentPage="lab" onNavigate={navigateToPage} />
         </div>
@@ -178,6 +184,7 @@ export default function App() {
           hidden={activePage !== 'skala'}
         >
           <Breadcrumb currentPage="skala" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="skala" onNavigate={navigateToPage} />
           <PhScaleSection />
           <PageBottomNav currentPage="skala" onNavigate={navigateToPage} />
         </div>
@@ -191,6 +198,7 @@ export default function App() {
           hidden={activePage !== 'kalkulator'}
         >
           <Breadcrumb currentPage="kalkulator" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="kalkulator" onNavigate={navigateToPage} />
           <PhCalculator />
           <PageBottomNav currentPage="kalkulator" onNavigate={navigateToPage} />
         </div>
@@ -204,6 +212,7 @@ export default function App() {
           hidden={activePage !== 'kuis'}
         >
           <Breadcrumb currentPage="kuis" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="kuis" onNavigate={navigateToPage} />
           <QuizSection />
           <PageBottomNav currentPage="kuis" onNavigate={navigateToPage} />
         </div>
@@ -217,6 +226,7 @@ export default function App() {
           hidden={activePage !== 'refleksi'}
         >
           <Breadcrumb currentPage="refleksi" onNavigate={navigateToPage} />
+          <InquiryStageBanner currentPage="refleksi" onNavigate={navigateToPage} />
           <ReflectionSection />
           <PageBottomNav currentPage="refleksi" onNavigate={navigateToPage} />
         </div>

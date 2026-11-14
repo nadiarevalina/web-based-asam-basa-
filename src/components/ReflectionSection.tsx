@@ -3,10 +3,13 @@ import { useState } from 'react'
 interface SavedReflectionDraft {
   studentName?: string
   studentClass?: string
+  hypothesisEvaluation?: string
+  overallConclusion?: string
   understoodConcept?: string
   challengingConcept?: string
   actionPlan?: string
   learningExperience?: string
+  lastUpdated?: string
 }
 
 function getSavedDraft(): SavedReflectionDraft {
@@ -23,25 +26,31 @@ export function ReflectionSection() {
   const [draft] = useState<SavedReflectionDraft>(getSavedDraft)
   const [studentName, setStudentName] = useState(draft.studentName || '')
   const [studentClass, setStudentClass] = useState(draft.studentClass || '')
-  const [understoodConcept, setUnderstoodConcept] = useState(draft.understoodConcept || '')
+  const [hypothesisEvaluation, setHypothesisEvaluation] = useState(
+    draft.hypothesisEvaluation || draft.learningExperience || ''
+  )
+  const [overallConclusion, setOverallConclusion] = useState(
+    draft.overallConclusion || draft.understoodConcept || ''
+  )
   const [challengingConcept, setChallengingConcept] = useState(draft.challengingConcept || '')
   const [actionPlan, setActionPlan] = useState(draft.actionPlan || '')
-  const [learningExperience, setLearningExperience] = useState(draft.learningExperience || '')
   const [saveNotice, setSaveNotice] = useState<string | null>(null)
 
   const handleSaveDraft = () => {
     try {
-      const draft = {
+      const draftData: SavedReflectionDraft = {
         studentName,
         studentClass,
-        understoodConcept,
+        hypothesisEvaluation,
+        overallConclusion,
+        understoodConcept: overallConclusion, // backwards compatibility
         challengingConcept,
         actionPlan,
-        learningExperience,
+        learningExperience: hypothesisEvaluation, // backwards compatibility
         lastUpdated: new Date().toISOString(),
       }
-      localStorage.setItem('asambasa_reflection_draft', JSON.stringify(draft))
-      setSaveNotice('Draf refleksi berhasil disimpan di browser!')
+      localStorage.setItem('asambasa_reflection_draft', JSON.stringify(draftData))
+      setSaveNotice('Draf lembar refleksi inkuiri berhasil disimpan di browser!')
       setTimeout(() => setSaveNotice(null), 3000)
     } catch {
       setSaveNotice('Gagal menyimpan draf ke memori browser.')
@@ -53,13 +62,13 @@ export function ReflectionSection() {
   }
 
   const handleResetForm = () => {
-    if (window.confirm('Apakah kamu yakin ingin mengosongkan lembar refleksi ini?')) {
+    if (window.confirm('Apakah kamu yakin ingin mengosongkan lembar refleksi inkuiri ini?')) {
       setStudentName('')
       setStudentClass('')
-      setUnderstoodConcept('')
+      setHypothesisEvaluation('')
+      setOverallConclusion('')
       setChallengingConcept('')
       setActionPlan('')
-      setLearningExperience('')
       localStorage.removeItem('asambasa_reflection_draft')
       setSaveNotice('Lembar refleksi telah dibersihkan.')
       setTimeout(() => setSaveNotice(null), 2500)
@@ -70,20 +79,20 @@ export function ReflectionSection() {
     <section id="refleksi-section" className="content-section" aria-labelledby="refleksi-heading">
       <div className="section-header-left">
         <div className="section-tag-row">
-          <span className="section-module-pill">Metakognisi</span>
-          <span className="section-topic-pill">Refleksi Belajar Inkuiri</span>
+          <span className="section-module-pill">Modul Inkuiri 6</span>
+          <span className="section-topic-pill">Tahap 6 &amp; 7: Kesimpulan Menyeluruh &amp; Refleksi Metakognitif</span>
         </div>
         <h2 id="refleksi-heading" className="section-title">
-          Jurnal Refleksi Pembelajaran Mandiri
+          Lembar Refleksi Inkuiri &amp; Evaluasi Hipotesis Awal
         </h2>
         <p className="section-description">
-          Menuliskan refleksi membantu memperkuat pemahaman konsep, mendeteksi miskonsepsi secara mandiri,
-          dan merancang langkah belajar lanjutan. Lembar refleksi ini dapat dicetak atau disimpan sebagai PDF.
+          Tahap puncak dari model Inkuiri Terbimbing: evaluasi kebenaran dugaan awalmu saat eksperimen,
+          sintesiskan kesimpulan ilmiah menyeluruh, dan rencanakan tindak lanjut belajar mandiri.
         </p>
       </div>
 
       <div className="reflection-sheet-card printable-sheet">
-        <div className="sheet-watermark">AsamBasa Lab • Lembar Kerja Siswa</div>
+        <div className="sheet-watermark">AsamBasa Lab • Lembar Kerja Inkuiri Siswa</div>
 
         {/* Student Identity Row */}
         <div className="sheet-identity-grid">
@@ -116,51 +125,73 @@ export function ReflectionSection() {
           </div>
         </div>
 
-        {/* Prompt Questions */}
+        {/* Prompt Questions for Guided Inquiry */}
         <div className="sheet-questions-list">
+          {/* Question 1: Evaluasi Hipotesis Awal */}
           <div className="sheet-q-box">
-            <label htmlFor="q-understood" className="sheet-q-label">
+            <label htmlFor="q-hypothesis" className="sheet-q-label">
               <span className="q-badge">1</span>
-              <span>Konsep kimia apa yang paling kamu pahami dengan baik hari ini?</span>
+              <span>Evaluasi Hipotesis Awal: Bandingkan dugaanmu di Lab Virtual dengan data hasil pengamatan!</span>
             </label>
             <p className="sheet-q-hint">
-              Misal: Perbedaan donor proton Brønsted–Lowry vs Arrhenius, perubahan warna lakmus, atau rumus pH asam kuat.
+              Apakah semua dugaan sifat sampelmu (asam kuat, asam lemah, netral, basa) terbukti benar? Jika ada dugaan yang berbeda/keliru, apa faktor kimiawi yang menjelaskannya?
             </p>
             <textarea
-              id="q-understood"
+              id="q-hypothesis"
               className="sheet-textarea"
               rows={3}
-              placeholder="Tuliskan pemahamanmu di sini..."
-              value={understoodConcept}
-              onChange={(e) => setUnderstoodConcept(e.target.value)}
+              placeholder="Contoh: Awalnya saya menduga air sabun bersifat netral, namun setelah diteteskan BTB warnanya biru (pH 10) sehingga terbukti basa lemah karena pelepasan ion OH⁻..."
+              value={hypothesisEvaluation}
+              onChange={(e) => setHypothesisEvaluation(e.target.value)}
             />
           </div>
 
+          {/* Question 2: Kesimpulan Menyeluruh */}
           <div className="sheet-q-box">
-            <label htmlFor="q-challenging" className="sheet-q-label">
+            <label htmlFor="q-conclusion" className="sheet-q-label">
               <span className="q-badge">2</span>
-              <span>Materi, perhitungan, atau fenomena indikator apa yang masih terasa sulit?</span>
+              <span>Menarik Kesimpulan Menyeluruh: Apa hakikat sifat larutan asam dan basa?</span>
             </label>
             <p className="sheet-q-hint">
-              Misal: Menentukan pasangan asam-basa konjugasi, perhitungan pOH basa kuat, atau trayek pH fenolftalein.
+              Sintesiskan definisi asam-basa dari sudut pandang Arrhenius (ion H⁺/OH⁻), Brønsted–Lowry (transfer proton), serta respon terhadap kertas lakmus dan skala pH 0–14.
+            </p>
+            <textarea
+              id="q-conclusion"
+              className="sheet-textarea"
+              rows={3}
+              placeholder="Contoh: Asam adalah spesi yang melepaskan ion H⁺ dalam air atau mendonorkan proton sehingga memiliki pH < 7 dan memerahkan lakmus, sedangkan basa..."
+              value={overallConclusion}
+              onChange={(e) => setOverallConclusion(e.target.value)}
+            />
+          </div>
+
+          {/* Question 3: Identifikasi Tantangan & Miskonsepsi */}
+          <div className="sheet-q-box">
+            <label htmlFor="q-challenging" className="sheet-q-label">
+              <span className="q-badge">3</span>
+              <span>Identifikasi Tantangan: Bagian materi atau perhitungan apa yang masih membutuhkan bimbingan?</span>
+            </label>
+            <p className="sheet-q-hint">
+              Misal: Menentukan pasangan asam-basa konjugasi, perhitungan pOH basa kuat monovalen, hubungan logaritmik pH, atau trayek indikator sintetis.
             </p>
             <textarea
               id="q-challenging"
               className="sheet-textarea"
               rows={3}
-              placeholder="Tuliskan kesulitan atau keraguanmu di sini..."
+              placeholder="Tuliskan materi atau jenis soal yang masih terasa membingungkan..."
               value={challengingConcept}
               onChange={(e) => setChallengingConcept(e.target.value)}
             />
           </div>
 
+          {/* Question 4: Rencana Tindak Lanjut Belajar */}
           <div className="sheet-q-box">
             <label htmlFor="q-action" className="sheet-q-label">
-              <span className="q-badge">3</span>
-              <span>Apa rencana tindakan belajarmu untuk memperdalam konsep tersebut?</span>
+              <span className="q-badge">4</span>
+              <span>Rencana Tindak Lanjut: Langkah konkret apa yang akan kamu lakukan untuk memperdalam penguasaan materi?</span>
             </label>
             <p className="sheet-q-hint">
-              Misal: Mencoba ulang kalkulator pH dengan variasi molaritas, membaca kembali penjelasan kuis, atau berdiskusi dengan guru/teman.
+              Misal: Mengulangi simulasi pengenceran pada Kalkulator pH, membaca ulang pembahasan kuis HOTS, atau menguji sampel bahan dapur lainnya.
             </p>
             <textarea
               id="q-action"
@@ -169,24 +200,6 @@ export function ReflectionSection() {
               placeholder="Tuliskan rencana belajarmu selanjutnya..."
               value={actionPlan}
               onChange={(e) => setActionPlan(e.target.value)}
-            />
-          </div>
-
-          <div className="sheet-q-box">
-            <label htmlFor="q-experience" className="sheet-q-label">
-              <span className="q-badge">4</span>
-              <span>Bagaimana pengalaman belajarmu menggunakan simulasi lab virtual AsamBasa Lab?</span>
-            </label>
-            <p className="sheet-q-hint">
-              Tuliskan kesan, kemudahan pengamatan warna, atau ide eksperimen kimia lain yang ingin kamu coba.
-            </p>
-            <textarea
-              id="q-experience"
-              className="sheet-textarea"
-              rows={3}
-              placeholder="Tuliskan catatan pengalaman belajarmu..."
-              value={learningExperience}
-              onChange={(e) => setLearningExperience(e.target.value)}
             />
           </div>
         </div>
@@ -231,7 +244,7 @@ export function ReflectionSection() {
                 <polyline points="17 21 17 13 7 13 7 21" />
                 <polyline points="7 3 7 8 15 8" />
               </svg>
-              <span>Simpan Draf Lokal</span>
+              <span>Simpan Draf Inkuiri</span>
             </button>
 
             <button
@@ -254,7 +267,7 @@ export function ReflectionSection() {
                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                 <rect x="6" y="14" width="12" height="8" />
               </svg>
-              <span>Cetak / Simpan PDF</span>
+              <span>Cetak Lembar Inkuiri (PDF)</span>
             </button>
           </div>
         </div>

@@ -85,8 +85,8 @@ export function PhCalculator() {
     <section id="kalkulator-section" className="content-section" aria-labelledby="calc-heading">
       <div className="section-header-left">
         <div className="section-tag-row">
-          <span className="section-module-pill">Modul 3</span>
-          <span className="section-topic-pill">Perhitungan Kuantitatif Asam & Basa</span>
+          <span className="section-module-pill">Modul Inkuiri 4</span>
+          <span className="section-topic-pill">Tahap 5: Analisis Kuantitatif & Perhitungan pH</span>
         </div>
         <h2 id="calc-heading" className="section-title">
           Kalkulator pH Larutan Kuat Monovalen
@@ -243,9 +243,9 @@ export function PhCalculator() {
                   </div>
                 </div>
                 <div className="gauge-axis">
-                  <span>0 (Asam)</span>
+                  <span>0 (Asam Kuat)</span>
                   <span>7 (Netral)</span>
-                  <span>14 (Basa)</span>
+                  <span>14 (Basa Kuat)</span>
                 </div>
               </div>
 
@@ -258,7 +258,7 @@ export function PhCalculator() {
                     <li className="step-flow-item">
                       <div className="step-flow-header">
                         <span className="step-flow-num">1</span>
-                        <strong>Tuliskan Persamaan Ionisasi:</strong>
+                        <strong>Tuliskan Persamaan Ionisasi Sempurna:</strong>
                       </div>
                       <div className="step-math-box font-mono">
                         {selectedCompound.formula}(aq) → H⁺(aq) + A⁻(aq)
@@ -293,7 +293,7 @@ export function PhCalculator() {
                     <li className="step-flow-item">
                       <div className="step-flow-header">
                         <span className="step-flow-num">1</span>
-                        <strong>Tuliskan Persamaan Ionisasi:</strong>
+                        <strong>Tuliskan Persamaan Ionisasi Sempurna:</strong>
                       </div>
                       <div className="step-math-box font-mono">
                         {selectedCompound.formula}(aq) → B⁺(aq) + OH⁻(aq)
@@ -334,6 +334,44 @@ export function PhCalculator() {
                     </li>
                   </ol>
                 )}
+              </div>
+
+              {/* Qualitative Lab Interpretation (Tahap 5 Inkuiri Kuantitatif) */}
+              <div style={{ marginTop: '20px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 'var(--radius-md)', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '16px' }}>🔬</span>
+                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                    Tahap 5 Inkuiri: Interpretasi Kualitatif &amp; Prediksi Indikator Lab
+                  </h4>
+                </div>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '12px' }}>
+                  Berdasarkan nilai perhitungan <strong>pH = {ph.toFixed(2)}</strong> pada konsentrasi {M} M {selectedCompound.name}:
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', fontSize: '12px' }}>
+                  <div style={{ background: '#ffffff', padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <strong>Prediksi Kertas Lakmus:</strong><br />
+                    <span style={{ color: ph < 7 ? '#dc2626' : '#2563eb', fontWeight: 600 }}>
+                      {ph < 7 ? 'Merah (Lakmus biru berubah jadi merah)' : 'Biru (Lakmus merah berubah jadi biru)'}
+                    </span>
+                  </div>
+                  <div style={{ background: '#ffffff', padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <strong>Prediksi Fenolftalein (PP):</strong><br />
+                    <span style={{ color: ph >= 8.3 ? '#db2777' : '#64748b', fontWeight: 600 }}>
+                      {ph >= 8.3 ? 'Merah Muda / Magenta (Trayek PP 8.3 - 10.0)' : 'Tidak Berwarna / Jernih (pH < 8.3)'}
+                    </span>
+                  </div>
+                  <div style={{ background: '#ffffff', padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <strong>Prediksi Bromtimol Biru (BTB):</strong><br />
+                    <span style={{ color: ph <= 6.0 ? '#d97706' : ph >= 7.6 ? '#2563eb' : '#16a34a', fontWeight: 600 }}>
+                      {ph <= 6.0 ? 'Kuning (Asam)' : ph >= 7.6 ? 'Biru (Basa)' : 'Hijau (Peralihan netral)'}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '12px', padding: '10px 14px', background: '#eff6ff', borderRadius: '6px', border: '1px solid #bfdbfe', fontSize: '12px', color: '#1e40af', lineHeight: '1.5' }}>
+                  💡 <strong>Pertanyaan Inkuiri Pengenceran:</strong> Jika larutan {selectedCompound.name} {M} M ini diencerkan 10 kali lipat dengan akuades, konsentrasi menjadi {(M / 10).toFixed(4)} M.
+                  Nilai pH akan bergeser 1 satuan {solType === 'asam_kuat' ? 'naik mendekati netral 7' : 'turun mendekati netral 7'} karena skala logaritmik!
+                </div>
               </div>
             </>
           ) : (
