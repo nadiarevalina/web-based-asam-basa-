@@ -157,6 +157,15 @@ const SEARCH_DATABASE: SearchItem[] = [
     description: 'Masuk akun Siswa/Guru, pilih & kaitkan hasil percobaan, antrekan kirim ke server, dan tinjau evaluasi guru.',
     keywords: ['login', 'masuk', 'akun', 'siswa', 'guru', 'antrean', 'server', 'tautkan', 'evaluasi', 'nilai'],
   },
+  {
+    id: 's-panel-guru',
+    title: 'Panel Guru — Monitoring Hasil Belajar & Rekap Soal',
+    sectionId: 'guru-section',
+    pageId: 'guru',
+    category: 'Khusus Guru',
+    description: 'Dashboard penilaian guru, rekap per butir soal HOTS, status data, dan rekomendasi tindak lanjut.',
+    keywords: ['guru', 'panel', 'rekap', 'nilai', 'butir', 'soal', 'analisis', 'tindak lanjut', 'distribusi', 'hasil'],
+  },
 ]
 
 interface SearchModalProps {

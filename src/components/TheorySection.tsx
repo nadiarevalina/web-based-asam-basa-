@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AcademicReference, Citation } from './AcademicReference'
 
 export function TheorySection() {
   const [activeTab, setActiveTab] = useState<'teori' | 'sifat' | 'kehidupan' | 'netralisasi'>('teori')
@@ -107,18 +108,18 @@ export function TheorySection() {
                 </div>
                 <div className="theory-card-body">
                   <p className="theory-explanation">
-                    Fokus pada ionisasi senyawa dalam pelarut air:
+                    Fokus pada ionisasi senyawa dalam pelarut air <Citation />:
                   </p>
                   <div className="theory-definition-box acid-def">
                     <strong>Asam:</strong> Zat yang menghasilkan ion hidrogen (
-                    <code>H⁺</code> atau <code>H₃O⁺</code>) dalam air.
+                    <code>H⁺</code> atau <code>H₃O⁺</code>) dalam air <Citation />.
                     <div className="chem-equation">
                       HCl(aq) → H⁺(aq) + Cl⁻(aq)
                     </div>
                   </div>
                   <div className="theory-definition-box base-def">
                     <strong>Basa:</strong> Zat yang menghasilkan ion hidroksida (
-                    <code>OH⁻</code>) dalam air.
+                    <code>OH⁻</code>) dalam air <Citation />.
                     <div className="chem-equation">
                       NaOH(aq) → Na⁺(aq) + OH⁻(aq)
                     </div>
@@ -126,7 +127,7 @@ export function TheorySection() {
                   <div className="theory-limitation-box">
                     <strong>Kelemahan:</strong> Hanya terbatas pada pelarut air dan tidak
                     dapat menjelaskan mengapa senyawa seperti <code>NH₃</code> (amonia)
-                    bersifat basa padahal tidak memiliki gugus hidroksida pada rumusnya.
+                    bersifat basa padahal tidak memiliki gugus hidroksida pada rumusnya <Citation />.
                   </div>
                 </div>
               </div>
@@ -140,16 +141,16 @@ export function TheorySection() {
                 </div>
                 <div className="theory-card-body">
                   <p className="theory-explanation">
-                    Mendefinisikan asam-basa berdasarkan serah terima partikel proton (H⁺):
+                    Mendefinisikan asam-basa berdasarkan serah terima partikel proton (H⁺) <Citation />:
                   </p>
                   <div className="theory-definition-box acid-def">
-                    <strong>Asam:</strong> Donor proton (pemberi ion <code>H⁺</code>).
+                    <strong>Asam:</strong> Donor proton (pemberi ion <code>H⁺</code>) <Citation />.
                     <div className="chem-equation">
                       HCl + H₂O ⇌ H₃O⁺ + Cl⁻
                     </div>
                   </div>
                   <div className="theory-definition-box base-def">
-                    <strong>Basa:</strong> Akseptor proton (penerima ion <code>H⁺</code>).
+                    <strong>Basa:</strong> Akseptor proton (penerima ion <code>H⁺</code>) <Citation />.
                     <div className="chem-equation">
                       NH₃ + H₂O ⇌ NH₄⁺ + OH⁻
                     </div>
@@ -157,7 +158,7 @@ export function TheorySection() {
                   <div className="theory-conjugate-box">
                     <strong>Pasangan Asam-Basa Konjugasi:</strong>
                     <p>
-                      Spesi yang tersisa setelah asam mendonorkan proton adalah{' '}
+                      <Citation narrative /> menjelaskan bahwa spesi yang tersisa setelah asam mendonorkan proton adalah{' '}
                       <em>basa konjugasi</em> (contoh: <code>HCl</code> → <code>Cl⁻</code>
                       ). Spesi yang terbentuk setelah basa menerima proton adalah{' '}
                       <em>asam konjugasi</em> (contoh: <code>NH₃</code> → <code>NH₄⁺</code>
@@ -176,20 +177,20 @@ export function TheorySection() {
                 </div>
                 <div className="theory-card-body">
                   <p className="theory-explanation">
-                    Teori paling umum yang berfokus pada serah-terima pasangan elektron bebas (PEB):
+                    Teori paling umum yang berfokus pada serah-terima pasangan elektron bebas (PEB) <Citation />:
                   </p>
                   <div className="theory-definition-box acid-def">
-                    <strong>Asam Lewis:</strong> Akseptor pasangan elektron (memiliki orbital kosong).
+                    <strong>Asam Lewis:</strong> Akseptor pasangan elektron (memiliki orbital kosong) <Citation />.
                   </div>
                   <div className="theory-definition-box base-def">
-                    <strong>Basa Lewis:</strong> Donor pasangan elektron bebas (memiliki PEB).
+                    <strong>Basa Lewis:</strong> Donor pasangan elektron bebas (memiliki PEB) <Citation />.
                   </div>
                   <div className="chem-equation">
                     NH₃ (donor PEB) + BF₃ (akseptor PEB) → H₃N:BF₃
                   </div>
                   <div className="theory-limitation-box success">
                     <strong>Keunggulan:</strong> Berlaku pada reaksi pembentukan ikatan kovalen
-                    koordinasi tanpa melibatkan transfer proton sama sekali, termasuk kompleks ion logam.
+                    koordinasi tanpa melibatkan transfer proton sama sekali, termasuk kompleks ion logam <Citation />.
                   </div>
                 </div>
               </div>
@@ -303,17 +304,17 @@ export function TheorySection() {
                     <strong>Rasa:</strong> Masam / asam khas (hanya diuji pada bahan makanan, jangan cicipi bahan kimia laboratorium!).
                   </li>
                   <li className="prop-item">
-                    <strong>Daya Hantar Listrik:</strong> Merupakan larutan elektrolit karena menghasilkan ion-ion bebas (<code>H⁺</code> dan anion) yang mampu menghantarkan arus listrik.
+                    <strong>Daya Hantar Listrik:</strong> Merupakan larutan elektrolit karena menghasilkan ion-ion bebas (<code>H⁺</code> dan anion) yang mampu menghantarkan arus listrik <Citation />.
                   </li>
                   <li className="prop-item">
-                    <strong>Reaksi dengan Kertas Lakmus:</strong> Memerahkan kertas lakmus biru, dan mempertahankan warna merah pada lakmus merah.
+                    <strong>Reaksi dengan Kertas Lakmus:</strong> Memerahkan kertas lakmus biru, dan mempertahankan warna merah pada lakmus merah <Citation />.
                   </li>
                   <li className="prop-item">
-                    <strong>Reaksi dengan Logam Aktif:</strong> Bersifat korosif terhadap logam aktif (Zn, Mg, Fe) dan menghasilkan gelembung gas hidrogen:
+                    <strong>Reaksi dengan Logam Aktif:</strong> Bersifat korosif terhadap logam aktif (Zn, Mg, Fe) dan menghasilkan gelembung gas hidrogen <Citation />:
                     <div className="chem-equation-small">Zn(s) + 2HCl(aq) → ZnCl₂(aq) + H₂(g)↑</div>
                   </li>
                   <li className="prop-item">
-                    <strong>Reaksi dengan Garam Karbonat:</strong> Bereaksi dengan batu kapur atau soda kue menghasilkan buih gas karbon dioksida:
+                    <strong>Reaksi dengan Garam Karbonat:</strong> Bereaksi dengan batu kapur atau soda kue menghasilkan buih gas karbon dioksida <Citation />:
                     <div className="chem-equation-small">CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g)↑</div>
                   </li>
                 </ul>
@@ -327,19 +328,19 @@ export function TheorySection() {
                 </div>
                 <ul className="prop-list">
                   <li className="prop-item">
-                    <strong>Rasa & Tekstur:</strong> Terasa pahit di lidah dan licin jika disentuh dengan jari (akibat reaksi saponifikasi dengan minyak alami pada kulit).
+                    <strong>Rasa &amp; Tekstur:</strong> Terasa pahit di lidah dan licin jika disentuh dengan jari (akibat reaksi saponifikasi dengan minyak alami pada kulit) <Citation />.
                   </li>
                   <li className="prop-item">
-                    <strong>Daya Hantar Listrik:</strong> Larutan elektrolit kuat maupun lemah melalui ion <code>OH⁻</code> dan kation logam pendukung.
+                    <strong>Daya Hantar Listrik:</strong> Larutan elektrolit kuat maupun lemah melalui ion <code>OH⁻</code> dan kation logam pendukung yang bergerak bebas <Citation />.
                   </li>
                   <li className="prop-item">
-                    <strong>Reaksi dengan Kertas Lakmus:</strong> Membirukan kertas lakmus merah, dan mempertahankan warna biru pada lakmus biru.
+                    <strong>Reaksi dengan Kertas Lakmus:</strong> Membirukan kertas lakmus merah, dan mempertahankan warna biru pada lakmus biru <Citation />.
                   </li>
                   <li className="prop-item">
                     <strong>Sifat Kaustik:</strong> Bersifat merusak jaringan organik dan protein (dapat menimbulkan luka bakar kimia jika konsentrasi pekat).
                   </li>
                   <li className="prop-item">
-                    <strong>Pelarut Lemak & Minyak:</strong> Sangat efektif mengemulsi kotoran berbasis lemak dan minyak, sehingga banyak digunakan sebagai formula sabun dan detergen pembersih.
+                    <strong>Pelarut Lemak &amp; Minyak:</strong> Sangat efektif mengemulsi kotoran berbasis lemak dan minyak, sehingga banyak digunakan sebagai formula sabun dan detergen pembersih.
                   </li>
                 </ul>
               </div>
@@ -540,8 +541,8 @@ export function TheorySection() {
                 Mekanisme Reaksi Netralisasi (Penetralan)
               </h3>
               <p className="neutralization-text">
-                Reaksi netralisasi adalah reaksi kimia antara ion hidrogen (<code>H⁺</code>) dari asam
-                dengan ion hidroksida (<code>OH⁻</code>) dari basa yang membentuk molekul air netral (<code>H₂O</code>).
+                <Citation narrative /> menjelaskan bahwa reaksi netralisasi antara asam dan basa pada dasarnya merupakan reaksi penggabungan ion hidrogen (<code>H⁺</code>)
+                dengan ion hidroksida (<code>OH⁻</code>) yang membentuk molekul air netral (<code>H₂O</code>).
               </p>
 
               <div className="equation-steps-box">
@@ -555,7 +556,7 @@ export function TheorySection() {
                 </div>
                 <div className="eq-step highlight">
                   <span className="eq-label">Persamaan Ion Bersih (Net Ionic):</span>
-                  <code>H⁺(aq) + OH⁻(aq) → H₂O(l) &nbsp; (ΔH = -57.1 kJ/mol)</code>
+                  <code>H⁺(aq) + OH⁻(aq) → H₂O(l) &nbsp; (ΔH = -57.1 kJ/mol)</code> <Citation />
                 </div>
               </div>
 
@@ -580,7 +581,7 @@ export function TheorySection() {
                   <span className="case-tag">Analisis Laboratorium</span>
                   <h4>Titrasi Asam-Basa</h4>
                   <p>
-                    Metode volumetri kuantitatif untuk menentukan konsentrasi larutan asam atau basa yang belum diketahui dengan meneteskan titran secara bertahap hingga mencapai <em>titik ekivalen</em>.
+                    Metode volumetri kuantitatif untuk menentukan konsentrasi larutan asam atau basa yang belum diketahui dengan meneteskan titran secara bertahap hingga mencapai <em>titik ekivalen</em> <Citation />.
                   </p>
                 </div>
               </div>
@@ -632,6 +633,22 @@ export function TheorySection() {
           </div>
         )}
       </div>
+
+      {/* Bagian Sumber Referensi Akademik Modul 1 */}
+      <AcademicReference
+        topic="Modul 1: Konsep Asam Basa, Sifat Larutan, dan Netralisasi"
+        relevantConcepts={[
+          'Definisi Asam-Basa Arrhenius: pembentukan ion H⁺ (H₃O⁺) dan OH⁻ dalam pelarut air',
+          'Definisi Asam-Basa Brønsted–Lowry: mekanisme donor dan akseptor proton serta pasangan asam-basa konjugasi',
+          'Definisi Asam-Basa Lewis: akseptor dan donor pasangan elektron bebas (PEB) pada ikatan kovalen koordinasi',
+          'Karakteristik larutan elektrolit asam dan basa serta daya hantar listrik ionik',
+          'Reaksi asam dengan logam aktif menghasilkan gas hidrogen (H₂)',
+          'Reaksi asam dengan garam karbonat menghasilkan gas karbon dioksida (CO₂)',
+          'Mekanisme reaksi netralisasi dan perumusan persamaan reaksi ion bersih (H⁺ + OH⁻ → H₂O)',
+          'Prinsip titrasi volumetri asam-basa dan penentuan titik ekivalen',
+        ]}
+        boundaryNotes="Aplikasi kontekstual praktis (seperti pengapuran tanah masam dan respon sengatan serangga) merupakan contoh pengayaan materi berbasis prinsip netralisasi asam-basa."
+      />
     </section>
   )
 }

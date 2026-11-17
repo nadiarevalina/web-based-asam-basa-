@@ -7,6 +7,7 @@ export type PageId =
   | 'kuis'
   | 'refleksi'
   | 'login'
+  | 'guru'
 
 export interface NavItem {
   id: PageId
@@ -99,6 +100,14 @@ export const PAGE_METADATA: Record<PageId, PageMeta> = {
     shortDescription: 'Kelola akun, pilih & kaitkan hasil percobaan, kirim ke server, dan tinjau evaluasi guru.',
     badge: 'Akun & Antrean Server',
   },
+  guru: {
+    id: 'guru',
+    number: 9,
+    label: 'Panel Guru',
+    subtitle: 'Dashboard Pembelajaran & Rekap Analisis Hasil Siswa',
+    shortDescription: 'Monitoring hasil belajar, rekap butir soal, status data, dan tindak lanjut pedagogis.',
+    badge: 'Khusus Guru',
+  },
 }
 
 export function getAdjacentPages(currentPage: PageId): {
@@ -114,6 +123,7 @@ export function getAdjacentPages(currentPage: PageId): {
     'kuis',
     'refleksi',
     'login',
+    'guru',
   ]
   const currentIndex = pageOrder.indexOf(currentPage)
   if (currentIndex === -1) return { prev: null, next: null }
@@ -154,6 +164,11 @@ export function normalizePageId(rawId: string): PageId {
     case 'portal':
     case 'server':
       return 'login'
+    case 'guru':
+    case 'panel-guru':
+    case 'panel':
+    case 'dashboard-guru':
+      return 'guru'
     default:
       return 'beranda'
   }

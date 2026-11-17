@@ -113,6 +113,25 @@ export function Footer({ onNavigateToPage }: FooterProps) {
                 7. Refleksi
               </button>
             </li>
+            <li>
+              <button
+                type="button"
+                className="footer-link"
+                onClick={() => onNavigateToPage('login')}
+              >
+                8. Portal Akun & Server
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="footer-link"
+                style={{ color: '#c084fc', fontWeight: 600 }}
+                onClick={() => onNavigateToPage('guru')}
+              >
+                9. Panel Guru (Khusus Guru)
+              </button>
+            </li>
           </ul>
         </div>
 

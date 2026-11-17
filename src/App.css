@@ -5010,3 +5010,267 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Academic Citations & Bibliography (APA 7th Edition)
+   ========================================================================== */
+
+.citation-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 3px;
+  font-size: 0.85em;
+  font-weight: 600;
+  font-style: normal;
+  color: #1d4ed8;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  cursor: help;
+  vertical-align: baseline;
+  transition: all var(--transition-fast, 0.15s ease);
+  white-space: nowrap;
+}
+
+.citation-tag:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.15);
+}
+
+.citation-tag:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.citation-narrative {
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+/* Academic Reference Container */
+.academic-ref-container {
+  margin-top: 36px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.academic-ref-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-left: 5px solid #2563eb;
+  border-radius: var(--radius-lg, 12px);
+  padding: 24px 28px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.academic-ref-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.academic-ref-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #bfdbfe;
+}
+
+.academic-ref-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.academic-ref-header-text {
+  flex: 1;
+}
+
+.academic-ref-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.academic-ref-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.academic-ref-style-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.academic-ref-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.academic-ref-subtitle {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.academic-ref-entry-box {
+  margin-top: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.academic-ref-apa-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1e293b;
+  margin: 0;
+  padding-left: 28px;
+  text-indent: -28px;
+  font-family: inherit;
+}
+
+.academic-ref-apa-text em {
+  font-style: italic;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.academic-ref-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.ref-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ref-detail-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ref-detail-value {
+  font-size: 13px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.academic-ref-scope-box {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+.ref-scope-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scope-bullet {
+  font-size: 14px;
+}
+
+.ref-scope-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.ref-scope-item {
+  margin-bottom: 4px;
+}
+
+.ref-scope-item:last-child {
+  margin-bottom: 0;
+}
+
+.academic-ref-disclaimer {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fffbeb;
+  border: 1px solid #fef08a;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #854d0e;
+  line-height: 1.5;
+}
+
+.ref-disclaimer-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-weight: 700;
+  color: #713f12;
+}
+
+.ref-disclaimer-text {
+  margin: 0;
+}
+
+.ref-custom-boundary {
+  display: block;
+  margin-top: 4px;
+  font-style: italic;
+  color: #78350f;
+}
+
+@media (max-width: 640px) {
+  .academic-ref-card {
+    padding: 18px 16px;
+  }
+  .academic-ref-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .academic-ref-apa-text {
+    padding-left: 0;
+    text-indent: 0;
+    font-size: 14px;
+  }
+}

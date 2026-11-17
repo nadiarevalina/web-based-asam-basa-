@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PH_SCALE_ITEMS, CHEMICAL_SAMPLES } from '../data/chemistryData'
+import { AcademicReference, Citation } from './AcademicReference'
 
 export function PhScaleSection() {
   const [selectedPh, setSelectedPh] = useState<number>(7)
@@ -22,7 +23,7 @@ export function PhScaleSection() {
           Visualisasi Interaktif Skala pH & Hubungan Eksperimen
         </h2>
         <p className="section-description">
-          Hubungkan hasil pengamatan kualitatif indikator dari Laboratorium Virtual dengan spektrum kuantitatif pH logaritmik (<code>pH = -log[H⁺]</code>).
+          Hubungkan hasil pengamatan kualitatif indikator dari Laboratorium Virtual dengan spektrum kuantitatif pH logaritmik (<code>pH = -log[H⁺]</code>) <Citation />.
           Setiap pergeseran 1 satuan pH menunjukkan perubahan konsentrasi <code>H⁺</code> sebesar 10 kali lipat!
         </p>
       </div>

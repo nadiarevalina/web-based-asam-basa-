@@ -15,7 +15,7 @@ export function PageBottomNav({ currentPage, onNavigate }: PageBottomNavProps) {
       <div className="page-bottom-nav-card">
         <div className="page-bottom-nav-info">
           <span className="bottom-nav-current-badge">
-            Bagian {currentMeta.number} dari 7: {currentMeta.label}
+            Bagian {currentMeta.number} • {currentMeta.label}
           </span>
           <span className="bottom-nav-sub">Gunakan navigasi cepat untuk berpindah materi</span>
         </div>

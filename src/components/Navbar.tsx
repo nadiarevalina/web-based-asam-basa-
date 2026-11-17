@@ -54,7 +54,7 @@ export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps
           </div>
         </button>
 
-        {/* Desktop Navigation — 7 Menu Utama */}
+        {/* Desktop Navigation — 7 Menu Utama + Panel Guru jika Guru Login */}
         <nav className="desktop-nav" aria-label="Navigasi Utama">
           <ul className="nav-list">
             {MAIN_NAV_ITEMS.map((item) => {
@@ -72,6 +72,24 @@ export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps
                 </li>
               )
             })}
+            {currentUser?.role === 'guru' && (
+              <li>
+                <button
+                  type="button"
+                  className={`nav-link ${activePage === 'guru' ? 'nav-link-active' : ''}`}
+                  style={{
+                    color: activePage === 'guru' ? '#ffffff' : '#7c3aed',
+                    background: activePage === 'guru' ? '#7c3aed' : '#f5f3ff',
+                    border: '1px solid #c4b5fd',
+                    fontWeight: 700,
+                  }}
+                  onClick={() => handleNavClick('guru')}
+                  aria-current={activePage === 'guru' ? 'page' : undefined}
+                >
+                  👩‍🏫 Panel Guru
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
 
@@ -201,6 +219,26 @@ export function Navbar({ onOpenSearch, activePage, onNavigatePage }: NavbarProps
                 </li>
               )
             })}
+            {currentUser?.role === 'guru' && (
+              <li>
+                <button
+                  type="button"
+                  className={`mobile-nav-link ${
+                    activePage === 'guru' ? 'mobile-nav-link-active' : ''
+                  }`}
+                  style={{
+                    background: activePage === 'guru' ? '#7c3aed' : '#f5f3ff',
+                    color: activePage === 'guru' ? '#ffffff' : '#7c3aed',
+                    border: '1px solid #c4b5fd',
+                  }}
+                  onClick={() => handleNavClick('guru')}
+                  aria-current={activePage === 'guru' ? 'page' : undefined}
+                >
+                  <span style={{ fontWeight: 700 }}>👩‍🏫 Panel Guru</span>
+                  <span className="mobile-nav-desc">Dashboard Analisis & Rekap Belajar Siswa</span>
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}

@@ -26,12 +26,14 @@ interface LoginPortalProps {
   onNavigateHome?: () => void
   onNavigateLab?: () => void
   onNavigateQuiz?: () => void
+  onNavigateGuru?: () => void
 }
 
 export function LoginPortal({
   onNavigateHome,
   onNavigateLab,
   onNavigateQuiz,
+  onNavigateGuru,
 }: LoginPortalProps) {
   // State Autentikasi
   const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => getCurrentUser())
@@ -1211,6 +1213,22 @@ export function LoginPortal({
                 Guru membaca hasil pengujian seluruh siswa yang telah diterima server.
                 ID Percobaan dan Pemilik dipertahankan secara akurat. Guru dapat memberikan umpan balik saintifik dan menandai status pembacaan.
               </p>
+              <div style={{ marginTop: '12px' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ background: '#7c3aed', borderColor: '#6d28d9', fontWeight: 700 }}
+                  onClick={() => {
+                    if (onNavigateGuru) {
+                      onNavigateGuru()
+                    } else {
+                      window.location.hash = '#/guru'
+                    }
+                  }}
+                >
+                  📊 Buka Halaman Penuh Panel Guru (6 Tab Analisis Terpadu) →
+                </button>
+              </div>
             </div>
           </div>
 

@@ -11,6 +11,7 @@ import { PhCalculator } from './components/PhCalculator'
 import { QuizSection } from './components/QuizSection'
 import { ReflectionSection } from './components/ReflectionSection'
 import { LoginPortal } from './components/LoginPortal'
+import { TeacherPanel } from './components/TeacherPanel/TeacherPanel'
 import { SearchModal } from './components/SearchModal'
 import { Breadcrumb } from './components/Breadcrumb'
 import { InquiryStageBanner } from './components/InquiryStageBanner'
@@ -244,8 +245,22 @@ export default function App() {
             onNavigateHome={() => navigateToPage('beranda')}
             onNavigateLab={() => navigateToPage('lab')}
             onNavigateQuiz={() => navigateToPage('kuis')}
+            onNavigateGuru={() => navigateToPage('guru')}
           />
           <PageBottomNav currentPage="login" onNavigate={navigateToPage} />
+        </div>
+
+        {/* 9. Panel Guru */}
+        <div
+          id="page-guru"
+          className={`page-view ${activePage === 'guru' ? 'page-view-active' : 'page-view-hidden'}`}
+          role="region"
+          aria-label="Halaman Panel Guru"
+          hidden={activePage !== 'guru'}
+        >
+          <Breadcrumb currentPage="guru" onNavigate={navigateToPage} />
+          <TeacherPanel onNavigatePage={navigateToPage} />
+          <PageBottomNav currentPage="guru" onNavigate={navigateToPage} />
         </div>
       </main>
 
