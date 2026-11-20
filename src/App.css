@@ -1885,8 +1885,239 @@
 }
 
 /* ==========================================================================
-   5. Virtual Lab Workbench Styles
+   5. Virtual Lab Guided Inquiry Layout (3 Rows Structure)
    ========================================================================== */
+.virtual-lab-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* BARIS 1: Rumusan Masalah (Full width) */
+.virtual-lab-row-problem {
+  width: 100%;
+}
+
+.problem-formulation-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-left: 5px solid #0284c7;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.problem-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.problem-badge-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.problem-inquiry-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.problem-question-box {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.05) 0%, rgba(56, 189, 248, 0.08) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.22);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.problem-question-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.problem-question-content {
+  flex: 1;
+}
+
+.problem-question-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0284c7;
+  margin-bottom: 6px;
+}
+
+.problem-question-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.problem-subcards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .problem-subcards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* BARIS 2: Alur Inkuiri & Pilih Sampel Larutan (Side-by-side) */
+.virtual-lab-row-inquiry-sample {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+/* BARIS 3: Tabung Reaksi & Uji dengan Indikator (Side-by-side) */
+.virtual-lab-row-tube-indicator {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.inquiry-guide-panel,
+.sample-selection-panel,
+.test-tube-panel,
+.indicator-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Inkuiri Steps List */
+.inquiry-flow-card {
+  height: 100%;
+}
+
+.inquiry-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inquiry-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-elevated);
+  transition: all var(--transition-fast);
+}
+
+.inquiry-step-item.active {
+  border-color: #0284c7;
+  background: rgba(2, 132, 199, 0.05);
+  box-shadow: 0 0 0 1px rgba(2, 132, 199, 0.2);
+}
+
+.inquiry-step-item.completed {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.04);
+}
+
+.inquiry-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--border-medium);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inquiry-step-item.active .inquiry-step-num {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.inquiry-step-item.completed .inquiry-step-num {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.inquiry-step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.inquiry-step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.inquiry-step-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.inquiry-step-status-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-active {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-pending {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-muted);
+}
+
+.inquiry-step-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Fallback for legacy class name */
 .lab-workbench-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -4526,7 +4757,9 @@
     grid-template-columns: 1fr;
   }
 
-  .lab-workbench-grid {
+  .lab-workbench-grid,
+  .virtual-lab-row-inquiry-sample,
+  .virtual-lab-row-tube-indicator {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -4756,7 +4989,9 @@
   }
 
   /* 4. Lab Virtual */
-  .lab-workbench-grid {
+  .lab-workbench-grid,
+  .virtual-lab-row-inquiry-sample,
+  .virtual-lab-row-tube-indicator {
     grid-template-columns: 1fr;
     gap: 20px;
   }
