@@ -465,12 +465,14 @@
   border: 1px solid #e2e8f0;
   border-radius: var(--radius-md, 14px);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .panel-table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
@@ -978,17 +980,74 @@
   .teacher-panel-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
   }
   .filter-search-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+  .filter-input-wrap {
+    min-width: unset;
+    width: 100%;
   }
   .filter-selects-row {
     flex-direction: column;
+    width: 100%;
+  }
+  .filter-actions-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .btn-export-excel {
+    width: 100%;
+    justify-content: center;
+  }
+  .charts-grid-two-col {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .panel-card {
+    padding: 16px 14px;
   }
   .table-pagination-bar {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+  }
+  .pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .detail-drawer-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .teacher-tab-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .metric-card {
+    padding: 14px 10px;
+  }
+  .metric-value {
+    font-size: 20px;
+  }
+  .metric-title {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 374px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
   }
 }
 
