@@ -4,6 +4,8 @@ import type {
   UserAccount,
   UserRole,
 } from '../types/auth'
+import { isTeacherEmail } from './firebaseConfig'
+import { saveActivityToFirestore, initFirebase } from './firebaseService'
 
 const STORAGE_KEYS = {
   USERS: 'asambasa_auth_users_v2',
@@ -33,6 +35,16 @@ const DEFAULT_USERS: UserAccount[] = [
     identifierNumber: 'NIS-20261102',
     schoolClass: 'XI MIPA 2',
     avatarColor: '#ec4899',
+  },
+  {
+    id: 'usr_guru_nadia_official',
+    username: 'nadia.revalina.2403316.@students.um.ac.id',
+    password: '123',
+    fullName: 'Nadia Revalina, S.Pd',
+    role: 'guru',
+    identifierNumber: 'NIP-2403316-GURU',
+    subject: 'Kimia SMA',
+    avatarColor: '#8b5cf6',
   },
   {
     id: 'usr_guru_sri',
@@ -189,6 +201,22 @@ export function initAuthStorage(): void {
   const existingUsers = safeGetItem<UserAccount[]>(STORAGE_KEYS.USERS, [])
   if (existingUsers.length === 0) {
     safeSetItem(STORAGE_KEYS.USERS, DEFAULT_USERS)
+  } else {
+    // Pastikan akun guru resmi selalu terdaftar di users list
+    const hasOfficialTeacher = existingUsers.some((u) => isTeacherEmail(u.username))
+    if (!hasOfficialTeacher) {
+      const teacherAccount: UserAccount = {
+        id: 'usr_guru_nadia_official',
+        username: 'nadia.revalina.2403316.@students.um.ac.id',
+        password: '123',
+        fullName: 'Nadia Revalina, S.Pd',
+        role: 'guru',
+        identifierNumber: 'NIP-2403316-GURU',
+        subject: 'Kimia SMA',
+        avatarColor: '#8b5cf6',
+      }
+      safeSetItem(STORAGE_KEYS.USERS, [teacherAccount, ...existingUsers])
+    }
   }
 
   const existingExperiments = safeGetItem<ExperimentItem[]>(STORAGE_KEYS.EXPERIMENTS, [])
@@ -271,7 +299,7 @@ export function loginUser(
 export function registerUser(newUser: {
   username: string
   fullName: string
-  role: UserRole
+  role?: UserRole
   identifierNumber: string
   schoolClass?: string
   subject?: string
@@ -287,21 +315,29 @@ export function registerUser(newUser: {
     }
   }
 
+  // ATURAN PENETAPAN PERAN OTOMATIS:
+  // - Email 'nadia.revalina.2403316.@students.um.ac.id' otomatis berhak sebagai Guru.
+  // - Akun baru lainnya otomatis ditetapkan sebagai Siswa.
+  const isTeacher = isTeacherEmail(newUser.username)
+  const assignedRole: UserRole = isTeacher ? 'guru' : 'siswa'
+
   const roleColors: Record<UserRole, string> = {
     siswa: '#0ea5e9',
     guru: '#8b5cf6',
   }
 
   const createdUser: UserAccount = {
-    id: `usr_${newUser.role}_${Date.now().toString(36)}`,
+    id: `usr_${assignedRole}_${Date.now().toString(36)}`,
     username: newUser.username.trim(),
     fullName: newUser.fullName.trim(),
-    role: newUser.role,
-    identifierNumber: newUser.identifierNumber.trim(),
-    schoolClass: newUser.schoolClass?.trim(),
-    subject: newUser.subject?.trim(),
+    role: assignedRole,
+    identifierNumber:
+      newUser.identifierNumber?.trim() ||
+      (isTeacher ? 'NIP-2403316-GURU' : `NIS-${Date.now().toString().slice(-6)}`),
+    schoolClass: assignedRole === 'siswa' ? (newUser.schoolClass?.trim() || 'XI MIPA 1') : undefined,
+    subject: assignedRole === 'guru' ? (newUser.subject?.trim() || 'Kimia SMA') : undefined,
     password: newUser.password || '123',
-    avatarColor: roleColors[newUser.role] || '#06b6d4',
+    avatarColor: roleColors[assignedRole] || '#06b6d4',
   }
 
   const updatedUsers = [...users, createdUser]
@@ -467,6 +503,18 @@ export async function sendQueueToServer(
   })
 
   saveAllExperiments(updatedAll)
+
+  // Sinkronkan ke Cloud Firestore jika Firebase terkonfigurasi
+  try {
+    const { isConfigured } = initFirebase()
+    if (isConfigured) {
+      for (const item of queuedItems) {
+        await saveActivityToFirestore(item)
+      }
+    }
+  } catch (err) {
+    console.warn('Gagal sinkronisasi data antrean ke Cloud Firestore:', err)
+  }
 
   // Simpan catatan log server
   const existingLogs = safeGetItem<ServerSyncLog[]>(STORAGE_KEYS.SERVER_LOGS, [])

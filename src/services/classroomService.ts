@@ -9,6 +9,7 @@ import type {
 } from '../types/teacher'
 import { MODULE_1_HOTS_QUESTIONS } from '../data/module1QuizData'
 import { getAllExperiments } from './authStorage'
+import { fetchActivitiesFromFirestore, initFirebase } from './firebaseService'
 
 /**
  * Registry pencocokan bank soal berdasarkan questionVersion
@@ -358,9 +359,20 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
     }
   }
 
-  // 2. Baca data eksperimen lokal yang sudah diterima server (status === 'diterima_server' || 'dibaca_guru')
+  // 2. Baca data dari Cloud Firestore jika Firebase aktif
+  let cloudResults: StudentActivityResult[] = []
+  try {
+    const { isConfigured } = initFirebase()
+    if (isConfigured) {
+      cloudResults = await fetchActivitiesFromFirestore()
+    }
+  } catch (err) {
+    console.warn('Gagal memuat aktivitas dari Firestore:', err)
+  }
+
+  // 3. Baca data eksperimen lokal yang sudah diterima server (status === 'diterima_server' || 'dibaca_guru')
   const localExperiments = getAllExperiments()
-  const realSyncedResults: StudentActivityResult[] = localExperiments
+  const localSyncedResults: StudentActivityResult[] = localExperiments
     .filter((exp) => (exp.status === 'diterima_server' || exp.status === 'dibaca_guru') && exp.ownerId)
     .map((exp) => {
       const isQuiz = exp.experimentType === 'kuis_evaluasi'
@@ -394,7 +406,16 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
       }
     })
 
-  // 3. Gabungkan dengan data contoh terverifikasi (hindari duplikasi id)
+  // Gabungkan hasil cloud dan lokal
+  const realSyncedResults = [...cloudResults]
+  const existingCloudIds = new Set(cloudResults.map((r) => r.id))
+  localSyncedResults.forEach((lr) => {
+    if (!existingCloudIds.has(lr.id)) {
+      realSyncedResults.push(lr)
+    }
+  })
+
+  // 4. Gabungkan dengan data contoh terverifikasi (hindari duplikasi id)
   const existingIds = new Set(realSyncedResults.map((r) => r.id))
   const combined = [...realSyncedResults]
 

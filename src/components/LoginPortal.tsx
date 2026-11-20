@@ -3,7 +3,6 @@ import type {
   ExperimentItem,
   ServerSyncLog,
   UserAccount,
-  UserRole,
 } from '../types/auth'
 import {
   getCurrentUser,
@@ -20,6 +19,20 @@ import {
   getServerLogs,
   clearServerLogs,
 } from '../services/authStorage'
+import {
+  getFirebaseConfig,
+  saveFirebaseConfig,
+  clearCustomFirebaseConfig,
+  isFirebaseConfigured,
+  isTeacherEmail,
+  type FirebaseConfig,
+} from '../services/firebaseConfig'
+import {
+  reinitFirebase,
+  loginWithFirebase,
+  registerWithFirebase,
+  logoutFromFirebase,
+} from '../services/firebaseService'
 import './LoginPortal.css'
 
 interface LoginPortalProps {
@@ -49,11 +62,17 @@ export function LoginPortal({
   // Form Register
   const [regFullName, setRegFullName] = useState('')
   const [regUsername, setRegUsername] = useState('')
-  const [regRole, setRegRole] = useState<UserRole>('siswa')
   const [regIdNumber, setRegIdNumber] = useState('')
   const [regSchoolClass, setRegSchoolClass] = useState('XI MIPA 1')
   const [regSubject, setRegSubject] = useState('Kimia')
   const [regPassword, setRegPassword] = useState('123')
+
+  // State Konfigurasi Firebase
+  const [fbConfig, setFbConfig] = useState<FirebaseConfig>(() => getFirebaseConfig())
+  const [isFbConfigured, setIsFbConfigured] = useState<boolean>(() => isFirebaseConfigured())
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false)
+  const [modalConfigInput, setModalConfigInput] = useState<FirebaseConfig>(() => getFirebaseConfig())
+  const [isSubmittingAuth, setIsSubmittingAuth] = useState<boolean>(false)
 
   // Tab di dalam Portal
   const [activeTab, setActiveTab] = useState<'tautkan' | 'antrean' | 'riwayat' | 'guru_dashboard' | 'server_logs'>(() => {
@@ -83,6 +102,8 @@ export function LoginPortal({
     setUsersList(getAllUsers())
     setAllExperiments(getAllExperiments())
     setServerLogs(getServerLogs())
+    setIsFbConfigured(isFirebaseConfigured())
+    setFbConfig(getFirebaseConfig())
 
     if (user?.role === 'guru') {
       setActiveTab('guru_dashboard')
@@ -101,15 +122,44 @@ export function LoginPortal({
   // Handler Autentikasi
   // ==========================================================================
 
-  const handleLogin = (e?: React.FormEvent) => {
+  const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     setAuthError(null)
     setAuthSuccess(null)
+    setIsSubmittingAuth(true)
 
+    // Coba masuk melalui Firebase jika terkonfigurasi dan masukan adalah alamat email
+    if (isFbConfigured && loginUsername.includes('@')) {
+      try {
+        const fbRes = await loginWithFirebase(loginUsername, loginPassword)
+        if (fbRes.success && fbRes.user) {
+          setCurrentUser(fbRes.user)
+          setAuthSuccess(
+            `Berhasil masuk via Firebase Cloud! Selamat datang, ${fbRes.user.fullName} (${fbRes.user.role === 'guru' ? 'Guru' : 'Siswa'}).`
+          )
+          if (fbRes.user.role === 'guru') {
+            setActiveTab('guru_dashboard')
+          } else {
+            setActiveTab('tautkan')
+          }
+          refreshData()
+          setIsSubmittingAuth(false)
+          return
+        } else {
+          setAuthError(fbRes.error || 'Gagal masuk akun Firebase.')
+          setIsSubmittingAuth(false)
+          return
+        }
+      } catch (err) {
+        console.warn('Fallback login akun lokal:', err)
+      }
+    }
+
+    // Fallback akun lokal / demo
     const res = loginUser(loginUsername, loginPassword)
     if (res.success && res.user) {
       setCurrentUser(res.user)
-      setAuthSuccess(`Selamat datang kembali, ${res.user.fullName}!`)
+      setAuthSuccess(`Selamat datang kembali, ${res.user.fullName}! (${res.user.role === 'guru' ? 'Guru' : 'Siswa'})`)
       if (res.user.role === 'guru') {
         setActiveTab('guru_dashboard')
       } else {
@@ -117,8 +167,9 @@ export function LoginPortal({
       }
       refreshData()
     } else {
-      setAuthError(res.error || 'Gagal masuk akun.')
+      setAuthError(res.error || 'Gagal masuk akun. Periksa username atau email dan kata sandi Anda.')
     }
+    setIsSubmittingAuth(false)
   }
 
   const handleQuickLogin = (username: string) => {
@@ -127,7 +178,7 @@ export function LoginPortal({
     const res = loginUser(username, '123')
     if (res.success && res.user) {
       setCurrentUser(res.user)
-      setAuthSuccess(`Masuk cepat berhasil sebagai ${res.user.fullName} (${res.user.role === 'guru' ? 'Guru' : 'Siswa'}).`)
+      setAuthSuccess(`Masuk cepat berhasil sebagai ${res.user.fullName} (${res.user.role === 'guru' ? 'Guru Resmi' : 'Siswa'}).`)
       if (res.user.role === 'guru') {
         setActiveTab('guru_dashboard')
       } else {
@@ -137,29 +188,69 @@ export function LoginPortal({
     }
   }
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setAuthError(null)
     setAuthSuccess(null)
+    setIsSubmittingAuth(true)
 
     if (!regFullName.trim() || !regUsername.trim() || !regIdNumber.trim()) {
       setAuthError('Harap lengkapi semua kolom bertanda wajib (*).')
+      setIsSubmittingAuth(false)
       return
     }
 
+    // Evaluasi aturan peran otomatis:
+    // Email nadia.revalina.2403316.@students.um.ac.id otomatis menjadi Guru.
+    // Akun baru lainnya otomatis ditetapkan sebagai Siswa.
+    const isTeacher = isTeacherEmail(regUsername)
+
+    if (isFbConfigured && regUsername.includes('@')) {
+      try {
+        const fbRes = await registerWithFirebase({
+          email: regUsername,
+          password: regPassword,
+          fullName: regFullName,
+          schoolClass: isTeacher ? undefined : regSchoolClass,
+          identifierNumber: regIdNumber,
+        })
+        if (fbRes.success && fbRes.user) {
+          setCurrentUser(fbRes.user)
+          setAuthSuccess(
+            `Akun Firebase berhasil didaftarkan di cloud! Selamat datang, ${fbRes.user.fullName} (${fbRes.user.role === 'guru' ? 'Guru Resmi' : 'Siswa'}).`
+          )
+          if (fbRes.user.role === 'guru') {
+            setActiveTab('guru_dashboard')
+          } else {
+            setActiveTab('tautkan')
+          }
+          refreshData()
+          setIsSubmittingAuth(false)
+          return
+        } else {
+          setAuthError(fbRes.error || 'Gagal mendaftarkan akun di Firebase.')
+          setIsSubmittingAuth(false)
+          return
+        }
+      } catch (err) {
+        console.warn('Pendaftaran Firebase dialihkan ke lokal:', err)
+      }
+    }
+
+    // Registrasi lokal
     const res = registerUser({
       fullName: regFullName,
       username: regUsername,
-      role: regRole,
+      role: isTeacher ? 'guru' : 'siswa',
       identifierNumber: regIdNumber,
-      schoolClass: regRole === 'siswa' ? regSchoolClass : undefined,
-      subject: regRole === 'guru' ? regSubject : undefined,
+      schoolClass: isTeacher ? undefined : regSchoolClass,
+      subject: isTeacher ? regSubject : undefined,
       password: regPassword,
     })
 
     if (res.success && res.user) {
       setCurrentUser(res.user)
-      setAuthSuccess(`Akun berhasil dibuat! Selamat datang, ${res.user.fullName}.`)
+      setAuthSuccess(`Akun berhasil dibuat! Selamat datang, ${res.user.fullName} (${res.user.role === 'guru' ? 'Guru Resmi' : 'Siswa'}).`)
       if (res.user.role === 'guru') {
         setActiveTab('guru_dashboard')
       } else {
@@ -169,9 +260,11 @@ export function LoginPortal({
     } else {
       setAuthError(res.error || 'Gagal mendaftarkan akun.')
     }
+    setIsSubmittingAuth(false)
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutFromFirebase()
     logoutUser()
     setCurrentUser(null)
     setActiveTab('tautkan')
@@ -416,6 +509,224 @@ export function LoginPortal({
         </div>
       )}
 
+      {/* Banner Status Sambungan Firebase & Ketetapan Akun Guru */}
+      <div className={`firebase-banner-card ${isFbConfigured ? 'connected' : ''}`}>
+        <div className="firebase-banner-top">
+          <div className="firebase-banner-title-group">
+            <span className="firebase-logo-icon">🔥</span>
+            <div>
+              <h3 className="firebase-banner-title">
+                Integrasi Cloud Firebase Backend
+              </h3>
+              <p className="firebase-banner-desc">
+                {isFbConfigured
+                  ? `Terhubung ke Project ID: ${fbConfig.projectId || 'Terkonfigurasi'}`
+                  : 'Siap dihubungkan ke Firebase. Masukkan kredensial project Anda untuk sinkronisasi cloud.'}
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span className={`firebase-status-pill ${isFbConfigured ? 'pill-online' : 'pill-pending'}`}>
+              <span
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: isFbConfigured ? '#16a34a' : '#d97706',
+                  display: 'inline-block',
+                }}
+              />
+              {isFbConfigured ? 'Firebase Aktif (Online)' : 'Menunggu Kunci API'}
+            </span>
+            <button
+              type="button"
+              className="btn btn-outline-cyan btn-xs"
+              onClick={() => {
+                setModalConfigInput(getFirebaseConfig())
+                setShowConfigModal(true)
+              }}
+            >
+              ⚙️ Pengaturan Kredensial Firebase
+            </button>
+          </div>
+        </div>
+
+        <div className="firebase-banner-rules">
+          <div className="firebase-rule-row">
+            <span className="firebase-rule-pill-teacher">Ketetapan Akun Guru</span>
+            <span>
+              Email <strong>nadia.revalina.2403316.@students.um.ac.id</strong> secara permanen ditetapkan sebagai <strong>Akun Guru</strong> dengan akses penuh ke Panel Guru.
+            </span>
+          </div>
+          <div className="firebase-rule-row">
+            <span className="firebase-rule-pill-student">Ketetapan Akun Siswa</span>
+            <span>
+              Seluruh pendaftar atau akun baru lainnya otomatis ditetapkan sebagai <strong>Akun Siswa</strong>.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Pengaturan Kredensial Firebase */}
+      {showConfigModal && (
+        <div className="firebase-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-modal-title">
+          <div className="firebase-modal-card">
+            <div className="firebase-modal-header">
+              <h3 id="fb-modal-title" className="firebase-modal-title">
+                🔥 Pengaturan Kredensial Firebase
+              </h3>
+              <button
+                type="button"
+                className="firebase-modal-close"
+                onClick={() => setShowConfigModal(false)}
+                aria-label="Tutup"
+              >
+                &times;
+              </button>
+            </div>
+
+            <p className="firebase-modal-desc">
+              Masukkan kredensial project Firebase yang Anda peroleh dari <strong>Firebase Console &rarr; Project Settings &rarr; General &rarr; Your apps &rarr; Web app</strong>.
+              Nilai ini disimpan secara lokal di peramban Anda atau dapat dituliskan di file <code>.env</code> proyek.
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                saveFirebaseConfig(modalConfigInput)
+                reinitFirebase()
+                setIsFbConfigured(isFirebaseConfigured(modalConfigInput))
+                setFbConfig(modalConfigInput)
+                setShowConfigModal(false)
+                setActionAlert({
+                  type: 'success',
+                  message: 'Kredensial Firebase berhasil disimpan dan backend diinisialisasi!',
+                })
+              }}
+            >
+              <div className="firebase-input-grid">
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">apiKey *</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: AIzaSyD..."
+                    value={modalConfigInput.apiKey}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({ ...prev, apiKey: e.target.value.trim() }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">authDomain *</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: asambasa-lab.firebaseapp.com"
+                    value={modalConfigInput.authDomain}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({ ...prev, authDomain: e.target.value.trim() }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">projectId *</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: asambasa-lab"
+                    value={modalConfigInput.projectId}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({ ...prev, projectId: e.target.value.trim() }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">storageBucket</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: asambasa-lab.firebasestorage.app"
+                    value={modalConfigInput.storageBucket}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({ ...prev, storageBucket: e.target.value.trim() }))
+                    }
+                  />
+                </div>
+
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">messagingSenderId</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: 1029384756"
+                    value={modalConfigInput.messagingSenderId}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({
+                        ...prev,
+                        messagingSenderId: e.target.value.trim(),
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="firebase-field-group">
+                  <label className="firebase-field-label">appId *</label>
+                  <input
+                    type="text"
+                    className="firebase-field-input"
+                    placeholder="Contoh: 1:1029384756:web:abcd1234ef56"
+                    value={modalConfigInput.appId}
+                    onChange={(e) =>
+                      setModalConfigInput((prev) => ({ ...prev, appId: e.target.value.trim() }))
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="firebase-modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-outline-cyan btn-sm"
+                  onClick={() => {
+                    clearCustomFirebaseConfig()
+                    const envConfig = getFirebaseConfig()
+                    setModalConfigInput(envConfig)
+                    setFbConfig(envConfig)
+                    setIsFbConfigured(isFirebaseConfigured(envConfig))
+                    reinitFirebase()
+                    setShowConfigModal(false)
+                    setActionAlert({
+                      type: 'info',
+                      message: 'Konfigurasi telah diatur ulang ke nilai variabel lingkungan (.env).',
+                    })
+                  }}
+                >
+                  Reset ke .env
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setShowConfigModal(false)}
+                >
+                  Batal
+                </button>
+                <button type="submit" className="btn btn-primary btn-sm">
+                  Simpan &amp; Hubungkan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Card Status Pengguna Saat Ini */}
       <div className="user-status-card">
         {currentUser ? (
@@ -431,7 +742,7 @@ export function LoginPortal({
                 <div className="user-name-role-row">
                   <h3 className="user-full-name">{currentUser.fullName}</h3>
                   <span className={`role-badge role-${currentUser.role}`}>
-                    {currentUser.role === 'guru' ? '👩‍🏫 Guru Kimia' : '👨‍🎓 Siswa'}
+                    {currentUser.role === 'guru' ? '👩‍🏫 Guru Kimia (Resmi)' : '👨‍🎓 Siswa'}
                   </span>
                 </div>
                 <div className="user-meta-row">
@@ -463,13 +774,24 @@ export function LoginPortal({
                 </button>
               )}
               {currentUser.role === 'guru' && (
-                <button
-                  type="button"
-                  className="btn btn-outline-cyan btn-sm"
-                  onClick={() => setActiveTab('guru_dashboard')}
-                >
-                  📊 Dashboard Guru
-                </button>
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-outline-cyan btn-sm"
+                    onClick={() => setActiveTab('guru_dashboard')}
+                  >
+                    📊 Dashboard Review
+                  </button>
+                  {onNavigateGuru && (
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={onNavigateGuru}
+                    >
+                      👩‍🏫 Buka Panel Guru &rarr;
+                    </button>
+                  )}
+                </>
               )}
               <button
                 type="button"
@@ -491,6 +813,14 @@ export function LoginPortal({
             </div>
             <div className="fast-login-chips">
               <span className="fast-chip-label">Pilih Akses Cepat Demo:</span>
+              <button
+                type="button"
+                className="fast-login-btn btn-chip-teacher"
+                style={{ background: '#7c3aed', color: '#ffffff', borderColor: '#6d28d9', fontWeight: 700 }}
+                onClick={() => handleQuickLogin('nadia.revalina.2403316.@students.um.ac.id')}
+              >
+                👑 Guru Resmi: Nadia Revalina
+              </button>
               <button
                 type="button"
                 className="fast-login-btn btn-chip-student"
@@ -549,12 +879,12 @@ export function LoginPortal({
           {authMode === 'login' ? (
             <form onSubmit={handleLogin} className="auth-inner-form">
               <div className="form-group">
-                <label htmlFor="login-username">Nama Pengguna (Username):</label>
+                <label htmlFor="login-username">Email / Nama Pengguna (Username):</label>
                 <input
                   id="login-username"
                   type="text"
                   className="form-input"
-                  placeholder="Contoh: budi atau guru"
+                  placeholder="Contoh: nadia.revalina.2403316.@students.um.ac.id atau budi"
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
                   required
@@ -575,8 +905,18 @@ export function LoginPortal({
               </div>
 
               <div className="form-actions-row">
-                <button type="submit" className="btn btn-primary btn-submit-auth">
-                  Masuk Sekarang →
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-submit-auth"
+                  disabled={isSubmittingAuth}
+                >
+                  {isSubmittingAuth ? (
+                    <>
+                      <span className="spinner-inline" /> Memproses Masuk...
+                    </>
+                  ) : (
+                    'Masuk Sekarang →'
+                  )}
                 </button>
               </div>
             </form>
@@ -596,41 +936,78 @@ export function LoginPortal({
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="reg-username">Username Unik *</label>
+                  <label htmlFor="reg-username">Email Akun (Username) *</label>
                   <input
                     id="reg-username"
                     type="text"
                     className="form-input"
-                    placeholder="Contoh: ahmad_fauzi"
+                    placeholder="Contoh: nadia.revalina.2403316.@students.um.ac.id atau siswa@sekolah.id"
                     value={regUsername}
                     onChange={(e) => setRegUsername(e.target.value)}
                     required
                   />
+                  {regUsername.trim() !== '' && (
+                    <div
+                      className={`role-detection-banner ${
+                        isTeacherEmail(regUsername) ? 'teacher' : 'student'
+                      }`}
+                    >
+                      {isTeacherEmail(regUsername) ? (
+                        <>
+                          <span>👑</span>
+                          <span>
+                            <strong>Email Guru Resmi Terverifikasi:</strong> Akun ini otomatis mendapatkan peran Guru dan akses penuh ke Panel Guru.
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🎓</span>
+                          <span>
+                            <strong>Peran Siswa (Otomatis):</strong> Akun baru ini otomatis ditetapkan sebagai Siswa.
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="form-row-2col">
                 <div className="form-group">
-                  <label htmlFor="reg-role">Peran (Role) Pengguna *</label>
-                  <select
+                  <label htmlFor="reg-role">Penetapan Peran (Otomatis)</label>
+                  <input
                     id="reg-role"
-                    className="form-input form-select"
-                    value={regRole}
-                    onChange={(e) => setRegRole(e.target.value as UserRole)}
-                  >
-                    <option value="siswa">👨‍🎓 Siswa SMA (Kelas XI)</option>
-                    <option value="guru">👩‍🏫 Guru / Pendidik Kimia</option>
-                  </select>
+                    type="text"
+                    className="form-input"
+                    readOnly
+                    value={
+                      isTeacherEmail(regUsername)
+                        ? '👩‍🏫 Guru / Pendidik Kimia (Hak Akses Resmi)'
+                        : '👨‍🎓 Siswa SMA (Otomatis)'
+                    }
+                    style={{
+                      background: '#f8fafc',
+                      color: isTeacherEmail(regUsername) ? '#7c3aed' : '#0369a1',
+                      fontWeight: 700,
+                      cursor: 'not-allowed',
+                    }}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="reg-idnum">
-                    {regRole === 'siswa' ? 'Nomor Induk Siswa (NIS) *' : 'Nomor Induk Pegawai (NIP) *'}
+                    {isTeacherEmail(regUsername)
+                      ? 'Nomor Induk Pegawai (NIP) *'
+                      : 'Nomor Induk Siswa (NIS) *'}
                   </label>
                   <input
                     id="reg-idnum"
                     type="text"
                     className="form-input"
-                    placeholder={regRole === 'siswa' ? 'Contoh: 20261103' : 'Contoh: 19850101...'}
+                    placeholder={
+                      isTeacherEmail(regUsername)
+                        ? 'Contoh: 19850101... atau NIP-GURU'
+                        : 'Contoh: 20261103'
+                    }
                     value={regIdNumber}
                     onChange={(e) => setRegIdNumber(e.target.value)}
                     required
@@ -638,7 +1015,7 @@ export function LoginPortal({
                 </div>
               </div>
 
-              {regRole === 'siswa' ? (
+              {!isTeacherEmail(regUsername) ? (
                 <div className="form-group">
                   <label htmlFor="reg-class">Rombongan Belajar / Kelas:</label>
                   <input
@@ -678,8 +1055,18 @@ export function LoginPortal({
               </div>
 
               <div className="form-actions-row">
-                <button type="submit" className="btn btn-primary btn-submit-auth">
-                  Daftarkan Akun & Masuk →
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-submit-auth"
+                  disabled={isSubmittingAuth}
+                >
+                  {isSubmittingAuth ? (
+                    <>
+                      <span className="spinner-inline" /> Mendaftarkan Akun...
+                    </>
+                  ) : (
+                    'Daftar Sekarang →'
+                  )}
                 </button>
               </div>
             </form>

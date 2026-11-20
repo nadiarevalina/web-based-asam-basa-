@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import type { UserAccount } from '../../types/auth'
 import type {
   ClassMetricSummary,
   ItemAnalysisSummary,
@@ -26,7 +25,7 @@ interface TeacherPanelProps {
 }
 
 export function TeacherPanel({ onNavigatePage }: TeacherPanelProps) {
-  const [currentUser] = useState<UserAccount | null>(() => getCurrentUser())
+  const currentUser = getCurrentUser()
   const [activeTab, setActiveTab] = useState<TeacherPanelTab>('ringkasan')
   const [selectedActivity, setSelectedActivity] = useState<StudentActivityResult | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0)
@@ -135,6 +134,12 @@ export function TeacherPanel({ onNavigatePage }: TeacherPanelProps) {
             Halaman Panel Guru hanya dapat diakses oleh akun guru yang telah terverifikasi di sistem AsamBasa Lab.
             Siswa atau akun tamu tidak memiliki izin untuk membaca data hasil belajar kelas lain.
           </p>
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '8px', fontSize: '13px', color: '#6d28d9', textAlign: 'left', maxWidth: '480px', margin: '14px auto 0' }}>
+            👑 <strong>Akun Guru Resmi:</strong> <code>nadia.revalina.2403316.@students.um.ac.id</code>
+            <div style={{ fontSize: '12px', color: '#7c3aed', marginTop: '4px' }}>
+              Silakan masuk menggunakan email tersebut melalui Portal Akun untuk mengelola data kelas, analisis butir soal, dan tindak lanjut.
+            </div>
+          </div>
           <div className="access-denied-actions">
             <button
               type="button"

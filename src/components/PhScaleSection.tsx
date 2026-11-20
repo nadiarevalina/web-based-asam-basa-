@@ -215,6 +215,19 @@ export function PhScaleSection() {
           </div>
         </div>
       </div>
+
+      {/* Bagian Sumber Referensi Akademik Skala pH */}
+      <AcademicReference
+        topic="Modul 3: Konsep Logaritmik pH dan Kesetimbangan Autoionisasi Air"
+        relevantConcepts={[
+          'Definisi matematis skala pH Sørensen (pH = -log₁₀[H⁺]) dan pOH (-log₁₀[OH⁻])',
+          'Sifat skala logaritmik: perubahan 1 unit pH merepresentasikan perbedaan konsentrasi 10 kali lipat',
+          'Tetapan hasil kali ion autoionisasi air Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ pada 25°C',
+          'Hubungan kesetimbangan pH + pOH = 14 pada kondisi standar',
+          'Kriteria larutan asam ([H⁺] > 10⁻⁷ M), netral ([H⁺] = 10⁻⁷ M), dan basa ([H⁺] < 10⁻⁷ M)',
+        ]}
+        boundaryNotes="Pemetaan contoh bahan sehari-hari (seperti air lemon, kopi, darah, dan pemutih) disajikan untuk mempermudah pemahaman intuitif terhadap rentang skala pH logaritmik."
+      />
     </section>
   )
 }
