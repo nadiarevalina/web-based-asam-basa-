@@ -312,7 +312,7 @@ export function subscribeToAuthChanges(callback: (user: UserAccount | null) => v
   const { isConfigured } = initFirebase()
   if (!isConfigured || !auth || !db) {
     callback(getCurrentUser())
-    return () => {}
+    return () => { }
   }
 
   const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
