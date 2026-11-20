@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { CHEMICAL_SAMPLES, INDICATORS } from '../data/chemistryData'
 import type { ChemicalSample, Indicator, SimulationRecord, SampleNature } from '../types/chemistry'
 import { addLabExperimentRecord } from '../services/authStorage'
+import { LabCitation } from './LabCitation'
+import { LabBibliography } from './LabBibliography'
 
 let recordCounter = 0
 
@@ -145,20 +147,116 @@ export function VirtualLab() {
     setHistory([])
   }
 
+  // Helper untuk mendapatkan sitasi spesifik sampel terpilih
+  const getSampleCitationId = (sampleId: string): string => {
+    switch (sampleId) {
+      case 'hcl':
+      case 'naoh':
+      case 'air-murni':
+        return 'brown-2018'
+      case 'lemon':
+        return 'haynes-2016'
+      case 'cuka':
+      case 'soda':
+      case 'sabun':
+      case 'amonia':
+        return 'chang-2016'
+      case 'air-laut':
+      case 'soda-kue':
+      case 'antasida':
+      case 'pemutih':
+        return 'zumdahl-2020'
+      default:
+        return 'openstax-2019'
+    }
+  }
+
+  // Helper untuk mendapatkan sitasi spesifik indikator terpilih
+  const getIndicatorCitationId = (indId: string): string => {
+    switch (indId) {
+      case 'lakmus-merah':
+      case 'lakmus-biru':
+        return 'chang-2016'
+      case 'kol-ungu':
+      case 'kunyit':
+        return 'harborne-1998'
+      case 'pp':
+      case 'btb':
+      case 'mo':
+        return 'haynes-2016'
+      case 'universal':
+      default:
+        return 'openstax-2019'
+    }
+  }
+
   return (
     <section id="lab-section" className="content-section" aria-labelledby="lab-heading">
+      {/* Header Section dengan Sitasi Metodologis */}
       <div className="section-header-left">
         <div className="section-tag-row">
           <span className="section-module-pill">Modul Inkuiri 2</span>
-          <span className="section-topic-pill">Tahap 3, 4, 5, & 6: Eksperimen & Analisis</span>
+          <span className="section-topic-pill">Tahap 3, 4, 5, &amp; 6: Eksperimen &amp; Analisis</span>
         </div>
         <h2 id="lab-heading" className="section-title">
           Laboratorium Virtual Pengujian Asam-Basa
         </h2>
         <p className="section-description">
           Praktikkan metode ilmiah secara bertahap: rumuskan hipotesis sifat larutan, kumpulkan data eksperimen indikator,
-          bandingkan hasil empiris dengan hipotesismu, dan tarik kesimpulan ilmiah.
+          bandingkan hasil empiris dengan hipotesismu, dan tarik kesimpulan ilmiah{' '}
+          <LabCitation id="openstax-2019" />.
         </p>
+      </div>
+
+      {/* Bagian A & B: Kartu Pengantar Konsep, Tujuan Praktikum, dan Keselamatan Kerja */}
+      <div className="lab-intro-cards-row">
+        <div className="lab-intro-subcard">
+          <h3 className="intro-subcard-title">
+            <span>🎯</span> Tujuan Praktikum &amp; Landasan Teori
+          </h3>
+          <p className="intro-subcard-text">
+            Mengidentifikasi derajat keasaman (pH) dan sifat asam-basa larutan melalui perubahan warna indikator kolorimetri{' '}
+            <LabCitation id="skoog-2014" />. Sifat asam larutan ditentukan oleh aktivitas ion hidronium (<code>H₃O⁺</code>),
+            sedangkan sifat basa ditentukan oleh ion hidroksida (<code>OH⁻</code>) dalam pelarut air{' '}
+            <LabCitation id="brown-2018" />.
+          </p>
+        </div>
+
+        <div className="lab-intro-subcard">
+          <h3 className="intro-subcard-title">
+            <span>🧪</span> Fungsi Instrumen &amp; Reagen Lab
+          </h3>
+          <p className="intro-subcard-text">
+            Tabung reaksi berfungsi sebagai wadah pengamatan mikro reaksi visual secara transparan{' '}
+            <LabCitation id="brown-2018" />. Pipet tetes digunakan untuk mengalirkan reagen indikator dalam volume mikro (1–2 tetes)
+            agar tidak mengubah kapasitas penyangga larutan uji secara signifikan{' '}
+            <LabCitation id="skoog-2014" />.
+          </p>
+        </div>
+
+        <div className="lab-intro-subcard">
+          <h3 className="intro-subcard-title">
+            <span>🌿</span> Karakteristik Indikator Asam-Basa
+          </h3>
+          <p className="intro-subcard-text">
+            Kertas lakmus memanfaatkan zat warna azolitmin alami untuk deteksi kualitatif biner cepat{' '}
+            <LabCitation id="chang-2016" />. Indikator sintetik memiliki rentang perubahan warna spesifik{' '}
+            <LabCitation id="haynes-2016" />, sementara indikator alami memanfaatkan respon pigmen antosianin dan kurkumin{' '}
+            <LabCitation id="harborne-1998" />.
+          </p>
+        </div>
+      </div>
+
+      {/* Banner Keselamatan Kerja Laboratorium */}
+      <div className="lab-safety-alert-strip" role="note" aria-label="Informasi Keselamatan Kerja Laboratorium">
+        <span style={{ fontSize: '18px' }} aria-hidden="true">⚠️</span>
+        <div>
+          <strong>Informasi Keselamatan Laboratorium (Safety Protocol):</strong> Pada laboratorium fisik riil, larutan asam kuat
+          pekat seperti <code>HCl</code> dan basa kuat pekat seperti <code>NaOH</code> bersifat korosif dan dapat menyebabkan luka bakar kimiawi pada jaringan hidup{' '}
+          <LabCitation id="brown-2018" />. Penggunaan alat pelindung diri (jas laboratorium, kacamata pengaman/goggles, dan sarung tangan)
+          merupakan standar keselamatan yang mutlak dipatuhi sebelum menangani reagen kimia{' '}
+          <LabCitation id="openstax-2019" />.
+        </div>
       </div>
 
       <div className="lab-workbench-grid">
@@ -213,7 +311,7 @@ export function VirtualLab() {
               </select>
             </div>
 
-            {/* Quick Sample Info */}
+            {/* Quick Sample Info dengan Sitasi Spesifik Sifat Bahan Kimia */}
             <div className="sample-quick-info">
               <div className="sample-info-row">
                 <span className="info-key">Rumus Kimia:</span>
@@ -221,11 +319,23 @@ export function VirtualLab() {
               </div>
               <div className="sample-info-row">
                 <span className="info-key">Kategori:</span>
-                <span className="info-val" style={{ textTransform: 'capitalize' }}>{currentSample.category}</span>
+                <span className="info-val" style={{ textTransform: 'capitalize' }}>
+                  {currentSample.category}
+                </span>
               </div>
               <div className="sample-info-row">
-                <span className="info-key">Deskripsi:</span>
-                <span className="info-val">{currentSample.description}</span>
+                <span className="info-key">Karakteristik Kimia:</span>
+                <span className="info-val">
+                  {currentSample.description}{' '}
+                  <LabCitation id={getSampleCitationId(currentSample.id)} />
+                </span>
+              </div>
+              <div className="sample-info-row">
+                <span className="info-key">Spesi Ionik:</span>
+                <span className="info-val font-mono">
+                  {currentSample.ionPresent}{' '}
+                  <LabCitation id="brown-2018" />
+                </span>
               </div>
             </div>
           </div>
@@ -233,11 +343,23 @@ export function VirtualLab() {
           {/* Step 2: Formulate Hypothesis (Tahap 3 Inkuiri) */}
           <div className="control-group-card hypothesis-panel-card">
             <div className="control-card-header">
-              <span className="step-badge" style={{ background: '#f59e0b', color: '#ffffff' }}>Tahap 3 Inkuiri</span>
+              <span className="step-badge" style={{ background: '#f59e0b', color: '#ffffff' }}>
+                Tahap 3 Inkuiri
+              </span>
               <h3 className="control-title">Rumuskan Hipotesis Awal</h3>
             </div>
-            <p className="hypothesis-guide-text" style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: '1.5' }}>
+            <p
+              className="hypothesis-guide-text"
+              style={{
+                fontSize: '13px',
+                color: 'var(--text-secondary)',
+                marginBottom: '12px',
+                lineHeight: '1.5',
+              }}
+            >
               Sebelum menguji <strong>{currentSample.name}</strong>, apa dugaan ilmiahmu mengenai sifat keasaman larutan ini?
+              Perumusan hipotesis awal sebelum pengamatan merupakan langkah esensial metode ilmiah untuk melatih penalaran deduktif
+              tanpa dipengaruhi bias konfirmasi <LabCitation id="openstax-2019" />.
             </p>
 
             <div className="hypothesis-options-grid">
@@ -262,7 +384,14 @@ export function VirtualLab() {
               ))}
             </div>
 
-            <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                marginTop: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               {hypothesisNature ? (
                 <button
                   type="button"
@@ -308,7 +437,7 @@ export function VirtualLab() {
               </select>
             </div>
 
-            {/* Quick Indicator Info */}
+            {/* Quick Indicator Info dengan Sitasi Teori Indikator */}
             <div className="indicator-quick-info">
               <div className="sample-info-row">
                 <span className="info-key">Tipe Indikator:</span>
@@ -318,9 +447,23 @@ export function VirtualLab() {
               </div>
               <div className="sample-info-row">
                 <span className="info-key">Trayek Efektif:</span>
-                <span className="info-val font-mono">{currentIndicator.phRange}</span>
+                <span className="info-val font-mono">
+                  {currentIndicator.phRange}{' '}
+                  <LabCitation id="haynes-2016" />
+                </span>
               </div>
-              <p className="indicator-tips-note">{currentIndicator.tips}</p>
+              <div className="sample-info-row">
+                <span className="info-key">Teori Kesetimbangan:</span>
+                <span className="info-val" style={{ fontSize: '12px' }}>
+                  Indikator asam-basa merupakan asam organik lemah (<code>HIn</code>) yang berada dalam kesetimbangan disosiasi{' '}
+                  <code>HIn(aq) ⇌ H⁺(aq) + In⁻(aq)</code>{' '}
+                  <LabCitation id="skoog-2014" />.
+                </span>
+              </div>
+              <p className="indicator-tips-note">
+                {currentIndicator.tips}{' '}
+                <LabCitation id={getIndicatorCitationId(currentIndicator.id)} />
+              </p>
             </div>
 
             {/* Action Buttons */}
@@ -371,9 +514,16 @@ export function VirtualLab() {
                 className="btn btn-outline btn-lab-reset"
                 onClick={handleReset}
                 id="btn-reset-simulation"
+                title="Bilas tabung reaksi dengan akuades murni untuk menghilangkan residu analit (Chang & Goldsby, 2016)"
               >
                 Bilas Tabung (Reset)
               </button>
+            </div>
+            <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--text-muted)' }}>
+              <em>
+                * Pembilasan alat dengan akuades murni mutlak diperlukan untuk mencegah galat kontaminasi silang residu analit{' '}
+                <LabCitation id="chang-2016" showSourceBtn={false} />.
+              </em>
             </div>
           </div>
         </div>
@@ -513,6 +663,12 @@ export function VirtualLab() {
                 Indikator: <strong>{currentIndicator.name}</strong>
               </span>
             </div>
+            <div style={{ textAlign: 'center', padding: '6px 12px', fontSize: '11px', color: 'var(--text-muted)' }}>
+              <em>
+                * Simulasi visual respon warna dimodelkan secara komputasional berdasarkan konstanta kesetimbangan analitik{' '}
+                <LabCitation id="skoog-2014" showSourceBtn={false} />.
+              </em>
+            </div>
           </div>
 
           {/* Observation Result & Inquiry Scaffolding Card */}
@@ -552,15 +708,25 @@ export function VirtualLab() {
               </div>
 
               {savedSuccessMessage && (
-                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#166534', padding: '8px 12px', borderRadius: '6px', fontSize: '13px', marginBottom: '12px' }}>
+                <div
+                  style={{
+                    background: '#f0fdf4',
+                    border: '1px solid #bbf7d0',
+                    color: '#166534',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    marginBottom: '12px',
+                  }}
+                >
                   {savedSuccessMessage}
                 </div>
               )}
 
-              {/* Raw Data Grid */}
+              {/* Raw Data Grid dengan Sitasi Parameter Ilmiah */}
               <div className="obs-result-grid">
                 <div className="obs-item">
-                  <span className="obs-label">Warna Pengamatan:</span>
+                  <span className="obs-label">Warna Pengamatan Visual:</span>
                   <div className="obs-color-preview-row">
                     <span
                       className="color-swatch-box"
@@ -575,30 +741,54 @@ export function VirtualLab() {
                 <div className="obs-item">
                   <span className="obs-label">Estimasi Derajat Keasaman:</span>
                   <strong className="obs-value font-mono">
-                    pH ≈ {currentSample.approximatePh.toFixed(1)}
+                    pH ≈ {currentSample.approximatePh.toFixed(1)}{' '}
+                    <LabCitation id="iupac-2019" />
                   </strong>
                 </div>
 
                 <div className="obs-item">
-                  <span className="obs-label">Trayek Indikator:</span>
-                  <span className="obs-value font-mono">{currentIndicator.phRange}</span>
+                  <span className="obs-label">Trayek Transisi Indikator:</span>
+                  <span className="obs-value font-mono">
+                    {currentIndicator.phRange}{' '}
+                    <LabCitation id="haynes-2016" />
+                  </span>
                 </div>
 
                 <div className="obs-item">
                   <span className="obs-label">Spesi Ionik Dominan:</span>
-                  <span className="obs-value font-mono">{currentSample.ionPresent}</span>
+                  <span className="obs-value font-mono">
+                    {currentSample.ionPresent}{' '}
+                    <LabCitation id="brown-2018" />
+                  </span>
                 </div>
               </div>
 
+              {/* Penjelasan Mekanisme Reaksi Kimia dengan Sitasi */}
               <div className="obs-explanation-box">
-                <h4 className="explanation-title">Mekanisme Kimiawi Reaksi:</h4>
-                <p className="explanation-text">{colorResult.behaviorNote}</p>
+                <h4 className="explanation-title">Mekanisme Kimiawi Reaksi Perubahan Warna:</h4>
+                <p className="explanation-text">
+                  {colorResult.behaviorNote}{' '}
+                  <LabCitation id={getIndicatorCitationId(currentIndicator.id)} />
+                </p>
+                <div style={{ marginTop: '8px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                  Pergeseran warna terjadi sesuai Asas Le Chatelier: peningkatan konsentrasi ion hidronium (<code>H⁺</code>)
+                  mendorong kesetimbangan ke arah pembentukan molekul asam indikator (<code>HIn</code>), sedangkan peningkatan basa
+                  mendorong deprotonasi ke bentuk anion konjugasi (<code>In⁻</code>){' '}
+                  <LabCitation id="openstax-2019" />.
+                </div>
               </div>
 
               {/* Tahap 5: Menganalisis Data — Komparasi Hipotesis vs Data Eksperimen */}
               <div className="hypothesis-analysis-section" style={{ marginTop: '16px' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                  Tahap 5: Analisis Komparasi Hipotesis vs Data
+                <h4
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Tahap 5: Analisis Komparasi Hipotesis vs Data Eksperimen
                 </h4>
                 {hypothesisNature ? (
                   isHypothesisCorrect ? (
@@ -610,7 +800,8 @@ export function VirtualLab() {
                       <p className="eval-desc">
                         Dugaanmu bahwa <strong>{currentSample.name}</strong> bersifat <strong>{NATURE_LABELS[hypothesisNature]}</strong> terbukti benar.
                         Data eksperimen menunjukkan respon warna <strong>{colorResult.colorName}</strong> dengan estimasi pH <strong>{currentSample.approximatePh.toFixed(1)}</strong>,
-                        yang konsisten dengan dominasi spesi <code>{currentSample.ionPresent}</code>.
+                        yang konsisten dengan dominasi spesi <code>{currentSample.ionPresent}</code>{' '}
+                        <LabCitation id="openstax-2019" />.
                       </p>
                     </div>
                   ) : (
@@ -620,14 +811,27 @@ export function VirtualLab() {
                         <span>Refleksi Ilmiah: Hipotesis Berbeda dari Data</span>
                       </div>
                       <p className="eval-desc">
-                        Dugaan awalmu adalah <strong>{NATURE_LABELS[hypothesisNature]}</strong>, namun hasil uji eksperimen menunjukkan sifat <strong>{getNatureLabel(currentSample.approximatePh)}</strong> (pH ≈ {currentSample.approximatePh.toFixed(1)}).
-                        Hal ini lumrah terjadi dalam penelitian ilmiah. Faktor penentunya adalah kekuatan ionisasi: sampel ini melepaskan <code>{currentSample.ionPresent}</code>.
+                        Dugaan awalmu adalah <strong>{NATURE_LABELS[hypothesisNature]}</strong>, namun hasil uji eksperimen menunjukkan sifat{' '}
+                        <strong>{getNatureLabel(currentSample.approximatePh)}</strong> (pH ≈ {currentSample.approximatePh.toFixed(1)}).
+                        Dalam metode ilmiah, perbedaan antara hipotesis dan bukti empiris merupakan hal lumrah yang memicu peninjauan ulang konsep derajat ionisasi dan disosiasi spesi kimia{' '}
+                        <LabCitation id="openstax-2019" />: sampel ini melepaskan <code>{currentSample.ionPresent}</code>{' '}
+                        <LabCitation id="brown-2018" />.
                       </p>
                     </div>
                   )
                 ) : (
-                  <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', padding: '10px 14px', borderRadius: '6px', fontSize: '13px', color: '#64748b' }}>
-                    💡 <strong>Catatan Inkuiri:</strong> Kamu belum memilih hipotesis sebelum pengujian. Cobalah mengunci dugaan sifat larutan pada pengujian berikutnya untuk melatih intuisi penalaran sainsmu!
+                  <div
+                    style={{
+                      background: '#f8fafc',
+                      border: '1px dashed #cbd5e1',
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      color: '#64748b',
+                    }}
+                  >
+                    💡 <strong>Catatan Inkuiri:</strong> Kamu belum memilih hipotesis sebelum pengujian. Menetapkan hipotesis sebelum observasi merupakan prosedur standar untuk membangun penalaran berbasis bukti ilmiah{' '}
+                    <LabCitation id="openstax-2019" />.
                   </div>
                 )}
               </div>
@@ -637,11 +841,15 @@ export function VirtualLab() {
                 <label htmlFor="student-lab-conclusion" className="conclusion-label">
                   Tahap 6: Rumuskan Kesimpulan Ilmiahmu
                 </label>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                  Kesimpulan ilmiah harus merujuk pada perubahan warna indikator dan estimasi nilai pH untuk mengklasifikasikan kekuatan asam/basa sampel{' '}
+                  <LabCitation id="iupac-2019" showSourceBtn={false} />.
+                </div>
                 <textarea
                   id="student-lab-conclusion"
                   className="conclusion-textarea"
                   rows={2}
-                  placeholder="Contoh: Berdasarkan perubahan warna indikator dan nilai pH, larutan ini tergolong asam lemah karena derajat ionisasinya kecil..."
+                  placeholder="Contoh: Berdasarkan perubahan warna indikator dan nilai pH ≈ 2.8, larutan asam asetat tergolong asam lemah karena derajat ionisasinya kecil (Chang & Goldsby, 2016)..."
                   value={studentConclusion}
                   onChange={(e) => setStudentConclusion(e.target.value)}
                 />
@@ -665,14 +873,14 @@ export function VirtualLab() {
                 <strong>Alur Inkuiri Laboratorium Terbimbing:</strong>
                 <p>
                   1. Pilih sampel larutan pada panel kiri.<br />
-                  2. Rumuskan hipotesismu mengenai sifat larutan pada <strong>Tahap 3</strong>.<br />
+                  2. Rumuskan hipotesismu mengenai sifat larutan pada <strong>Tahap 3</strong> <LabCitation id="openstax-2019" showSourceBtn={false} />.<br />
                   3. Pilih indikator kimia dan klik tombol{' '}
                   <em>
                     "{currentIndicator.type === 'kertas'
                       ? 'Celupkan Kertas Uji'
                       : 'Teteskan Indikator'}"
                   </em>{' '}
-                  untuk mengumpulkan data pengamatan.
+                  untuk mengumpulkan data pengamatan <LabCitation id="skoog-2014" showSourceBtn={false} />.
                 </p>
               </div>
             </div>
@@ -687,7 +895,8 @@ export function VirtualLab() {
             <div>
               <h3 className="journal-title">Buku Jurnal Pengamatan Inkuiri Siswa</h3>
               <p className="journal-subtitle">
-                Rekam jejak penyelidikan ilmiah: sampel, hipotesis awal, data pengamatan, evaluasi kesesuaian, dan kesimpulanmu.
+                Rekam jejak penyelidikan ilmiah: sampel, hipotesis awal, data pengamatan, evaluasi kesesuaian, dan kesimpulanmu{' '}
+                <LabCitation id="openstax-2019" />.
               </p>
             </div>
             <button
@@ -705,10 +914,10 @@ export function VirtualLab() {
                 <tr>
                   <th scope="col">Waktu</th>
                   <th scope="col">Sampel Larutan</th>
-                  <th scope="col">Indikator & Hasil</th>
+                  <th scope="col">Indikator &amp; Hasil</th>
                   <th scope="col">Estimasi pH</th>
                   <th scope="col">Hipotesis Siswa</th>
-                  <th scope="col">Evaluasi & Sifat</th>
+                  <th scope="col">Evaluasi &amp; Sifat</th>
                   <th scope="col">Kesimpulan Siswa</th>
                 </tr>
               </thead>
@@ -762,6 +971,9 @@ export function VirtualLab() {
           </div>
         </div>
       )}
+
+      {/* Bagian 7: Daftar Pustaka Lengkap Virtual Lab (Format APA 7th Edition) */}
+      <LabBibliography />
     </section>
   )
 }
