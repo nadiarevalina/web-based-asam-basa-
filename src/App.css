@@ -981,7 +981,7 @@
 
 @media (max-width: 767px) {
   .app-sidebar {
-    width: 280px !important;
+    width: min(290px, 85vw) !important;
     transform: translateX(-100%);
     z-index: 1000;
     box-shadow: none;
@@ -4490,18 +4490,28 @@
 }
 
 /* Tablet & Mobile Breakpoints */
-@media (max-width: 1024px) {
+@media (min-width: 1440px) {
+  /* Desktop Besar: Skala nyaman dan terpusat */
+  .main-content {
+    max-width: 1360px;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Tablet Viewport (768px - 1023px) */
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 32px;
   }
 
   .topic-cards-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .theory-tabs-nav {
     grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
   .theory-cards-grid {
@@ -4518,21 +4528,19 @@
 
   .lab-workbench-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .calculator-layout-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .ph-detail-spotlight {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 32px;
-  background: #f8fafc;
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-}
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
 
   .footer-inner {
     grid-template-columns: 1fr;
@@ -4542,66 +4550,706 @@
   .neutralization-examples-grid {
     grid-template-columns: 1fr;
   }
+
+  .inquiry-steps-list {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
 }
 
-@media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
+@media (max-width: 767px) {
+  /* Mobile Viewports General (320px - 767px) */
+  
+  /* 1. Kontainer & Tata Letak Dasar */
+  .main-content {
+    padding: 0 16px;
   }
 
-  .mobile-hamburger-btn {
-    display: flex;
+  .content-section {
+    padding: 20px 0 32px;
+    scroll-margin-top: 72px;
   }
 
-  .mobile-nav-drawer {
-    display: block;
+  .section-header-left,
+  .section-header-center {
+    margin-bottom: 24px;
   }
 
-  .search-text-desktop,
-  .search-kbd {
-  font-size: 11px;
-  padding: 2px 6px;
-  background: #f1f5f9;
-  border: 1px solid var(--border-medium);
-  border-radius: 4px;
-  color: var(--text-secondary);
-}
+  .section-title {
+    font-size: clamp(20px, 5.5vw, 24px);
+    line-height: 1.25;
+  }
+
+  .section-description {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .section-tag-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .section-module-pill,
+  .section-topic-pill {
+    white-space: normal;
+    line-height: 1.3;
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* 2. Beranda & Hero Section */
+  .hero-section {
+    padding: 24px 0 32px;
+  }
+
+  .hero-badge-wrap {
+    margin-bottom: 16px;
+  }
+
+  .hero-pill-badge {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    white-space: normal;
+    line-height: 1.35;
+  }
 
   .hero-main-title {
-    font-size: 36px;
+    font-size: clamp(26px, 6.5vw, 34px);
+    line-height: 1.2;
+    margin-bottom: 16px;
+    word-break: break-word;
+  }
+
+  .hero-lead-text {
+    font-size: 14.5px;
+    line-height: 1.55;
+    margin-bottom: 24px;
+  }
+
+  .hero-button-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .hero-button-group .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+    font-size: 14px;
   }
 
   .hero-highlights {
+    display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
   }
 
   .highlight-divider {
     display: none;
   }
 
+  .highlight-item {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 120px;
+  }
+
+  .highlight-number {
+    font-size: 20px;
+  }
+
+  .highlight-text {
+    font-size: 11.5px;
+  }
+
+  .flask-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .flask-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .flask-switch-buttons {
+    width: 100%;
+    display: flex;
+    gap: 6px;
+  }
+
+  .switch-chip {
+    flex: 1;
+    text-align: center;
+    padding: 7px 8px;
+    font-size: 12.5px;
+    min-height: 38px;
+  }
+
+  .topic-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .hub-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .hub-card {
+    padding: 18px 16px;
+  }
+
+  /* 3. Materi Teori */
   .theory-tabs-nav {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .theory-tab-btn {
+    padding: 12px 14px;
+    min-height: 48px;
+    text-align: left;
+    justify-content: flex-start;
   }
 
   .everyday-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .kw-rules-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .properties-dual-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .chem-equation,
+  .chem-equation-small {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    word-break: break-word;
+    white-space: pre-wrap;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid var(--border-medium);
+  }
+
+  .chem-table {
+    min-width: 520px;
+  }
+
+  /* 4. Lab Virtual */
+  .lab-workbench-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .control-group-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .filter-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .filter-chip {
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .lab-dropdown {
+    min-height: 44px;
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .lab-action-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .btn-lab-test,
+  .btn-lab-reset {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+    font-size: 14px;
+  }
+
+  .bench-stage-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .obs-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .obs-result-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn-save-journal {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .journal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-clear-history {
+    width: 100%;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .journal-table {
+    min-width: 640px;
+  }
+
+  /* 5. Skala pH */
+  .ph-scale-interactive-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .ph-spectrum-bar-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+
+  .ph-spectrum-bar {
+    min-width: 480px;
+  }
+
+  .ph-scale-chips {
+    min-width: 480px;
+    gap: 3px;
+  }
+
+  .ph-chip-btn {
+    min-width: 28px;
+    height: 36px;
+    padding: 6px 0;
+    font-size: 12px;
+  }
+
+  .ph-detail-spotlight {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px 16px;
+  }
+
+  .spotlight-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .spotlight-category-group {
+    text-align: center;
+  }
+
+  .ion-conc-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* 6. Kalkulator pH */
+  .calculator-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .calc-form-card,
+  .calc-results-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .calc-type-switcher {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .calc-type-btn {
+    min-height: 48px;
+    width: 100%;
+    padding: 12px 14px;
+  }
+
+  .calc-num-input {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 10px 80px 10px 12px;
+  }
+
+  .btn-calc-submit {
+    width: 100%;
+    min-height: 48px;
+    font-size: 15px;
+    justify-content: center;
+  }
+
+  .preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .preset-chip {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* 7. Kuis dan Skor */
+  .quiz-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .quiz-header-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .quiz-nav-nums {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .quiz-num-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 13px;
+  }
+
+  .quiz-question-text {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .quiz-option-btn {
+    min-height: 48px;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .option-label-text {
+    font-size: 13.5px;
+  }
+
+  .quiz-footer-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .footer-left,
+  .footer-right {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-left .btn,
+  .footer-right .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+    font-size: 14px;
+  }
+
+  .quiz-summary-card {
+    padding: 22px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+  }
+
+  .score-num {
+    font-size: 36px;
+  }
+
+  .score-breakdown-cards {
+    width: 100%;
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .breakdown-card {
+    min-width: unset;
+    flex: 1 1 calc(50% - 10px);
+    padding: 12px 8px;
+  }
+
+  .breakdown-num {
+    font-size: 26px;
+  }
+
+  .cognitive-perf-item {
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .cognitive-progress-bar {
+    grid-column: 1 / -1;
+  }
+
+  .quiz-history-modal {
+    max-width: 95vw;
+  }
+
+  .history-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .history-table {
+    min-width: 500px;
+  }
+
+  /* 8. Refleksi */
+  .reflection-sheet-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
   }
 
   .sheet-identity-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .sheet-textarea {
     margin-left: 0;
+    font-size: 14px;
+    min-height: 90px;
   }
 
   .sheet-q-hint {
     margin-left: 0;
+  }
+
+  .sheet-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .sheet-actions-right {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .sheet-actions-row .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  /* 9. Guided Inquiry Banner */
+  .inquiry-stepper-container {
+    padding: 14px 12px;
+    border-radius: var(--radius-lg);
+  }
+
+  .stepper-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stepper-toggle-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .inquiry-steps-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .inquiry-step-node {
+    padding: 8px 6px;
+  }
+
+  .step-node-label {
+    font-size: 10.5px;
+  }
+
+  /* 10. Navigasi Bawah & Footer */
+  .page-bottom-nav-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 18px 16px;
+  }
+
+  .page-bottom-nav-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .bottom-nav-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .bottom-nav-next .bottom-nav-btn-text {
+    text-align: left;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .btn-back-to-top {
+    align-self: center;
+  }
+
+  /* 11. Search Modal */
+  .modal-backdrop {
+    padding: 16px 12px;
+    align-items: center;
+  }
+
+  .modal-card {
+    max-height: 90vh;
+  }
+
+  .modal-body {
+    max-height: calc(85vh - 120px);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Mobile Standar (375px - 430px) & Kecil (320px - 374px) Micro-Refinements */
+  .hero-main-title {
+    font-size: clamp(24px, 7vw, 28px);
+  }
+
+  .topic-card,
+  .hub-card,
+  .control-group-card,
+  .bench-stage-card,
+  .ph-scale-interactive-card,
+  .calc-form-card,
+  .calc-results-card,
+  .quiz-card,
+  .reflection-sheet-card {
+    padding: 16px 12px;
+  }
+
+  .quiz-num-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 12px;
+  }
+
+  .quiz-nav-nums {
+    gap: 4px;
+  }
+
+  .score-breakdown-cards {
+    flex-direction: column;
+  }
+
+  .breakdown-card {
+    width: 100%;
+  }
+
+  .calc-num-input {
+    padding-right: 70px;
+  }
+
+  .unit-badge {
+    right: 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 374px) {
+  /* Mobile Kecil Ekstrem (320px - 374px) */
+  .main-content {
+    padding: 0 10px;
+  }
+
+  .hero-main-title {
+    font-size: 22px;
+  }
+
+  .hero-highlights {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .highlight-item {
+    width: 100%;
+  }
+
+  .inquiry-steps-list {
+    grid-template-columns: 1fr;
+  }
+
+  .inquiry-step-node {
+    flex-direction: row;
+    text-align: left;
+    padding: 8px 10px;
+    gap: 10px;
+  }
+
+  .step-node-bubble {
+    flex-shrink: 0;
   }
 }
 
@@ -4970,16 +5618,16 @@
 
 @media (max-width: 768px) {
   .page-bottom-nav-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  background: #ffffff;
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  box-shadow: var(--shadow-sm);
-}
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 18px 16px;
+    box-shadow: var(--shadow-sm);
+  }
   .page-bottom-nav-actions {
     flex-direction: column;
   }
@@ -5556,6 +6204,25 @@
   }
   .scaffolding-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .inquiry-steps-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 374px) {
+  .inquiry-steps-list {
+    grid-template-columns: 1fr;
+  }
+  .inquiry-step-node {
+    flex-direction: row;
+    text-align: left;
+    padding: 8px 10px;
+    gap: 10px;
   }
 }
 
