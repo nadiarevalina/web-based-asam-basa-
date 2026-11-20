@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { PageId } from './types/navigation'
 import { normalizePageId, MAIN_NAV_ITEMS, PAGE_METADATA } from './types/navigation'
-import { Navbar } from './components/Navbar'
+import { Sidebar } from './components/Sidebar'
 import { HeroSection } from './components/HeroSection'
 import { TopicCards } from './components/TopicCards'
 import { TheorySection } from './components/TheorySection'
@@ -31,6 +31,28 @@ function getInitialPage(): PageId {
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>(getInitialPage)
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      const saved = window.localStorage.getItem('asambasa_sidebar_collapsed')
+      if (saved !== null) return saved === 'true'
+      return window.innerWidth < 1024
+    } catch {
+      return false
+    }
+  })
+
+  const toggleSidebarCollapse = useCallback(() => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev
+      try {
+        window.localStorage.setItem('asambasa_sidebar_collapsed', String(next))
+      } catch {
+        // ignore storage error
+      }
+      return next
+    })
+  }, [])
 
   // Navigasi ke halaman tertentu dan sinkronisasi ke URL hash
   const navigateToPage = useCallback((page: PageId) => {
@@ -72,16 +94,23 @@ export default function App() {
   }, [])
 
   return (
-    <div className="app-container">
-      {/* Sticky Header Navbar — 7 Menu Utama */}
-      <Navbar
-        onOpenSearch={() => setIsSearchOpen(true)}
+    <div
+      className={`app-layout ${
+        isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'
+      }`}
+    >
+      {/* Sidebar Navigasi Responsif di Sisi Kiri */}
+      <Sidebar
         activePage={activePage}
         onNavigatePage={navigateToPage}
+        onOpenSearch={() => setIsSearchOpen(true)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
       />
 
-      {/* Main Learning Views — 7 Bagian Pembelajaran */}
-      <main id="main-content" className="main-content" role="main">
+      {/* Area Konten Utama & Footer di Sisi Kanan Sidebar */}
+      <div className="app-main-content-wrapper">
+        <main id="main-content" className="main-content" role="main">
         {/* 1. Beranda */}
         <div
           id="page-beranda"
@@ -264,15 +293,16 @@ export default function App() {
         </div>
       </main>
 
-      {/* Global Search Modal */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        onNavigateToPage={navigateToPage}
-      />
-
       {/* Footer Navigasi 7 Bagian Pembelajaran */}
       <Footer onNavigateToPage={navigateToPage} />
     </div>
+
+    {/* Global Search Modal */}
+    <SearchModal
+      isOpen={isSearchOpen}
+      onClose={() => setIsSearchOpen(false)}
+      onNavigateToPage={navigateToPage}
+    />
+  </div>
   )
 }
