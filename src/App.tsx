@@ -112,8 +112,8 @@ export default function App() {
         onToggleCollapse={toggleSidebarCollapse}
       />
 
-      {/* Area Konten Utama & Footer di Sisi Kanan Sidebar */}
-      <div className="app-main-content-wrapper">
+      {/* Area Konten Utama & Footer di Sisi Kanan Sidebar (Layer 10 di atas background) */}
+      <div className="app-main-content-wrapper main-content-layer">
         <main id="main-content" className="main-content" role="main">
         {/* 1. Beranda */}
         <div

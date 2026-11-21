@@ -16,6 +16,8 @@
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
+  z-index: 10;
 }
 
 .content-section {
@@ -219,7 +221,7 @@
   min-height: 100vh;
   width: 100%;
   position: relative;
-  background-color: var(--bg-body);
+  background-color: transparent;
 }
 
 .app-main-content-wrapper {
@@ -228,6 +230,9 @@
   flex-direction: column;
   min-height: 100vh;
   min-width: 0;
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
   transition: margin-left var(--transition-normal);
 }
 
