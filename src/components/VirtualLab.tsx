@@ -304,99 +304,88 @@ export function VirtualLab() {
                 <LabCitation id="openstax-2019" />:
               </p>
 
-              <div className="inquiry-steps-list">
+              {/* Grid 2x3 Rapi untuk 6 Tahapan Inkuiri */}
+              <div className="inquiry-steps-grid">
                 {/* Step 1 */}
-                <div className="inquiry-step-item completed">
-                  <div className="inquiry-step-num">1</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Orientasi &amp; Rumusan Masalah</span>
-                      <span className="inquiry-step-status-pill status-done">✓ Selesai</span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Mengkaji rumusan masalah eksperimen dan pertanyaan pemantik di atas.
-                    </p>
+                <div className="inquiry-step-card completed">
+                  <div className="step-card-top">
+                    <span className="step-card-num">1</span>
+                    <span className="step-card-status status-done">✓ Selesai</span>
                   </div>
+                  <h4 className="step-card-title">Orientasi &amp; Rumusan Masalah</h4>
+                  <p className="step-card-desc">
+                    Mengkaji rumusan masalah eksperimen dan pertanyaan pemantik di Baris 1.
+                  </p>
                 </div>
 
                 {/* Step 2 */}
-                <div className={`inquiry-step-item ${selectedSampleId ? 'active' : ''}`}>
-                  <div className="inquiry-step-num">2</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Eksplorasi Sifat Reagen Analit</span>
-                      <span className="inquiry-step-status-pill status-active">Aktif</span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Pilih sampel larutan pada panel kanan dan pelajari spesi ionik serta karakteristik kimianya.
-                    </p>
+                <div className={`inquiry-step-card ${selectedSampleId ? 'active' : ''}`}>
+                  <div className="step-card-top">
+                    <span className="step-card-num">2</span>
+                    <span className="step-card-status status-active">Aktif</span>
                   </div>
+                  <h4 className="step-card-title">Eksplorasi Sifat Reagen</h4>
+                  <p className="step-card-desc">
+                    Memilih sampel analit pada panel kanan dan pelajari spesi kimianya.
+                  </p>
                 </div>
 
                 {/* Step 3 */}
-                <div className={`inquiry-step-item ${hypothesisNature ? 'completed' : 'active'}`}>
-                  <div className="inquiry-step-num">3</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Perumusan Hipotesis Awal</span>
-                      <span className={`inquiry-step-status-pill ${hypothesisNature ? 'status-done' : 'status-pending'}`}>
-                        {hypothesisNature ? (isHypothesisLocked ? '✓ Terkunci' : 'Dugaan Dipilih') : 'Menunggu Pilihan'}
-                      </span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Tentukan dugaan sifat keasaman sampel sebelum pengujian untuk melatih penalaran deduktif{' '}
-                      <LabCitation id="openstax-2019" showSourceBtn={false} />.
-                    </p>
+                <div className={`inquiry-step-card ${hypothesisNature ? 'completed' : 'active'}`}>
+                  <div className="step-card-top">
+                    <span className="step-card-num">3</span>
+                    <span className={`step-card-status ${hypothesisNature ? 'status-done' : 'status-pending'}`}>
+                      {hypothesisNature ? (isHypothesisLocked ? '✓ Terkunci' : 'Dipilih') : 'Menunggu'}
+                    </span>
                   </div>
+                  <h4 className="step-card-title">Perumusan Hipotesis Awal</h4>
+                  <p className="step-card-desc">
+                    Memprediksi sifat keasaman sebelum uji untuk melatih penalaran deduktif{' '}
+                    <LabCitation id="openstax-2019" showSourceBtn={false} />.
+                  </p>
                 </div>
 
                 {/* Step 4 */}
-                <div className={`inquiry-step-item ${isTested ? 'completed' : ''}`}>
-                  <div className="inquiry-step-num">4</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Eksperimen Kolorimetri &amp; Pengamatan</span>
-                      <span className={`inquiry-step-status-pill ${isTested ? 'status-done' : 'status-pending'}`}>
-                        {isTested ? '✓ Data Terkumpul' : 'Belum Diuji'}
-                      </span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Teteskan indikator atau celupkan kertas pada tabung reaksi di baris bawah untuk mengamati perubahan warna.
-                    </p>
+                <div className={`inquiry-step-card ${isTested ? 'completed' : ''}`}>
+                  <div className="step-card-top">
+                    <span className="step-card-num">4</span>
+                    <span className={`step-card-status ${isTested ? 'status-done' : 'status-pending'}`}>
+                      {isTested ? '✓ Data Ada' : 'Belum Uji'}
+                    </span>
                   </div>
+                  <h4 className="step-card-title">Eksperimen Kolorimetri</h4>
+                  <p className="step-card-desc">
+                    Menguji respon warna dengan indikator pada tabung reaksi di Baris 3.
+                  </p>
                 </div>
 
                 {/* Step 5 */}
-                <div className={`inquiry-step-item ${isTested ? 'completed' : ''}`}>
-                  <div className="inquiry-step-num">5</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Analisis Komparasi Hipotesis vs Data</span>
-                      <span className={`inquiry-step-status-pill ${isTested ? 'status-done' : 'status-pending'}`}>
-                        {isTested ? '✓ Selesai Dianalisis' : 'Menunggu Uji'}
-                      </span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Bandingkan dugaan awalmu dengan bukti empiris respon indikator dan asas Le Chatelier{' '}
-                      <LabCitation id="openstax-2019" showSourceBtn={false} />.
-                    </p>
+                <div className={`inquiry-step-card ${isTested ? 'completed' : ''}`}>
+                  <div className="step-card-top">
+                    <span className="step-card-num">5</span>
+                    <span className={`step-card-status ${isTested ? 'status-done' : 'status-pending'}`}>
+                      {isTested ? '✓ Dianalisis' : 'Menunggu'}
+                    </span>
                   </div>
+                  <h4 className="step-card-title">Analisis Komparasi Data</h4>
+                  <p className="step-card-desc">
+                    Bandingkan dugaan awal vs bukti empiris Asas Le Chatelier{' '}
+                    <LabCitation id="openstax-2019" showSourceBtn={false} />.
+                  </p>
                 </div>
 
                 {/* Step 6 */}
-                <div className={`inquiry-step-item ${studentConclusion.trim() ? 'completed' : ''}`}>
-                  <div className="inquiry-step-num">6</div>
-                  <div className="inquiry-step-body">
-                    <div className="inquiry-step-header">
-                      <span className="inquiry-step-title">Penarikan Kesimpulan Ilmiah</span>
-                      <span className={`inquiry-step-status-pill ${studentConclusion.trim() ? 'status-done' : 'status-pending'}`}>
-                        {studentConclusion.trim() ? '✓ Disimpulkan' : 'Belum Ditulis'}
-                      </span>
-                    </div>
-                    <p className="inquiry-step-desc">
-                      Tuliskan kesimpulan ilmiahmu dan simpan catatan penyelidikan ke Buku Jurnal Pengamatan.
-                    </p>
+                <div className={`inquiry-step-card ${studentConclusion.trim() ? 'completed' : ''}`}>
+                  <div className="step-card-top">
+                    <span className="step-card-num">6</span>
+                    <span className={`step-card-status ${studentConclusion.trim() ? 'status-done' : 'status-pending'}`}>
+                      {studentConclusion.trim() ? '✓ Disimpulkan' : 'Belum Diisi'}
+                    </span>
                   </div>
+                  <h4 className="step-card-title">Penarikan Kesimpulan</h4>
+                  <p className="step-card-desc">
+                    Menyusun kesimpulan ilmiah dan menyimpan catatan ke jurnal pengamatan.
+                  </p>
                 </div>
               </div>
             </div>
@@ -702,221 +691,6 @@ export function VirtualLab() {
                 </em>
               </div>
             </div>
-
-            {/* Observation Result & Inquiry Scaffolding Card */}
-            {isTested ? (
-              <div className="observation-result-card animate-fade-in" id="observation-result">
-                <div className="obs-card-header">
-                  <div className="obs-badge-group">
-                    <span className="obs-status-pill">Tahap 4: Data Pengamatan</span>
-                    <span
-                      className={`obs-nature-pill nature-${currentSample.nature}`}
-                    >
-                      {getNatureLabel(currentSample.approximatePh)}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-save-journal"
-                    onClick={handleSaveToJournal}
-                    title="Simpan hasil uji ke jurnal catatan belajar"
-                  >
-                    <svg
-                      className="btn-icon"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                      <polyline points="17 21 17 13 7 13 7 21" />
-                      <polyline points="7 3 7 8 15 8" />
-                    </svg>
-                    <span>Simpan ke Jurnal</span>
-                  </button>
-                </div>
-
-                {savedSuccessMessage && (
-                  <div
-                    style={{
-                      background: '#f0fdf4',
-                      border: '1px solid #bbf7d0',
-                      color: '#166534',
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      fontSize: '13px',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    {savedSuccessMessage}
-                  </div>
-                )}
-
-                {/* Raw Data Grid dengan Sitasi Parameter Ilmiah */}
-                <div className="obs-result-grid">
-                  <div className="obs-item">
-                    <span className="obs-label">Warna Pengamatan Visual:</span>
-                    <div className="obs-color-preview-row">
-                      <span
-                        className="color-swatch-box"
-                        style={{ backgroundColor: colorResult.colorHex }}
-                      />
-                      <strong className="obs-value color-name">
-                        {colorResult.colorName}
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div className="obs-item">
-                    <span className="obs-label">Estimasi Derajat Keasaman:</span>
-                    <strong className="obs-value font-mono">
-                      pH ≈ {currentSample.approximatePh.toFixed(1)}{' '}
-                      <LabCitation id="iupac-2019" />
-                    </strong>
-                  </div>
-
-                  <div className="obs-item">
-                    <span className="obs-label">Trayek Transisi Indikator:</span>
-                    <span className="obs-value font-mono">
-                      {currentIndicator.phRange}{' '}
-                      <LabCitation id="haynes-2016" />
-                    </span>
-                  </div>
-
-                  <div className="obs-item">
-                    <span className="obs-label">Spesi Ionik Dominan:</span>
-                    <span className="obs-value font-mono">
-                      {currentSample.ionPresent}{' '}
-                      <LabCitation id="brown-2018" />
-                    </span>
-                  </div>
-                </div>
-
-                {/* Penjelasan Mekanisme Reaksi Kimia dengan Sitasi */}
-                <div className="obs-explanation-box">
-                  <h4 className="explanation-title">Mekanisme Kimiawi Reaksi Perubahan Warna:</h4>
-                  <p className="explanation-text">
-                    {colorResult.behaviorNote}{' '}
-                    <LabCitation id={getIndicatorCitationId(currentIndicator.id)} />
-                  </p>
-                  <div style={{ marginTop: '8px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                    Pergeseran warna terjadi sesuai Asas Le Chatelier: peningkatan konsentrasi ion hidronium (<code>H⁺</code>)
-                    mendorong kesetimbangan ke arah pembentukan molekul asam indikator (<code>HIn</code>), sedangkan peningkatan basa
-                    mendorong deprotonasi ke bentuk anion konjugasi (<code>In⁻</code>){' '}
-                    <LabCitation id="openstax-2019" />.
-                  </div>
-                </div>
-
-                {/* Tahap 5: Menganalisis Data — Komparasi Hipotesis vs Data Eksperimen */}
-                <div className="hypothesis-analysis-section" style={{ marginTop: '16px' }}>
-                  <h4
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Tahap 5: Analisis Komparasi Hipotesis vs Data Eksperimen
-                  </h4>
-                  {hypothesisNature ? (
-                    isHypothesisCorrect ? (
-                      <div className="hypothesis-eval-card eval-success">
-                        <div className="eval-header">
-                          <span>✅</span>
-                          <span>Hipotesis Terbukti Sesuai!</span>
-                        </div>
-                        <p className="eval-desc">
-                          Dugaanmu bahwa <strong>{currentSample.name}</strong> bersifat <strong>{NATURE_LABELS[hypothesisNature]}</strong> terbukti benar.
-                          Data eksperimen menunjukkan respon warna <strong>{colorResult.colorName}</strong> dengan estimasi pH <strong>{currentSample.approximatePh.toFixed(1)}</strong>,
-                          yang konsisten dengan dominasi spesi <code>{currentSample.ionPresent}</code>{' '}
-                          <LabCitation id="openstax-2019" />.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="hypothesis-eval-card eval-mismatch">
-                        <div className="eval-header">
-                          <span>🔍</span>
-                          <span>Refleksi Ilmiah: Hipotesis Berbeda dari Data</span>
-                        </div>
-                        <p className="eval-desc">
-                          Dugaan awalmu adalah <strong>{NATURE_LABELS[hypothesisNature]}</strong>, namun hasil uji eksperimen menunjukkan sifat{' '}
-                          <strong>{getNatureLabel(currentSample.approximatePh)}</strong> (pH ≈ {currentSample.approximatePh.toFixed(1)}).
-                          Dalam metode ilmiah, perbedaan antara hipotesis dan bukti empiris merupakan hal lumrah yang memicu peninjauan ulang konsep derajat ionisasi dan disosiasi spesi kimia{' '}
-                          <LabCitation id="openstax-2019" />: sampel ini melepaskan <code>{currentSample.ionPresent}</code>{' '}
-                          <LabCitation id="brown-2018" />.
-                        </p>
-                      </div>
-                    )
-                  ) : (
-                    <div
-                      style={{
-                        background: '#f8fafc',
-                        border: '1px dashed #cbd5e1',
-                        padding: '10px 14px',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        color: '#64748b',
-                      }}
-                    >
-                      💡 <strong>Catatan Inkuiri:</strong> Kamu belum memilih hipotesis sebelum pengujian. Menetapkan hipotesis sebelum observasi merupakan prosedur standar untuk membangun penalaran berbasis bukti ilmiah{' '}
-                      <LabCitation id="openstax-2019" />.
-                    </div>
-                  )}
-                </div>
-
-                {/* Tahap 6: Menarik Kesimpulan Siswa */}
-                <div className="conclusion-input-box">
-                  <label htmlFor="student-lab-conclusion" className="conclusion-label">
-                    Tahap 6: Rumuskan Kesimpulan Ilmiahmu
-                  </label>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                    Kesimpulan ilmiah harus merujuk pada perubahan warna indikator dan estimasi nilai pH untuk mengklasifikasikan kekuatan asam/basa sampel{' '}
-                    <LabCitation id="iupac-2019" showSourceBtn={false} />.
-                  </div>
-                  <textarea
-                    id="student-lab-conclusion"
-                    className="conclusion-textarea"
-                    rows={2}
-                    placeholder="Contoh: Berdasarkan perubahan warna indikator dan nilai pH ≈ 2.8, larutan asam asetat tergolong asam lemah karena derajat ionisasinya kecil (Chang & Goldsby, 2016)..."
-                    value={studentConclusion}
-                    onChange={(e) => setStudentConclusion(e.target.value)}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="lab-prompt-box">
-                <svg
-                  className="prompt-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="16" x2="12" y2="12" />
-                  <line x1="12" y1="8" x2="12.01" y2="8" />
-                </svg>
-                <div className="prompt-text">
-                  <strong>Alur Inkuiri Laboratorium Terbimbing:</strong>
-                  <p>
-                    1. Pilih sampel larutan pada panel kanan di baris atas.<br />
-                    2. Rumuskan hipotesismu mengenai sifat larutan pada <strong>Tahap 3</strong> <LabCitation id="openstax-2019" showSourceBtn={false} />.<br />
-                    3. Pilih indikator kimia pada panel kanan dan klik tombol{' '}
-                    <em>
-                      "{currentIndicator.type === 'kertas'
-                        ? 'Celupkan Kertas Uji'
-                        : 'Teteskan Indikator'}"
-                    </em>{' '}
-                    untuk mengamati respon reaksi perubahan warna <LabCitation id="skoog-2014" showSourceBtn={false} />.
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* KANAN: Uji dengan Indikator */}
@@ -1035,6 +809,200 @@ export function VirtualLab() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* =========================================================================
+            BARIS 4 — PENGAMATAN DAN TAHAPAN EKSPERIMEN SELANJUTNYA
+            ========================================================================= */}
+        <div className="virtual-lab-row-observation">
+          {isTested ? (
+            <div className="observation-result-card animate-fade-in" id="observation-result">
+              <div className="obs-card-header">
+                <div className="obs-badge-group">
+                  <span className="obs-status-pill">Tahap 4 Inkuiri: Data Hasil Pengamatan</span>
+                  <span
+                    className={`obs-nature-pill nature-${currentSample.nature}`}
+                  >
+                    {getNatureLabel(currentSample.approximatePh)}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="btn-save-journal"
+                  onClick={handleSaveToJournal}
+                  title="Simpan hasil uji ke jurnal catatan belajar"
+                >
+                  <svg
+                    className="btn-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  <span>Simpan ke Jurnal</span>
+                </button>
+              </div>
+
+              {savedSuccessMessage && (
+                <div className="lab-success-alert" role="status">
+                  {savedSuccessMessage}
+                </div>
+              )}
+
+              {/* Raw Data Grid 4 Kolom dengan Sitasi Parameter Ilmiah */}
+              <div className="obs-result-grid-4col">
+                <div className="obs-item-box">
+                  <span className="obs-label">Warna Pengamatan Visual:</span>
+                  <div className="obs-color-preview-row">
+                    <span
+                      className="color-swatch-box"
+                      style={{ backgroundColor: colorResult.colorHex }}
+                    />
+                    <strong className="obs-value color-name">
+                      {colorResult.colorName}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="obs-item-box">
+                  <span className="obs-label">Estimasi Derajat Keasaman:</span>
+                  <strong className="obs-value font-mono">
+                    pH ≈ {currentSample.approximatePh.toFixed(1)}{' '}
+                    <LabCitation id="iupac-2019" />
+                  </strong>
+                </div>
+
+                <div className="obs-item-box">
+                  <span className="obs-label">Trayek Transisi Indikator:</span>
+                  <span className="obs-value font-mono">
+                    {currentIndicator.phRange}{' '}
+                    <LabCitation id="haynes-2016" />
+                  </span>
+                </div>
+
+                <div className="obs-item-box">
+                  <span className="obs-label">Spesi Ionik Dominan:</span>
+                  <span className="obs-value font-mono">
+                    {currentSample.ionPresent}{' '}
+                    <LabCitation id="brown-2018" />
+                  </span>
+                </div>
+              </div>
+
+              {/* Penjelasan Mekanisme Reaksi Kimia dengan Sitasi */}
+              <div className="obs-explanation-box">
+                <h4 className="explanation-title">Mekanisme Kimiawi Reaksi Perubahan Warna:</h4>
+                <p className="explanation-text">
+                  {colorResult.behaviorNote}{' '}
+                  <LabCitation id={getIndicatorCitationId(currentIndicator.id)} />
+                </p>
+                <div style={{ marginTop: '8px', fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                  Pergeseran warna terjadi sesuai Asas Le Chatelier: peningkatan konsentrasi ion hidronium (<code>H⁺</code>)
+                  mendorong kesetimbangan ke arah pembentukan molekul asam indikator (<code>HIn</code>), sedangkan peningkatan basa
+                  mendorong deprotonasi ke bentuk anion konjugasi (<code>In⁻</code>){' '}
+                  <LabCitation id="openstax-2019" />.
+                </div>
+              </div>
+
+              {/* Tahap 5: Menganalisis Data — Komparasi Hipotesis vs Data Eksperimen */}
+              <div className="hypothesis-analysis-section" style={{ marginTop: '16px' }}>
+                <h4
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Tahap 5 Inkuiri: Analisis Komparasi Hipotesis vs Data Eksperimen
+                </h4>
+                {hypothesisNature ? (
+                  isHypothesisCorrect ? (
+                    <div className="hypothesis-eval-card eval-success">
+                      <div className="eval-header">
+                        <span>✅</span>
+                        <span>Hipotesis Terbukti Sesuai!</span>
+                      </div>
+                      <p className="eval-desc">
+                        Dugaanmu bahwa <strong>{currentSample.name}</strong> bersifat <strong>{NATURE_LABELS[hypothesisNature]}</strong> terbukti benar.
+                        Data eksperimen menunjukkan respon warna <strong>{colorResult.colorName}</strong> dengan estimasi pH <strong>{currentSample.approximatePh.toFixed(1)}</strong>,
+                        yang konsisten dengan dominasi spesi <code>{currentSample.ionPresent}</code>{' '}
+                        <LabCitation id="openstax-2019" />.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="hypothesis-eval-card eval-mismatch">
+                      <div className="eval-header">
+                        <span>🔍</span>
+                        <span>Refleksi Ilmiah: Hipotesis Berbeda dari Data</span>
+                      </div>
+                      <p className="eval-desc">
+                        Dugaan awalmu adalah <strong>{NATURE_LABELS[hypothesisNature]}</strong>, namun hasil uji eksperimen menunjukkan sifat{' '}
+                        <strong>{getNatureLabel(currentSample.approximatePh)}</strong> (pH ≈ {currentSample.approximatePh.toFixed(1)}).
+                        Dalam metode ilmiah, perbedaan antara hipotesis dan bukti empiris merupakan hal lumrah yang memicu peninjauan ulang konsep derajat ionisasi dan disosiasi spesi kimia{' '}
+                        <LabCitation id="openstax-2019" />: sampel ini melepaskan <code>{currentSample.ionPresent}</code>{' '}
+                        <LabCitation id="brown-2018" />.
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  <div
+                    style={{
+                      background: '#f8fafc',
+                      border: '1px dashed #cbd5e1',
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      color: '#64748b',
+                    }}
+                  >
+                    💡 <strong>Catatan Inkuiri:</strong> Kamu belum memilih hipotesis sebelum pengujian. Menetapkan hipotesis sebelum observasi merupakan prosedur standar untuk membangun penalaran berbasis bukti ilmiah{' '}
+                    <LabCitation id="openstax-2019" />.
+                  </div>
+                )}
+              </div>
+
+              {/* Tahap 6: Menarik Kesimpulan Siswa */}
+              <div className="conclusion-input-box">
+                <label htmlFor="student-lab-conclusion" className="conclusion-label">
+                  Tahap 6 Inkuiri: Rumuskan Kesimpulan Ilmiahmu
+                </label>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                  Kesimpulan ilmiah harus merujuk pada perubahan warna indikator dan estimasi nilai pH untuk mengklasifikasikan kekuatan asam/basa sampel{' '}
+                  <LabCitation id="iupac-2019" showSourceBtn={false} />.
+                </div>
+                <textarea
+                  id="student-lab-conclusion"
+                  className="conclusion-textarea"
+                  rows={2}
+                  placeholder="Contoh: Berdasarkan perubahan warna indikator dan nilai pH ≈ 2.8, larutan asam asetat tergolong asam lemah karena derajat ionisasinya kecil (Chang & Goldsby, 2016)..."
+                  value={studentConclusion}
+                  onChange={(e) => setStudentConclusion(e.target.value)}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="observation-waiting-card">
+              <div className="waiting-card-icon" aria-hidden="true">🧪</div>
+              <div className="waiting-card-content">
+                <h4 className="waiting-card-title">Tahap 4, 5, &amp; 6 Inkuiri: Pengamatan dan Tahapan Eksperimen Selanjutnya</h4>
+                <p className="waiting-card-text">
+                  Lakukan pengujian pada <strong>Baris 3</strong> di atas (pilih indikator pada panel kanan, lalu klik tombol{' '}
+                  <em>"{currentIndicator.type === 'kertas' ? 'Celupkan Kertas Uji' : 'Teteskan Indikator'}"</em>).
+                  Setelah pengujian dijalankan, lembar data hasil pengamatan kolorimetri, mekanisme kesetimbangan ionik Asas Le Chatelier,
+                  evaluasi hipotesis, dan form perumusan kesimpulan ilmiah akan ditampilkan secara otomatis di sini{' '}
+                  <LabCitation id="skoog-2014" showSourceBtn={false} />.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
