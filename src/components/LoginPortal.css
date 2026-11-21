@@ -62,8 +62,8 @@
 
 /* User Status Card */
 .user-status-card {
-  background: #ffffff;
-  border: 1px solid var(--border-medium);
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-lg);
   padding: 24px;
   margin-bottom: 30px;
@@ -233,8 +233,8 @@
 .auth-form-card {
   max-width: 580px;
   margin: 0 auto 36px;
-  background: #ffffff;
-  border: 1px solid var(--border-medium);
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-lg);
   padding: 28px;
   box-shadow: var(--shadow-md);
@@ -423,8 +423,8 @@
 
 /* Portal Card */
 .portal-card {
-  background: #ffffff;
-  border: 1px solid var(--border-medium);
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-sm);
@@ -693,8 +693,8 @@
 }
 
 .result-detail-card {
-  background: #ffffff;
-  border: 1px solid var(--border-medium);
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-md);
   padding: 20px;
   display: flex;
@@ -851,7 +851,7 @@
 }
 
 .metric-box {
-  background: #ffffff;
+  background: var(--surface-neutral-card, linear-gradient(145deg, #FAF8F5 0%, #F5F7FB 100%));
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   padding: 18px;

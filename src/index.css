@@ -10,22 +10,54 @@
 
   /* ── Color Palette: Warm Acid Yellow-Orange & Base Baby Blue ── */
   --bg-body: #F4F8FD;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f8fafc;
-  --bg-surface-hover: #f1f5f9;
-  --bg-card: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-glass: rgba(255, 255, 255, 0.94);
+  --bg-surface: #FBFBFC;
+  --bg-surface-elevated: #F4F8FC;
+  --bg-surface-hover: #EBF4FC;
+  --bg-card: #FDFBF8;
+  --bg-secondary: #F4F8FC;
+  --bg-glass: rgba(253, 251, 247, 0.94);
 
-  --border-subtle: rgba(15, 23, 42, 0.06);
-  --border-medium: rgba(15, 23, 42, 0.12);
-  --border-strong: rgba(15, 23, 42, 0.18);
-  --border-card: rgba(15, 23, 42, 0.08);
+  /* Thematic Surface Tints (Asam, Basa, Perpaduan, Netral) */
+  /* 1. Acid Surfaces (Warm Yellow / Soft Orange / Golden Tint) */
+  --surface-acid-subtle: #FFFDF7;
+  --surface-acid-light: #FFFBEB;
+  --surface-acid-medium: #FEF3C7;
+  --surface-acid-border: #FDE68A;
+  --surface-acid-border-strong: #F59E0B;
+  --surface-acid-card: linear-gradient(145deg, #FFFDF8 0%, #FEF8E6 100%);
+  --surface-acid-glow: rgba(245, 158, 11, 0.12);
 
-  --text-primary: #0f172a;
+  /* 2. Base Surfaces (Baby Blue / Sky Blue Tint) */
+  --surface-base-subtle: #F8FAFD;
+  --surface-base-light: #F0F9FF;
+  --surface-base-medium: #E0F2FE;
+  --surface-base-border: #BAE6FD;
+  --surface-base-border-strong: #0284C7;
+  --surface-base-card: linear-gradient(145deg, #F8FAFD 0%, #EBF5FD 100%);
+  --surface-base-glow: rgba(2, 132, 199, 0.12);
+
+  /* 3. Perpaduan / Blend Surfaces (Warm Yellow melting into Baby Blue) */
+  --surface-blend-card: linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%);
+  --surface-blend-subtle: linear-gradient(135deg, #FFFDF9 0%, #F5F9FD 100%);
+  --surface-blend-border: #CBD5E1;
+  --surface-blend-border-subtle: rgba(186, 230, 253, 0.55);
+
+  /* 4. Neutral / General Surfaces (Warm White / Subtle Light Tint) */
+  --surface-neutral-card: linear-gradient(145deg, #FAF8F5 0%, #F5F7FB 100%);
+  --surface-neutral-light: #FAF8F5;
+  --surface-neutral-border: #E2E8F0;
+
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-medium: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.22);
+  --border-card: rgba(15, 23, 42, 0.09);
+
+  /* Typography: Deep Navy for Crisp Readability */
+  --text-primary: #0F172A;
+  --text-heading: #0B192C;
   --text-secondary: #334155;
-  --text-muted: #64748b;
-  --text-inverse: #ffffff;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
 
   /* Primary Blue Brand Identity */
   --primary-blue: #0284c7;
@@ -39,20 +71,38 @@
   --acid-soft-orange: #FFB454;
   --acid-tangerine: #FFA94D;
   --acid-amber: #d97706;
-  --acid-glow: rgba(255, 180, 84, 0.20);
+  --acid-glow: rgba(255, 180, 84, 0.22);
 
   --base-baby-blue: #A2D2FF;
   --base-sky-blue: #BCE0FF;
   --base-pale-blue: #DCEFFF;
   --base-ice-blue: #EAF6FF;
   --base-blue: #0284c7;
-  --base-glow: rgba(162, 210, 255, 0.24);
+  --base-glow: rgba(162, 210, 255, 0.26);
 
   --neutral-green: #059669;
-  --neutral-glow: rgba(5, 150, 105, 0.12);
+  --neutral-glow: rgba(5, 150, 105, 0.14);
 
   --accent-cyan: #0284c7;
   --accent-amber: #d97706;
+
+  /* Button Tokens */
+  --btn-acid-bg: linear-gradient(135deg, #FFB454 0%, #F59E0B 100%);
+  --btn-acid-hover: linear-gradient(135deg, #FFA94D 0%, #D97706 100%);
+  --btn-acid-text: #0F172A;
+  --btn-acid-border: #F59E0B;
+  --btn-acid-shadow: 0 4px 14px rgba(245, 158, 11, 0.32);
+
+  --btn-base-bg: linear-gradient(135deg, #A2D2FF 0%, #38BDF8 100%);
+  --btn-base-hover: linear-gradient(135deg, #7DD3FC 0%, #0284C7 100%);
+  --btn-base-text: #0F172A;
+  --btn-base-border: #38BDF8;
+  --btn-base-shadow: 0 4px 14px rgba(56, 189, 248, 0.32);
+
+  --btn-general-bg: linear-gradient(135deg, #FFFDF8 0%, #F1F5F9 100%);
+  --btn-general-hover: linear-gradient(135deg, #F8FAFD 0%, #E2E8F0 100%);
+  --btn-general-text: #0F172A;
+  --btn-general-border: #CBD5E1;
 
   /* Card & Shadow Elevations */
   --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);

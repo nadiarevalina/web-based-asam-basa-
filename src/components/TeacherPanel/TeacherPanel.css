@@ -194,8 +194,8 @@
 }
 
 .metric-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-md, 14px);
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -272,8 +272,8 @@
 }
 
 .panel-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-md, 14px);
   padding: 22px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -396,8 +396,8 @@
 
 /* Filter & Search Bar */
 .filter-search-bar {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-neutral-card, linear-gradient(145deg, #FAF8F5 0%, #F5F7FB 100%));
+  border: 1px solid var(--border-medium, #E2E8F0);
   border-radius: var(--radius-md, 14px);
   padding: 16px;
   margin-bottom: 20px;
@@ -419,7 +419,9 @@
   padding: 8px 12px 8px 34px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  background: #FFFDF8;
   font-size: 13px;
+  color: #0F172A;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -448,9 +450,9 @@
   padding: 8px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  background: #ffffff;
+  background: #FFFDF8;
   font-size: 13px;
-  color: #334155;
+  color: #0F172A;
   outline: none;
   cursor: pointer;
 }
@@ -461,8 +463,8 @@
 
 /* Data Table */
 .panel-table-container {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
   border-radius: var(--radius-md, 14px);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
