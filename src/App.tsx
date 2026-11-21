@@ -17,6 +17,7 @@ import { Breadcrumb } from './components/Breadcrumb'
 import { InquiryStageBanner } from './components/InquiryStageBanner'
 import { PageBottomNav } from './components/PageBottomNav'
 import { Footer } from './components/Footer'
+import { ChemistryBackground } from './components/ChemistryBackground'
 import './App.css'
 
 function getInitialPage(): PageId {
@@ -99,6 +100,9 @@ export default function App() {
         isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'
       }`}
     >
+      {/* Background Sains Kimia: Warm Acid Yellow-Orange & Base Baby Blue */}
+      <ChemistryBackground />
+
       {/* Sidebar Navigasi Responsif di Sisi Kiri */}
       <Sidebar
         activePage={activePage}

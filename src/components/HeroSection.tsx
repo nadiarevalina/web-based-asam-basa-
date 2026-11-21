@@ -16,9 +16,9 @@ export function HeroSection({
   const stateDetails = {
     acid: {
       label: 'Suasana Asam (pH 2.0)',
-      color: '#ef4444',
-      glow: 'rgba(239, 68, 68, 0.4)',
-      bubbleColor: '#fca5a5',
+      color: '#FFB454',
+      glow: 'rgba(255, 180, 84, 0.45)',
+      bubbleColor: '#FFE38A',
       sample: 'Jus Lemon / HCl Encer',
       note: 'Kaya ion H⁺ / H₃O⁺',
     },
@@ -32,9 +32,9 @@ export function HeroSection({
     },
     base: {
       label: 'Suasana Basa (pH 12.0)',
-      color: '#8b5cf6',
-      glow: 'rgba(139, 92, 246, 0.4)',
-      bubbleColor: '#ddd6fe',
+      color: '#0284c7',
+      glow: 'rgba(162, 210, 255, 0.55)',
+      bubbleColor: '#A2D2FF',
       sample: 'Air Sabun / NaOH Encer',
       note: 'Kaya ion OH⁻ bebas',
     },

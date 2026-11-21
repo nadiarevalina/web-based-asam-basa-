@@ -816,7 +816,7 @@ export function LoginPortal({
               <button
                 type="button"
                 className="fast-login-btn btn-chip-teacher"
-                style={{ background: '#7c3aed', color: '#ffffff', borderColor: '#6d28d9', fontWeight: 700 }}
+                style={{ background: '#d97706', color: '#ffffff', borderColor: '#b45309', fontWeight: 700 }}
                 onClick={() => handleQuickLogin('nadia.revalina.2403316.@students.um.ac.id')}
               >
                 👑 Guru Resmi: Nadia Revalina
@@ -987,7 +987,7 @@ export function LoginPortal({
                     }
                     style={{
                       background: '#f8fafc',
-                      color: isTeacherEmail(regUsername) ? '#7c3aed' : '#0369a1',
+                      color: isTeacherEmail(regUsername) ? '#d97706' : '#0369a1',
                       fontWeight: 700,
                       cursor: 'not-allowed',
                     }}
@@ -1604,7 +1604,7 @@ export function LoginPortal({
                 <button
                   type="button"
                   className="btn btn-primary"
-                  style={{ background: '#7c3aed', borderColor: '#6d28d9', fontWeight: 700 }}
+                  style={{ background: '#0284c7', borderColor: '#0369a1', fontWeight: 700 }}
                   onClick={() => {
                     if (onNavigateGuru) {
                       onNavigateGuru()

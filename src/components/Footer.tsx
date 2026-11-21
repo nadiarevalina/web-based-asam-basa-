@@ -126,7 +126,7 @@ export function Footer({ onNavigateToPage }: FooterProps) {
               <button
                 type="button"
                 className="footer-link"
-                style={{ color: '#c084fc', fontWeight: 600 }}
+                style={{ color: '#0284c7', fontWeight: 600 }}
                 onClick={() => onNavigateToPage('guru')}
               >
                 9. Panel Guru (Khusus Guru)
