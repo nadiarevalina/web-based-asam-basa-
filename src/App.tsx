@@ -31,6 +31,7 @@ function getInitialPage(): PageId {
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>(getInitialPage)
+  const [labSimulationState, setLabSimulationState] = useState<'initial' | 'acid' | 'neutral' | 'base'>('initial')
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
@@ -101,7 +102,7 @@ export default function App() {
       }`}
     >
       {/* Background Sains Kimia: Warm Acid Yellow-Orange & Base Baby Blue */}
-      <ChemistryBackground />
+      <ChemistryBackground mode={activePage === 'lab' ? labSimulationState : 'default'} />
 
       {/* Sidebar Navigasi Responsif di Sisi Kiri */}
       <Sidebar
@@ -205,7 +206,7 @@ export default function App() {
         >
           <Breadcrumb currentPage="lab" onNavigate={navigateToPage} />
           <InquiryStageBanner currentPage="lab" onNavigate={navigateToPage} />
-          <VirtualLab />
+          <VirtualLab onSimulationStateChange={setLabSimulationState} />
           <PageBottomNav currentPage="lab" onNavigate={navigateToPage} />
         </div>
 

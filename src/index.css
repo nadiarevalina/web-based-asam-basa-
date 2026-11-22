@@ -1,6 +1,6 @@
 /* ==========================================================================
    AsamBasa Lab - Global Design System & Variables
-   Bright Science Learning Theme — Modern Academic Light Mode
+   Warm Orange-Yellow & Baby Blue Visual Identity — Modern EdTech Chemistry
    ========================================================================== */
 
 :root {
@@ -8,108 +8,118 @@
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* ── Color Palette: Warm Acid Yellow-Orange & Base Baby Blue ── */
+  /* ── 8 Core Palette Design Tokens (User Prompt Specification) ── */
+  --color-warm-orange-yellow: #FFD58A;
+  --color-baby-blue: #B9E5FA;
+  --color-soft-cream: #FFF5DF;
+  --color-soft-blue: #D8F1FC;
+  --color-amber-accent: #F5A623;
+  --color-ocean-blue: #399ACB;
+  --color-deep-navy: #263747;
+  --color-white: #FFFFFF;
+
+  /* ── Surface & Body Tokens ── */
   --bg-body: #F4F8FD;
-  --bg-surface: #FBFBFC;
-  --bg-surface-elevated: #F4F8FC;
-  --bg-surface-hover: #EBF4FC;
-  --bg-card: #FDFBF8;
-  --bg-secondary: #F4F8FC;
-  --bg-glass: rgba(253, 251, 247, 0.94);
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFDF8;
+  --bg-surface-hover: #F0F8FD;
+  --bg-card: #FFFFFF;
+  --bg-secondary: #F5F9FD;
+  --bg-glass: rgba(255, 255, 255, 0.94);
 
   /* Thematic Surface Tints (Asam, Basa, Perpaduan, Netral) */
-  /* 1. Acid Surfaces (Warm Yellow / Soft Orange / Golden Tint) */
+  /* 1. Acid Surfaces (Warm Orange-Yellow / Soft Cream / Amber Tint) */
   --surface-acid-subtle: #FFFDF7;
-  --surface-acid-light: #FFFBEB;
-  --surface-acid-medium: #FEF3C7;
-  --surface-acid-border: #FDE68A;
-  --surface-acid-border-strong: #F59E0B;
-  --surface-acid-card: linear-gradient(145deg, #FFFDF8 0%, #FEF8E6 100%);
-  --surface-acid-glow: rgba(245, 158, 11, 0.12);
+  --surface-acid-light: #FFF5DF;
+  --surface-acid-medium: #FFEDB8;
+  --surface-acid-border: #FFD58A;
+  --surface-acid-border-strong: #F5A623;
+  --surface-acid-card: linear-gradient(145deg, #FFFFFF 0%, #FFF5DF 100%);
+  --surface-acid-glow: rgba(245, 166, 35, 0.16);
 
-  /* 2. Base Surfaces (Baby Blue / Sky Blue Tint) */
+  /* 2. Base Surfaces (Baby Blue / Soft Blue Tint) */
   --surface-base-subtle: #F8FAFD;
-  --surface-base-light: #F0F9FF;
-  --surface-base-medium: #E0F2FE;
-  --surface-base-border: #BAE6FD;
-  --surface-base-border-strong: #0284C7;
-  --surface-base-card: linear-gradient(145deg, #F8FAFD 0%, #EBF5FD 100%);
-  --surface-base-glow: rgba(2, 132, 199, 0.12);
+  --surface-base-light: #F0F9FE;
+  --surface-base-medium: #D8F1FC;
+  --surface-base-border: #B9E5FA;
+  --surface-base-border-strong: #399ACB;
+  --surface-base-card: linear-gradient(145deg, #FFFFFF 0%, #EBF7FD 100%);
+  --surface-base-glow: rgba(57, 154, 203, 0.16);
 
-  /* 3. Perpaduan / Blend Surfaces (Warm Yellow melting into Baby Blue) */
-  --surface-blend-card: linear-gradient(135deg, #FFFDF7 0%, #F8FAFD 50%, #EFF6FC 100%);
+  /* 3. Perpaduan / Blend Surfaces (Warm Orange-Yellow melting into Baby Blue) */
+  --surface-blend-card: linear-gradient(135deg, #FFFDF8 0%, #FFF5DF 45%, #EBF7FD 100%);
   --surface-blend-subtle: linear-gradient(135deg, #FFFDF9 0%, #F5F9FD 100%);
   --surface-blend-border: #CBD5E1;
-  --surface-blend-border-subtle: rgba(186, 230, 253, 0.55);
+  --surface-blend-border-subtle: rgba(185, 229, 250, 0.55);
 
   /* 4. Neutral / General Surfaces (Warm White / Subtle Light Tint) */
-  --surface-neutral-card: linear-gradient(145deg, #FAF8F5 0%, #F5F7FB 100%);
-  --surface-neutral-light: #FAF8F5;
+  --surface-neutral-card: linear-gradient(145deg, #FFFFFF 0%, #F8FAFD 100%);
+  --surface-neutral-light: #FFFDF9;
   --surface-neutral-border: #E2E8F0;
 
-  --border-subtle: rgba(15, 23, 42, 0.08);
-  --border-medium: rgba(15, 23, 42, 0.14);
-  --border-strong: rgba(15, 23, 42, 0.22);
-  --border-card: rgba(15, 23, 42, 0.09);
+  --border-subtle: rgba(38, 55, 71, 0.08);
+  --border-medium: rgba(38, 55, 71, 0.14);
+  --border-strong: rgba(38, 55, 71, 0.22);
+  --border-card: rgba(38, 55, 71, 0.09);
 
-  /* Typography: Deep Navy for Crisp Readability */
-  --text-primary: #0F172A;
-  --text-heading: #0B192C;
-  --text-secondary: #334155;
-  --text-muted: #64748B;
+  /* Typography: Deep Navy for Crisp Academic Readability */
+  --text-primary: #263747;
+  --text-heading: #1A2836;
+  --text-secondary: #3D5266;
+  --text-muted: #647B91;
   --text-inverse: #FFFFFF;
 
-  /* Primary Blue Brand Identity */
-  --primary-blue: #0284c7;
-  --primary-blue-hover: #0369a1;
-  --primary-blue-light: #EAF6FF;
+  /* Primary Blue Brand Identity (Ocean Blue) */
+  --primary-blue: #399ACB;
+  --primary-blue-hover: #2B83AF;
+  --primary-blue-light: #EBF7FD;
 
-  /* Chemical Brand Accents: Warm Acid Yellow-Orange & Cool Base Baby Blue */
-  --acid-soft-yellow: #FFF3C4;
-  --acid-light-yellow: #FFE38A;
-  --acid-warm-yellow: #FFD166;
-  --acid-soft-orange: #FFB454;
-  --acid-tangerine: #FFA94D;
-  --acid-amber: #d97706;
-  --acid-glow: rgba(255, 180, 84, 0.22);
+  /* Chemical Brand Accents: Warm Acid Orange-Yellow & Cool Base Baby Blue */
+  --acid-soft-yellow: #FFF5DF;
+  --acid-light-yellow: #FFEDB8;
+  --acid-warm-yellow: #FFD58A;
+  --acid-soft-orange: #FFB347;
+  --acid-tangerine: #FFA326;
+  --acid-amber: #F5A623;
+  --acid-glow: rgba(245, 166, 35, 0.25);
 
-  --base-baby-blue: #A2D2FF;
-  --base-sky-blue: #BCE0FF;
-  --base-pale-blue: #DCEFFF;
-  --base-ice-blue: #EAF6FF;
-  --base-blue: #0284c7;
-  --base-glow: rgba(162, 210, 255, 0.26);
+  --base-baby-blue: #B9E5FA;
+  --base-sky-blue: #93D5F8;
+  --base-pale-blue: #D8F1FC;
+  --base-ice-blue: #EBF7FD;
+  --base-blue: #399ACB;
+  --base-glow: rgba(57, 154, 203, 0.26);
 
   --neutral-green: #059669;
   --neutral-glow: rgba(5, 150, 105, 0.14);
 
-  --accent-cyan: #0284c7;
-  --accent-amber: #d97706;
+  --accent-cyan: #399ACB;
+  --accent-amber: #F5A623;
 
   /* Button Tokens */
-  --btn-acid-bg: linear-gradient(135deg, #FFB454 0%, #F59E0B 100%);
-  --btn-acid-hover: linear-gradient(135deg, #FFA94D 0%, #D97706 100%);
-  --btn-acid-text: #0F172A;
-  --btn-acid-border: #F59E0B;
-  --btn-acid-shadow: 0 4px 14px rgba(245, 158, 11, 0.32);
+  --btn-acid-bg: linear-gradient(135deg, #FFD58A 0%, #F5A623 100%);
+  --btn-acid-hover: linear-gradient(135deg, #F5A623 0%, #D98C12 100%);
+  --btn-acid-text: #263747;
+  --btn-acid-border: #F5A623;
+  --btn-acid-shadow: 0 4px 14px rgba(245, 166, 35, 0.32);
 
-  --btn-base-bg: linear-gradient(135deg, #A2D2FF 0%, #38BDF8 100%);
-  --btn-base-hover: linear-gradient(135deg, #7DD3FC 0%, #0284C7 100%);
-  --btn-base-text: #0F172A;
-  --btn-base-border: #38BDF8;
-  --btn-base-shadow: 0 4px 14px rgba(56, 189, 248, 0.32);
+  --btn-base-bg: linear-gradient(135deg, #B9E5FA 0%, #399ACB 100%);
+  --btn-base-hover: linear-gradient(135deg, #91D7F8 0%, #2B83AF 100%);
+  --btn-base-text: #263747;
+  --btn-base-border: #399ACB;
+  --btn-base-shadow: 0 4px 14px rgba(57, 154, 203, 0.32);
 
-  --btn-general-bg: linear-gradient(135deg, #FFFDF8 0%, #F1F5F9 100%);
-  --btn-general-hover: linear-gradient(135deg, #F8FAFD 0%, #E2E8F0 100%);
-  --btn-general-text: #0F172A;
+  --btn-general-bg: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
+  --btn-general-hover: linear-gradient(135deg, #FFF5DF 0%, #E2E8F0 100%);
+  --btn-general-text: #263747;
   --btn-general-border: #CBD5E1;
 
   /* Card & Shadow Elevations */
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.10), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
-  --shadow-glow-cyan: 0 0 20px -3px rgba(2, 132, 199, 0.18);
+  --shadow-sm: 0 1px 3px 0 rgba(38, 55, 71, 0.05), 0 1px 2px -1px rgba(38, 55, 71, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(38, 55, 71, 0.07), 0 2px 4px -2px rgba(38, 55, 71, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(38, 55, 71, 0.08), 0 4px 6px -4px rgba(38, 55, 71, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(38, 55, 71, 0.10), 0 8px 10px -6px rgba(38, 55, 71, 0.06);
+  --shadow-glow-cyan: 0 0 20px -3px rgba(57, 154, 203, 0.18);
 
   /* Layout */
   --max-width: 1240px;
@@ -165,7 +175,7 @@ body {
 
 /* Typography elements */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary);
+  color: var(--text-heading);
   font-weight: 700;
   line-height: 1.25;
 }
@@ -181,7 +191,7 @@ a {
 }
 
 a:hover {
-  color: #0369a1;
+  color: var(--primary-blue-hover);
 }
 
 button {
@@ -207,13 +217,13 @@ code, kbd, pre {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-surface-elevated);
+  background: var(--color-soft-blue);
   border-radius: 4px;
   border: 1px solid var(--border-subtle);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bg-surface-hover);
+  background: var(--color-baby-blue);
 }
 
 /* Screen reader only utility */

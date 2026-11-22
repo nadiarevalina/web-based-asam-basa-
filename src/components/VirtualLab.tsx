@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CHEMICAL_SAMPLES, INDICATORS } from '../data/chemistryData'
 import type { ChemicalSample, Indicator, SimulationRecord, SampleNature } from '../types/chemistry'
 import { addLabExperimentRecord } from '../services/authStorage'
@@ -42,7 +42,11 @@ function createSimulationRecord(
   }
 }
 
-export function VirtualLab() {
+export interface VirtualLabProps {
+  onSimulationStateChange?: (state: 'initial' | 'acid' | 'neutral' | 'base') => void
+}
+
+export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
   const [selectedSampleId, setSelectedSampleId] = useState<string>(CHEMICAL_SAMPLES[0].id)
   const [selectedIndicatorId, setSelectedIndicatorId] = useState<string>(INDICATORS[0].id)
   const [isTested, setIsTested] = useState<boolean>(false)
@@ -56,12 +60,26 @@ export function VirtualLab() {
   const [studentConclusion, setStudentConclusion] = useState<string>('')
   const [savedSuccessMessage, setSavedSuccessMessage] = useState<string | null>(null)
 
+
   const currentSample: ChemicalSample =
     CHEMICAL_SAMPLES.find((s) => s.id === selectedSampleId) || CHEMICAL_SAMPLES[0]
   const currentIndicator: Indicator =
     INDICATORS.find((i) => i.id === selectedIndicatorId) || INDICATORS[0]
 
   const colorResult = currentIndicator.getColorResult(currentSample.approximatePh)
+
+  // Sinkronisasi status pengujian untuk tema dinamis latar lab (Inkuiri Kimia)
+  useEffect(() => {
+    if (!isTested) {
+      onSimulationStateChange?.('initial')
+    } else if (currentSample.approximatePh < 7.0) {
+      onSimulationStateChange?.('acid')
+    } else if (currentSample.approximatePh > 7.0) {
+      onSimulationStateChange?.('base')
+    } else {
+      onSimulationStateChange?.('neutral')
+    }
+  }, [isTested, currentSample.approximatePh, onSimulationStateChange])
 
   const filteredSamples = CHEMICAL_SAMPLES.filter((s) => {
     if (activeFilterCategory === 'semua') return true
@@ -551,6 +569,49 @@ export function VirtualLab() {
         <div className="virtual-lab-row-tube-indicator">
           {/* KIRI: Tabung Reaksi / Pengujian Virtual */}
           <div className="test-tube-panel">
+            {/* Dynamic Visual Simulation State Indicator Banner */}
+            <div
+              className={`lab-dynamic-state-banner state-${
+                !isTested
+                  ? 'initial'
+                  : currentSample.approximatePh < 7
+                  ? 'acid'
+                  : currentSample.approximatePh > 7
+                  ? 'base'
+                  : 'neutral'
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              <div className="lab-state-banner-content">
+                <div className="lab-state-banner-icon-badge">
+                  {!isTested && <span aria-hidden="true">🧪</span>}
+                  {isTested && currentSample.approximatePh < 7 && <span aria-hidden="true">🔥</span>}
+                  {isTested && currentSample.approximatePh > 7 && <span aria-hidden="true">💧</span>}
+                  {isTested && currentSample.approximatePh === 7 && <span aria-hidden="true">⚖️</span>}
+                </div>
+                <div className="lab-state-banner-text">
+                  <div className="lab-state-banner-title">
+                    {!isTested && 'Status Simulasi: Kondisi Awal (Siap Diuji)'}
+                    {isTested && currentSample.approximatePh < 7 && `Hasil Uji: Larutan Bersifat ASAM (pH ≈ ${currentSample.approximatePh})`}
+                    {isTested && currentSample.approximatePh > 7 && `Hasil Uji: Larutan Bersifat BASA (pH ≈ ${currentSample.approximatePh})`}
+                    {isTested && currentSample.approximatePh === 7 && `Hasil Uji: Larutan Bersifat NETRAL (pH = 7.0)`}
+                  </div>
+                  <div className="lab-state-banner-sub">
+                    {!isTested && 'Pilih sampel larutan dan indikator di panel samping, lalu klik tombol "Uji Larutan".'}
+                    {isTested && currentSample.approximatePh < 7 && 'Konsentrasi ion hidronium [H₃O⁺] dominan. Latar laboratorium bertransisi ke nuansa Warm Orange-Yellow.'}
+                    {isTested && currentSample.approximatePh > 7 && 'Konsentrasi ion hidroksida [OH⁻] dominan. Latar laboratorium bertransisi ke nuansa Baby Blue.'}
+                    {isTested && currentSample.approximatePh === 7 && 'Konsentrasi ion [H₃O⁺] dan [OH⁻] seimbang sempurna. Latar laboratorium berada dalam mode netral.'}
+                  </div>
+                </div>
+                {isTested && (
+                  <div className="lab-state-banner-badge">
+                    {currentSample.approximatePh < 7 ? 'ASAM' : currentSample.approximatePh > 7 ? 'BASA' : 'NETRAL'}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Workbench Graphic */}
             <div className="bench-stage-card">
               <div className="stage-header">
