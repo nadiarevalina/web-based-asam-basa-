@@ -9,10 +9,61 @@ import type {
   StorageStatus,
 } from '../types/quiz'
 import { QUIZ_MODULE_ID, QUIZ_QUESTION_VERSION } from '../types/quiz'
-import { addQuizExperimentRecord } from './authStorage'
+import { addQuizExperimentRecord, trackQuizProgress } from './authStorage'
 
 const DRAFT_STORAGE_KEY = 'asambasa_quiz_m1_draft_v2'
 const HISTORY_STORAGE_KEY = 'asambasa_quiz_m1_history_v2'
+
+export const STUDENT_IDENTITY_STORAGE_KEY = 'asambasa_student_identity_v2'
+
+/**
+ * Membaca identitas siswa yang tersimpan di localStorage atau memori cadangan
+ */
+export function getStoredStudentIdentity(): StudentIdentity | null {
+  const raw = readRawStorage(STUDENT_IDENTITY_STORAGE_KEY)
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw) as StudentIdentity
+    if (parsed && typeof parsed.name === 'string' && parsed.name.trim().length > 0) {
+      return {
+        id: parsed.id || `guest_std_${Date.now()}`,
+        name: parsed.name.trim(),
+        schoolClass: parsed.schoolClass?.trim() || 'XI MIPA',
+        nisn: parsed.nisn?.trim(),
+        savedAt: parsed.savedAt || new Date().toISOString(),
+      }
+    }
+  } catch (e) {
+    console.warn('[QuizStorage] Format identitas siswa tidak valid:', e)
+  }
+  return null
+}
+
+/**
+ * Menyimpan identitas siswa ke localStorage agar tidak perlu diisi ulang saat refresh
+ */
+export function saveStudentIdentity(identity: StudentIdentity): { success: boolean; error: string | null } {
+  try {
+    const normalized: StudentIdentity = {
+      ...identity,
+      name: identity.name.trim(),
+      schoolClass: identity.schoolClass?.trim() || 'XI MIPA',
+      savedAt: new Date().toISOString(),
+    }
+    return writeRawStorage(STUDENT_IDENTITY_STORAGE_KEY, JSON.stringify(normalized))
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : 'Gagal menyimpan identitas siswa.'
+    return { success: false, error: errorMsg }
+  }
+}
+
+/**
+ * Menghapus data identitas siswa dari penyimpanan lokal
+ */
+export function clearStudentIdentity(): { success: boolean; error: string | null } {
+  return removeRawStorage(STUDENT_IDENTITY_STORAGE_KEY)
+}
+
 
 // Penyimpanan cadangan berbasis memori (in-memory fallback) jika localStorage tidak tersedia
 const memoryStorageMap = new Map<string, string>()

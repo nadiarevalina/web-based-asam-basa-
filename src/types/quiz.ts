@@ -6,6 +6,17 @@ export const QUIZ_MODULE_ID = 'modul-1'
 export type CognitiveLevel = 'C3' | 'C4' | 'C5'
 
 /**
+ * Identitas siswa yang mengerjakan kuis (baik dari akun login maupun tamu terverifikasi)
+ */
+export interface StudentIdentity {
+  id: string
+  fullName: string
+  schoolClass: string
+  isFromAccount: boolean
+  createdAt?: string
+}
+
+/**
  * Struktur data butir soal Kuis Modul 1 dengan lima opsi (A-E)
  * dan taksonomi kognitif HOTS (C3, C4, C5)
  */
@@ -49,6 +60,9 @@ export interface QuizDraftSession {
   startedAt: string
   updatedAt: string
   isCompleted: boolean
+  studentId?: string
+  studentName?: string
+  studentClass?: string
 }
 
 /**
@@ -68,6 +82,8 @@ export interface QuizAttemptHistory {
   syncedToBackend: boolean
   syncedAt?: string
   userId?: string
+  studentName?: string
+  studentClass?: string
 }
 
 /**
@@ -75,6 +91,8 @@ export interface QuizAttemptHistory {
  */
 export interface QuizBackendSubmissionPayload {
   userId?: string
+  studentName?: string
+  studentClass?: string
   attemptId: string
   moduleId: string
   questionVersion: string
@@ -98,7 +116,7 @@ export interface QuizBackendSubmissionPayload {
 export interface QuizBackendSyncResult {
   success: boolean
   message: string
-  timestamp: string
+  timestamp?: string
 }
 
 /**
@@ -108,5 +126,3 @@ export interface StorageStatus {
   isAvailable: boolean
   error: string | null
 }
-
-export type { QuizQuestion }

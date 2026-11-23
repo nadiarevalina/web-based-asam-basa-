@@ -9,14 +9,17 @@ interface ResultsListTabProps {
 export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) {
   // State Filter & Pencarian
   const [searchQuery, setSearchQuery] = useState('')
+  const [filterStatus, setFilterStatus] = useState<string>('all') // 'all' | 'selesai' | 'sedang_dikerjakan'
   const [filterActivity, setFilterActivity] = useState<string>('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [filterScoreRange, setFilterScoreRange] = useState<string>('all')
-  const [sortBy, setSortBy] = useState<'score_desc' | 'score_asc' | 'time_desc' | 'time_asc'>('time_desc')
+  const [sortBy, setSortBy] = useState<
+    'time_desc' | 'time_asc' | 'score_desc' | 'score_asc' | 'progress_desc'
+  >('time_desc')
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 6
+  const pageSize = 8
 
   // Ekstrak opsi aktivitas unik
   const uniqueActivities = useMemo(() => {
@@ -24,30 +27,60 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
     return Array.from(set)
   }, [data])
 
+  // Ringkasan metrik cepat untuk kartu ringkasan di atas tabel
+  const summaryCards = useMemo(() => {
+    const total = data.length
+    const selesaiCount = data.filter(
+      (d) => d.status === 'diterima_server' || d.status === 'dibaca_guru'
+    ).length
+    const sedangCount = data.filter((d) => d.status === 'sedang_dikerjakan').length
+
+    const scoredItems = data.filter((d) => d.score !== null)
+    const avgScore =
+      scoredItems.length > 0
+        ? Math.round(
+            scoredItems.reduce((acc, curr) => acc + (curr.score ?? 0), 0) / scoredItems.length
+          )
+        : 0
+
+    return { total, selesaiCount, sedangCount, avgScore }
+  }, [data])
+
   // Filter & Sort
   const filteredData = useMemo(() => {
     return data
       .filter((item) => {
-        // 1. Search Query (Alias atau ID)
+        // 1. Search Query (Nama Siswa / Alias atau ID percobaan)
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim()
           const matchAlias = item.alias.toLowerCase().includes(q)
           const matchId = item.id.toLowerCase().includes(q)
-          if (!matchAlias && !matchId) return false
+          const matchClass = item.schoolClass ? item.schoolClass.toLowerCase().includes(q) : false
+          if (!matchAlias && !matchId && !matchClass) return false
         }
 
-        // 2. Filter Aktivitas
+        // 2. Filter Status Pengerjaan (all | selesai | sedang_dikerjakan)
+        if (filterStatus !== 'all') {
+          if (filterStatus === 'selesai') {
+            if (item.status !== 'diterima_server' && item.status !== 'dibaca_guru') return false
+          } else if (filterStatus === 'sedang_dikerjakan') {
+            if (item.status !== 'sedang_dikerjakan') return false
+          }
+        }
+
+        // 3. Filter Nama Kuis / Aktivitas
         if (filterActivity !== 'all' && item.activityTitle !== filterActivity) {
           return false
         }
 
-        // 3. Filter Jenis Aktivitas
+        // 4. Filter Jenis Aktivitas
         if (filterType !== 'all' && item.activityType !== filterType) {
           return false
         }
 
-        // 4. Filter Rentang Nilai
+        // 5. Filter Rentang Nilai
         if (filterScoreRange !== 'all') {
+          if (item.score === null) return false
           if (filterScoreRange === 'high' && item.score < 80) return false
           if (filterScoreRange === 'medium' && (item.score < 60 || item.score >= 80)) return false
           if (filterScoreRange === 'low' && item.score >= 60) return false
@@ -56,17 +89,34 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
         return true
       })
       .sort((a, b) => {
-        if (sortBy === 'score_desc') return b.score - a.score
-        if (sortBy === 'score_asc') return a.score - b.score
+        if (sortBy === 'score_desc') {
+          const sA = a.score ?? -1
+          const sB = b.score ?? -1
+          return sB - sA
+        }
+        if (sortBy === 'score_asc') {
+          const sA = a.score ?? 999
+          const sB = b.score ?? 999
+          return sA - sB
+        }
+        if (sortBy === 'progress_desc') {
+          const pA = a.progressCount ?? (a.isCompleted ? a.totalQuestions : 0)
+          const pB = b.progressCount ?? (b.isCompleted ? b.totalQuestions : 0)
+          return pB - pA
+        }
         if (sortBy === 'time_desc') {
-          return new Date(b.serverReceivedAt).getTime() - new Date(a.serverReceivedAt).getTime()
+          const tA = new Date(a.startedAt || a.serverReceivedAt || a.completedAt).getTime()
+          const tB = new Date(b.startedAt || b.serverReceivedAt || b.completedAt).getTime()
+          return tB - tA
         }
         if (sortBy === 'time_asc') {
-          return new Date(a.serverReceivedAt).getTime() - new Date(b.serverReceivedAt).getTime()
+          const tA = new Date(a.startedAt || a.serverReceivedAt || a.completedAt).getTime()
+          const tB = new Date(b.startedAt || b.serverReceivedAt || b.completedAt).getTime()
+          return tA - tB
         }
         return 0
       })
-  }, [data, searchQuery, filterActivity, filterType, filterScoreRange, sortBy])
+  }, [data, searchQuery, filterStatus, filterActivity, filterType, filterScoreRange, sortBy])
 
   // Pagination slicing
   const totalPages = Math.ceil(filteredData.length / pageSize) || 1
@@ -77,6 +127,7 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
 
   const handleResetFilters = () => {
     setSearchQuery('')
+    setFilterStatus('all')
     setFilterActivity('all')
     setFilterType('all')
     setFilterScoreRange('all')
@@ -86,6 +137,108 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
 
   return (
     <div className="tab-results-content animate-fade-in">
+      {/* Kartu Ringkasan Cepat */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '12px',
+          marginBottom: '20px',
+        }}
+      >
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '10px',
+            padding: '14px 18px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <div style={{ fontSize: '26px' }}>📊</div>
+          <div>
+            <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>
+              Total Sesi Pengerjaan
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#1e293b' }}>
+              {summaryCards.total}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: '10px',
+            padding: '14px 18px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <div style={{ fontSize: '26px' }}>✅</div>
+          <div>
+            <div style={{ fontSize: '11px', color: '#15803d', fontWeight: 700, textTransform: 'uppercase' }}>
+              Selesai Dikirim
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#166534' }}>
+              {summaryCards.selesaiCount}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
+            borderRadius: '10px',
+            padding: '14px 18px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <div style={{ fontSize: '26px' }}>⏳</div>
+          <div>
+            <div style={{ fontSize: '11px', color: '#b45309', fontWeight: 700, textTransform: 'uppercase' }}>
+              Sedang Dikerjakan
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#92400e' }}>
+              {summaryCards.sedangCount}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '10px',
+            padding: '14px 18px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <div style={{ fontSize: '26px' }}>🎯</div>
+          <div>
+            <div style={{ fontSize: '11px', color: '#1d4ed8', fontWeight: 700, textTransform: 'uppercase' }}>
+              Rata-Rata Nilai (Selesai)
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#1e40af' }}>
+              {summaryCards.avgScore} / 100
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Bilah Pencarian & Filter */}
       <div className="filter-search-bar">
         {/* Input Pencarian */}
@@ -96,7 +249,7 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
           <input
             type="text"
             className="search-input-panel"
-            placeholder="Cari berdasarkan alias siswa atau ID percobaan..."
+            placeholder="Cari berdasarkan nama siswa, kelas, atau ID sesi..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value)
@@ -108,6 +261,22 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
 
         {/* Dropdown Filter */}
         <div className="filter-selects-row">
+          {/* Filter Status Pengerjaan (Sesuai Spesifikasi Wajib) */}
+          <select
+            className="filter-select"
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.target.value)
+              setCurrentPage(1)
+            }}
+            aria-label="Filter Status Pengerjaan"
+            style={{ fontWeight: 600 }}
+          >
+            <option value="all">📌 Semua Status</option>
+            <option value="selesai">✅ Selesai</option>
+            <option value="sedang_dikerjakan">⏳ Sedang Dikerjakan</option>
+          </select>
+
           <select
             className="filter-select"
             value={filterActivity}
@@ -117,7 +286,7 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
             }}
             aria-label="Filter Aktivitas"
           >
-            <option value="all">Semua Aktivitas</option>
+            <option value="all">Semua Kuis / Aktivitas</option>
             {uniqueActivities.map((act) => (
               <option key={act} value={act}>
                 {act}
@@ -135,8 +304,8 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
             aria-label="Filter Jenis"
           >
             <option value="all">Semua Jenis</option>
-            <option value="kuis_evaluasi">Kuis Evaluasi</option>
-            <option value="lab_simulasi">Lab Simulasi</option>
+            <option value="kuis_evaluasi">Kuis Evaluasi HOTS</option>
+            <option value="lab_simulasi">Lab Virtual</option>
             <option value="diagnostic">Diagnostik</option>
           </select>
 
@@ -161,13 +330,18 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
             onChange={(e) => setSortBy(e.target.value as any)}
             aria-label="Urutkan Data"
           >
-            <option value="time_desc">Waktu Terima: Terbaru</option>
-            <option value="time_asc">Waktu Terima: Terlama</option>
-            <option value="score_desc">Nilai: Tertinggi</option>
-            <option value="score_asc">Nilai: Terendah</option>
+            <option value="time_desc">Tanggal Mulai: Terbaru</option>
+            <option value="time_asc">Tanggal Mulai: Terlama</option>
+            <option value="score_desc">Nilai Akhir: Tertinggi</option>
+            <option value="score_asc">Nilai Akhir: Terendah</option>
+            <option value="progress_desc">Progres: Terbanyak</option>
           </select>
 
-          {(searchQuery || filterActivity !== 'all' || filterType !== 'all' || filterScoreRange !== 'all') && (
+          {(searchQuery ||
+            filterStatus !== 'all' ||
+            filterActivity !== 'all' ||
+            filterType !== 'all' ||
+            filterScoreRange !== 'all') && (
             <button
               type="button"
               className="btn-page"
@@ -180,100 +354,246 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
         </div>
       </div>
 
-      {/* Tabel Data Hasil Belajar */}
+      {/* Tabel Data Rekap Aktivitas Siswa: 8 Kolom Lengkap Sesuai Spesifikasi */}
       {paginatedData.length > 0 ? (
         <>
           <div className="panel-table-container">
-            <table className="panel-table" aria-label="Tabel Hasil Belajar Siswa">
+            <table className="panel-table" aria-label="Tabel Rekap Aktivitas Siswa">
               <thead>
                 <tr>
-                  <th scope="col" style={{ width: '45px' }}>No.</th>
-                  <th scope="col">Nama Alias Siswa</th>
-                  <th scope="col">Nama Aktivitas / Percobaan</th>
-                  <th scope="col">Jenis Aktivitas</th>
-                  <th scope="col">Versi Soal</th>
-                  <th scope="col">Nilai</th>
-                  <th scope="col">Waktu Selesai</th>
-                  <th scope="col">Diterima Server</th>
-                  <th scope="col" style={{ textAlign: 'center' }}>Aksi</th>
+                  <th scope="col" style={{ width: '45px', textAlign: 'center' }}>
+                    No.
+                  </th>
+                  <th scope="col" style={{ minWidth: '150px' }}>
+                    Nama Siswa
+                  </th>
+                  <th scope="col" style={{ minWidth: '180px' }}>
+                    Nama Kuis / Aktivitas
+                  </th>
+                  <th scope="col" style={{ minWidth: '130px' }}>
+                    Tanggal Mulai
+                  </th>
+                  <th scope="col" style={{ minWidth: '120px' }}>
+                    Progres Pengerjaan
+                  </th>
+                  <th scope="col" style={{ minWidth: '130px', textAlign: 'center' }}>
+                    Status Pengerjaan
+                  </th>
+                  <th scope="col" style={{ minWidth: '90px', textAlign: 'center' }}>
+                    Nilai Akhir
+                  </th>
+                  <th scope="col" style={{ minWidth: '110px', textAlign: 'center' }}>
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedData.map((item, index) => {
                   const rowNumber = (currentPage - 1) * pageSize + index + 1
+                  const isOngoing = item.status === 'sedang_dikerjakan'
+                  const totalQ = item.totalQuestions || 10
+                  const progressCount =
+                    item.progressCount !== undefined
+                      ? item.progressCount
+                      : isOngoing
+                      ? Object.keys(item.answers || {}).length
+                      : totalQ
+
+                  const startDate = item.startedAt || item.serverReceivedAt || item.completedAt
+                  const percentProgress = Math.min(100, Math.round((progressCount / totalQ) * 100))
+
                   return (
-                    <tr key={item.id}>
-                      <td style={{ fontWeight: 600, color: '#64748b' }}>{rowNumber}</td>
+                    <tr
+                      key={item.id}
+                      style={{
+                        backgroundColor: isOngoing ? 'rgba(254, 243, 199, 0.15)' : undefined,
+                      }}
+                    >
+                      {/* 1. No. */}
+                      <td style={{ fontWeight: 600, color: '#64748b', textAlign: 'center' }}>
+                        {rowNumber}
+                      </td>
+
+                      {/* 2. Nama Siswa */}
                       <td>
-                        <strong>{item.alias}</strong>
+                        <strong style={{ color: '#0f172a' }}>{item.alias}</strong>
                         {item.schoolClass && (
                           <div style={{ fontSize: '11px', color: '#64748b' }}>
                             {item.schoolClass}
                           </div>
                         )}
                         {item.attemptNumber && item.attemptNumber > 1 && (
-                          <span style={{ fontSize: '10px', background: '#e0f2fe', color: '#0369a1', padding: '1px 5px', borderRadius: '4px' }}>
+                          <span
+                            style={{
+                              fontSize: '10px',
+                              background: '#e0f2fe',
+                              color: '#0369a1',
+                              padding: '1px 5px',
+                              borderRadius: '4px',
+                              display: 'inline-block',
+                              marginTop: '2px',
+                            }}
+                          >
                             Percobaan #{item.attemptNumber}
                           </span>
                         )}
                       </td>
+
+                      {/* 3. Nama Kuis / Aktivitas */}
                       <td>
-                        <div style={{ fontWeight: 500 }}>{item.activityTitle}</div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>ID: {item.id}</div>
-                      </td>
-                      <td>
-                        <span style={{ textTransform: 'capitalize', fontSize: '12px' }}>
-                          {item.activityType === 'kuis_evaluasi'
-                            ? 'Kuis Evaluasi'
-                            : item.activityType === 'lab_simulasi'
-                            ? 'Lab Virtual'
-                            : 'Diagnostik'}
-                        </span>
-                      </td>
-                      <td>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 600, color: '#475569' }}>
-                          v{item.questionVersion}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`score-badge ${
-                            item.score >= 80 ? 'high' : item.score >= 60 ? 'medium' : 'low'
-                          }`}
+                        <div style={{ fontWeight: 600, color: '#1e293b' }}>
+                          {item.activityTitle}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '11px',
+                            color: '#94a3b8',
+                            fontFamily: 'monospace',
+                            display: 'flex',
+                            gap: '6px',
+                            alignItems: 'center',
+                          }}
                         >
-                          {item.score}
-                        </span>
+                          <span>{item.id}</span>
+                          <span style={{ color: '#64748b' }}>• v{item.questionVersion}</span>
+                        </div>
                       </td>
+
+                      {/* 4. Tanggal Mulai */}
                       <td>
-                        {new Date(item.completedAt).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}{' '}
-                        WIB
-                      </td>
-                      <td>
-                        <div style={{ fontWeight: 600 }}>
-                          {new Date(item.serverReceivedAt).toLocaleTimeString('id-ID', {
+                        <div style={{ fontWeight: 600, fontSize: '12px', color: '#1e293b' }}>
+                          {new Date(startDate).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>
+                          {new Date(startDate).toLocaleTimeString('id-ID', {
                             hour: '2-digit',
                             minute: '2-digit',
-                            second: '2-digit',
                           })}{' '}
                           WIB
                         </div>
-                        {item.serverAckId && (
-                          <div style={{ fontSize: '10px', color: '#059669' }}>
-                            {item.serverAckId}
+                      </td>
+
+                      {/* 5. Progres Pengerjaan (e.g. 4/10 Soal) */}
+                      <td>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              fontWeight: 700,
+                              color: isOngoing ? '#b45309' : '#15803d',
+                            }}
+                          >
+                            {progressCount} / {totalQ} Soal
                           </div>
+                          <div
+                            style={{
+                              background: '#e2e8f0',
+                              borderRadius: '4px',
+                              height: '6px',
+                              width: '100%',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <div
+                              style={{
+                                background: isOngoing
+                                  ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+                                  : 'linear-gradient(90deg, #10b981, #059669)',
+                                height: '100%',
+                                width: `${percentProgress}%`,
+                                transition: 'width 0.3s ease',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* 6. Status Pengerjaan (Sedang Dikerjakan vs Selesai) */}
+                      <td style={{ textAlign: 'center' }}>
+                        {isOngoing ? (
+                          <span
+                            style={{
+                              background: '#fef3c7',
+                              border: '1px solid #fde68a',
+                              color: '#92400e',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span style={{ animation: 'spin 2s linear infinite' }}>⏳</span> Sedang Dikerjakan
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              background: '#dcfce7',
+                              border: '1px solid #bbf7d0',
+                              color: '#166534',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span>✅</span> Selesai
+                          </span>
                         )}
                       </td>
+
+                      {/* 7. Nilai Akhir (Angka atau '-' jika belum selesai) */}
+                      <td style={{ textAlign: 'center' }}>
+                        {isOngoing || item.score === null ? (
+                          <span
+                            style={{
+                              color: '#94a3b8',
+                              fontWeight: 700,
+                              fontSize: '18px',
+                            }}
+                            title="Nilai belum dihitung karena kuis masih berlangsung"
+                          >
+                            —
+                          </span>
+                        ) : (
+                          <span
+                            className={`score-badge ${
+                              item.score >= 80 ? 'high' : item.score >= 60 ? 'medium' : 'low'
+                            }`}
+                            style={{
+                              display: 'inline-block',
+                              minWidth: '40px',
+                              textAlign: 'center',
+                            }}
+                          >
+                            {item.score}
+                          </span>
+                        )}
+                      </td>
+
+                      {/* 8. Aksi (Lihat Detail) */}
                       <td style={{ textAlign: 'center' }}>
                         <button
                           type="button"
                           className="btn-action-detail"
                           onClick={() => onSelectActivity(item)}
-                          aria-label={`Lihat rincian untuk ${item.alias}`}
+                          aria-label={`Lihat detail aktivitas ${item.alias}`}
+                          style={{
+                            background: isOngoing ? '#fef3c7' : undefined,
+                            borderColor: isOngoing ? '#fde68a' : undefined,
+                            color: isOngoing ? '#92400e' : undefined,
+                          }}
                         >
-                          Lihat Rincian →
+                          Lihat Detail →
                         </button>
                       </td>
                     </tr>
@@ -339,4 +659,3 @@ export function ResultsListTab({ data, onSelectActivity }: ResultsListTabProps) 
     </div>
   )
 }
-

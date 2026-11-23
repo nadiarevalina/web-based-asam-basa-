@@ -14,6 +14,7 @@ export interface UserAccount {
 
 export type ExperimentStatus =
   | 'belum_dikaitkan' // Belum ditautkan ke akun pengguna (draft/anonim)
+  | 'sedang_dikerjakan' // Sedang aktif dikerjakan oleh siswa
   | 'terkait' // Sudah ditautkan ke akun pemilik
   | 'dalam_antrean' // Masuk antrean siap dikirim ke server
   | 'diterima_server' // Server telah menerima data (HTTP 200)
@@ -37,8 +38,13 @@ export interface ExperimentDetails {
   correctCount?: number
   wrongCount?: number
   totalQuestions?: number
+  answeredCount?: number
   durationSeconds?: number
   moduleTitle?: string
+  answers?: Record<string, string>
+  itemsDetail?: Record<number, any>
+  startedAt?: string
+  completedAt?: string
 }
 
 export interface ExperimentItem {
@@ -75,4 +81,3 @@ export interface ServerSyncLog {
   httpCode: number
   message: string
 }
-

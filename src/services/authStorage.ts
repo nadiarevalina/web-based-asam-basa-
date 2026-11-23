@@ -632,6 +632,83 @@ export function addLabExperimentRecord(params: {
 /**
  * Menambahkan hasil kuis yang baru diselesaikan ke penyimpanan percobaan
  */
+
+/**
+ * Mencatat progres pengerjaan kuis siswa secara real-time (baik sedang dikerjakan maupun selesai)
+ * Memastikan Panel Guru dapat mendeteksi siswa yang baru memulai, sedang mengerjakan, atau telah selesai
+ */
+export function trackQuizProgress(params: {
+  attemptId: string
+  studentId: string
+  studentName: string
+  studentClass?: string
+  totalQuestions: number
+  answeredCount: number
+  answers: Record<string, string>
+  itemsDetail?: Record<number, any>
+  isCompleted: boolean
+  score?: number
+  correctCount?: number
+  wrongCount?: number
+  durationSeconds?: number
+  startedAt?: string
+}): ExperimentItem {
+  initAuthStorage()
+  const all = getAllExperiments()
+  const existing = all.find((e) => e.id === params.attemptId)
+
+  const nowIso = new Date().toISOString()
+  const createdAt = existing ? existing.createdAt : (params.startedAt || nowIso)
+
+  const status: ExperimentItem['status'] = params.isCompleted ? 'diterima_server' : 'sedang_dikerjakan'
+  const summary = params.isCompleted
+    ? `Pengerjaan kuis formatif: Selesai (Skor ${params.score ?? 0}/100, ${params.correctCount ?? 0} Benar, ${params.wrongCount ?? 0} Salah).`
+    : `Pengerjaan kuis formatif: Sedang dikerjakan (${params.answeredCount}/${params.totalQuestions} soal dijawab).`
+
+  const updatedItem: ExperimentItem = {
+    id: params.attemptId,
+    experimentType: 'kuis_evaluasi',
+    title: 'Kuis Evaluasi Modul 1 Asam Basa',
+    summary,
+    createdAt,
+    ownerId: params.studentId,
+    ownerName: params.studentName,
+    ownerRole: 'siswa',
+    ownerClass: params.studentClass || 'XI MIPA',
+    status,
+    serverReceivedAt: nowIso,
+    serverAckId: existing?.serverAckId || (params.isCompleted ? `SRV-ACK-${Math.random().toString(36).substring(2, 8).toUpperCase()}` : undefined),
+    details: {
+      score: params.score,
+      correctCount: params.correctCount,
+      wrongCount: params.wrongCount,
+      totalQuestions: params.totalQuestions,
+      answeredCount: params.answeredCount,
+      durationSeconds: params.durationSeconds,
+      moduleTitle: 'Kuis Evaluasi Modul 1 Asam Basa',
+      answers: params.answers,
+      itemsDetail: params.itemsDetail,
+      startedAt: createdAt,
+      completedAt: params.isCompleted ? nowIso : undefined,
+    },
+  }
+
+  const filtered = all.filter((e) => e.id !== params.attemptId)
+  saveAllExperiments([updatedItem, ...filtered])
+
+  // Sinkronkan ke Cloud Firestore jika Firebase terkonfigurasi
+  try {
+    const { isConfigured } = initFirebase()
+    if (isConfigured) {
+      void saveActivityToFirestore(updatedItem)
+    }
+  } catch (err) {
+    console.warn('Gagal sinkronisasi trackQuizProgress ke Firestore:', err)
+  }
+
+  return updatedItem
+}
+
 export function addQuizExperimentRecord(params: {
   attemptId: string
   score: number

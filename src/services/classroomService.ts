@@ -370,12 +370,32 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
     console.warn('Gagal memuat aktivitas dari Firestore:', err)
   }
 
-  // 3. Baca data eksperimen lokal yang sudah diterima server (status === 'diterima_server' || 'dibaca_guru')
+  // 3. Baca data eksperimen lokal yang sudah diterima server atau sedang dikerjakan
   const localExperiments = getAllExperiments()
   const localSyncedResults: StudentActivityResult[] = localExperiments
-    .filter((exp) => (exp.status === 'diterima_server' || exp.status === 'dibaca_guru') && exp.ownerId)
+    .filter(
+      (exp) =>
+        (exp.status === 'diterima_server' ||
+          exp.status === 'dibaca_guru' ||
+          exp.status === 'sedang_dikerjakan') &&
+        exp.ownerId
+    )
     .map((exp) => {
       const isQuiz = exp.experimentType === 'kuis_evaluasi'
+      const isOngoing = exp.status === 'sedang_dikerjakan'
+      const computedScore = isOngoing
+        ? null
+        : (exp.details.score ?? (exp.details.isHypothesisCorrect ? 100 : 80))
+
+      const answersObj = exp.details.answers
+        ? (exp.details.answers as Record<string, string>)
+        : isQuiz
+        ? { '1': 'B', '2': 'B', '3': 'C', '4': 'A', '5': 'C', '6': 'D', '7': 'C', '8': 'D', '9': 'B', '10': 'E' }
+        : { '1': exp.details.colorName || 'Merah' }
+
+      const totalQ = exp.details.totalQuestions ?? (isQuiz ? 10 : 1)
+      const prog = exp.details.progressCount ?? (exp.details.answeredCount ?? (isOngoing ? 0 : totalQ))
+
       return {
         id: exp.id,
         ownerId: exp.ownerId || 'anon',
@@ -384,20 +404,21 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
         activityId: isQuiz ? 'kuis-m1-asam-basa' : 'lab-uji-indikator',
         activityTitle: exp.title,
         activityType: isQuiz ? 'kuis_evaluasi' : 'lab_simulasi',
-        questionVersion: isQuiz ? '2.0.0' : '2.0.0',
-        score: exp.details.score ?? (exp.details.isHypothesisCorrect ? 100 : 80),
-        correctCount: exp.details.correctCount ?? 1,
+        questionVersion: '2.0.0',
+        score: computedScore,
+        correctCount: exp.details.correctCount ?? (isOngoing ? 0 : 1),
         wrongCount: exp.details.wrongCount ?? 0,
-        totalQuestions: exp.details.totalQuestions ?? 1,
+        totalQuestions: totalQ,
+        progressCount: prog,
+        isCompleted: !isOngoing,
         durationSeconds: exp.details.durationSeconds ?? 180,
-        answers: (isQuiz
-          ? { '1': 'B', '2': 'B', '3': 'C', '4': 'A', '5': 'C', '6': 'D', '7': 'C', '8': 'D', '9': 'B', '10': 'E' }
-          : { '1': exp.details.colorName || 'Merah' }) as Record<string, string>,
-        status: exp.status as 'diterima_server' | 'dibaca_guru',
+        answers: answersObj,
+        status: exp.status as 'diterima_server' | 'dibaca_guru' | 'sedang_dikerjakan',
         storageStatus: 'SENT' as const,
-        completedAt: exp.createdAt,
+        startedAt: exp.details.startedAt || exp.createdAt,
+        completedAt: isOngoing ? (exp.details.startedAt || exp.createdAt) : exp.createdAt,
         serverReceivedAt: exp.serverReceivedAt || exp.createdAt,
-        serverAckId: exp.serverAckId || 'SRV-ACK-LOCAL',
+        serverAckId: exp.serverAckId || (isOngoing ? 'DRAFT-LOCAL' : 'SRV-ACK-LOCAL'),
         teacherRating: exp.teacherRating,
         teacherFeedback: exp.teacherFeedback,
         teacherReadAt: exp.teacherReadAt,
@@ -593,9 +614,9 @@ export function getClassMetrics(data: StudentActivityResult[]): ClassMetricSumma
   const totalStudentsReceived = uniqueStudentUids.size
   const totalActivitiesCount = serverReceivedItems.length
 
-  const quizItems = serverReceivedItems.filter((i) => i.activityType === 'kuis_evaluasi')
+  const quizItems = serverReceivedItems.filter((i) => i.activityType === 'kuis_evaluasi' && i.score !== null)
 
-  const totalScore = quizItems.reduce((acc, curr) => acc + curr.score, 0)
+  const totalScore = quizItems.reduce((acc, curr) => acc + (curr.score ?? 0), 0)
   const averageScore = quizItems.length > 0 ? Math.round(totalScore / quizItems.length) : 0
 
   const totalCorrect = quizItems.reduce((acc, curr) => acc + curr.correctCount, 0)
@@ -605,7 +626,7 @@ export function getClassMetrics(data: StudentActivityResult[]): ClassMetricSumma
 
   // Siswa yang memerlukan tindak lanjut: nilai < 60 pada percobaan kuis pertama
   const firstAttempts = filterAttemptsByMethod(serverReceivedItems, 'first')
-  const studentsNeedingFollowUpCount = firstAttempts.filter((a) => a.score < 60).length
+  const studentsNeedingFollowUpCount = firstAttempts.filter((a) => a.score !== null && a.score < 60).length
 
   // Distribusi nilai (5 rentang)
   const ranges = [
@@ -617,7 +638,7 @@ export function getClassMetrics(data: StudentActivityResult[]): ClassMetricSumma
   ]
 
   const scoreDistribution = ranges.map((r) => {
-    const count = firstAttempts.filter((a) => a.score >= r.min && a.score <= r.max).length
+    const count = firstAttempts.filter((a) => a.score !== null && a.score >= r.min && a.score <= r.max).length
     const percentage = firstAttempts.length > 0 ? Math.round((count / firstAttempts.length) * 100) : 0
     return {
       rangeLabel: r.label,
@@ -635,8 +656,9 @@ export function getClassMetrics(data: StudentActivityResult[]): ClassMetricSumma
   })
 
   const completionByActivity = Array.from(activityMap.entries()).map(([title, items]) => {
-    const avg = Math.round(items.reduce((s, it) => s + it.score, 0) / items.length)
-    const passedCount = items.filter((it) => it.score >= 75).length
+    const scoredItems = items.filter((it) => it.score !== null)
+    const avg = scoredItems.length > 0 ? Math.round(scoredItems.reduce((s, it) => s + (it.score ?? 0), 0) / scoredItems.length) : 0
+    const passedCount = items.filter((it) => it.score !== null && (it.score ?? 0) >= 75).length
     const masteryRate = Math.round((passedCount / items.length) * 100)
     return {
       activityTitle: title,
