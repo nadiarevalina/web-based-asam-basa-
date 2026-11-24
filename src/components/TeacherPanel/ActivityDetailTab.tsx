@@ -40,13 +40,24 @@ export function ActivityDetailTab({ activity, onBackToList }: ActivityDetailTabP
       <div className="activity-detail-overview">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <span className="teacher-meta-pill" style={{ marginBottom: '8px' }}>
-              {activity.activityType === 'kuis_evaluasi'
-                ? 'Kuis Formatif HOTS'
-                : activity.activityType === 'lab_simulasi'
-                ? 'Eksperimen Lab Virtual'
-                : 'Uji Diagnostik'}
-            </span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap' }}>
+              <span className="teacher-meta-pill">
+                {activity.activityType === 'kuis_evaluasi'
+                  ? 'Kuis Formatif HOTS'
+                  : activity.activityType === 'lab_simulasi'
+                  ? 'Eksperimen Lab Virtual'
+                  : 'Uji Diagnostik'}
+              </span>
+              {activity.isSampleData ? (
+                <span style={{ background: '#f1f5f9', color: '#475569', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, border: '1px solid #cbd5e1' }}>
+                  🧪 Data Contoh (Preview Sistem)
+                </span>
+              ) : (
+                <span style={{ background: '#dcfce7', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, border: '1px solid #bbf7d0' }}>
+                  👤 Data Siswa Nyata
+                </span>
+              )}
+            </div>
             <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1e293b', margin: '4px 0' }}>
               {activity.activityTitle}
             </h2>
@@ -62,11 +73,13 @@ export function ActivityDetailTab({ activity, onBackToList }: ActivityDetailTabP
             </div>
             <div
               className={`score-badge ${
-                activity.score >= 80 ? 'high' : activity.score >= 60 ? 'medium' : 'low'
+                activity.score !== null && activity.score !== undefined
+                  ? activity.score >= 80 ? 'high' : activity.score >= 60 ? 'medium' : 'low'
+                  : 'neutral'
               }`}
               style={{ fontSize: '24px', padding: '4px 14px' }}
             >
-              {activity.score}
+              {activity.score !== null && activity.score !== undefined ? activity.score : '—'}
             </div>
           </div>
         </div>
@@ -176,8 +189,14 @@ export function ActivityDetailTab({ activity, onBackToList }: ActivityDetailTabP
             </span>
           </div>
 
+          {(!activity.answers || Object.keys(activity.answers).length === 0) && (
+            <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '14px 18px', marginBottom: '20px', color: '#475569', fontSize: '13px' }}>
+              <strong>ℹ️ Rincian Pilihan Jawaban Tidak Tersedia:</strong> Rekaman aktivitas ini tidak memuat data pilihan butir soal per nomor (misalnya data arsip lama atau data sebelum rincian jawaban diaktifkan). Sistem tidak merekonstruksi jawaban secara buatan demi menjamin keaslian data.
+            </div>
+          )}
+
           {questions.map((q) => {
-            const studentChoice = activity.answers[String(q.questionNumber)]
+            const studentChoice = activity.answers ? activity.answers[String(q.questionNumber)] : undefined
             const hasAnswered = studentChoice !== undefined && studentChoice !== null && studentChoice !== ''
             const isCorrect = hasAnswered && studentChoice === q.correctAnswer
 

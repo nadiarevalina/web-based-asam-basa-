@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getCurrentUser } from '../services/authStorage'
 
 interface SavedReflectionDraft {
   studentName?: string
@@ -49,7 +50,8 @@ export function ReflectionSection() {
         learningExperience: hypothesisEvaluation, // backwards compatibility
         lastUpdated: new Date().toISOString(),
       }
-      localStorage.setItem('asambasa_reflection_draft', JSON.stringify(draftData))
+      const activeKey = getReflectionStorageKey(getCurrentUser()?.id)
+      localStorage.setItem(activeKey, JSON.stringify(draftData))
       setSaveNotice('Draf lembar refleksi inkuiri berhasil disimpan di browser!')
       setTimeout(() => setSaveNotice(null), 3000)
     } catch {
@@ -69,6 +71,8 @@ export function ReflectionSection() {
       setOverallConclusion('')
       setChallengingConcept('')
       setActionPlan('')
+      const activeKey = getReflectionStorageKey(getCurrentUser()?.id)
+      localStorage.removeItem(activeKey)
       localStorage.removeItem('asambasa_reflection_draft')
       setSaveNotice('Lembar refleksi telah dibersihkan.')
       setTimeout(() => setSaveNotice(null), 2500)

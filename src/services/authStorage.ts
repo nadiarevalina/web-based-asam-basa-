@@ -76,7 +76,7 @@ const INITIAL_EXPERIMENTS: ExperimentItem[] = [
       ph: 2.8,
       colorName: 'Merah Cerah',
       colorHex: '#ef4444',
-      natureLabel: 'Asam Kuat/Sedang',
+      natureLabel: 'Asam (Asam Lemah)',
     },
   },
   {

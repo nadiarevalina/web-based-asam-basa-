@@ -387,11 +387,13 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
         ? null
         : (exp.details.score ?? (exp.details.isHypothesisCorrect ? 100 : 80))
 
-      const answersObj = exp.details.answers
+      // AD14-02: Gunakan jawaban asli siswa secara autentik!
+      // JANGAN PERNAH menimpa jawaban siswa dengan template jawaban fiktif!
+      const answersObj = exp.details.answers && Object.keys(exp.details.answers).length > 0
         ? (exp.details.answers as Record<string, string>)
         : isQuiz
-        ? { '1': 'B', '2': 'B', '3': 'C', '4': 'A', '5': 'C', '6': 'D', '7': 'C', '8': 'D', '9': 'B', '10': 'E' }
-        : { '1': exp.details.colorName || 'Merah' }
+        ? {} // Jika data legacy tidak menyertakan rincian, berikan objek kosong dan jangan mengarang jawaban
+        : (exp.details.colorName ? { '1': exp.details.colorName } : {})
 
       const totalQ = exp.details.totalQuestions ?? (isQuiz ? 10 : 1)
       const prog = exp.details.progressCount ?? (exp.details.answeredCount ?? (isOngoing ? 0 : totalQ))

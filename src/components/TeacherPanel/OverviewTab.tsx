@@ -242,10 +242,12 @@ export function OverviewTab({
                   <td>
                     <span
                       className={`score-badge ${
-                        item.score >= 80 ? 'high' : item.score >= 60 ? 'medium' : 'low'
+                        item.score !== null && item.score !== undefined
+                          ? item.score >= 80 ? 'high' : item.score >= 60 ? 'medium' : 'low'
+                          : 'neutral'
                       }`}
                     >
-                      {item.score}
+                      {item.score !== null && item.score !== undefined ? item.score : '—'}
                     </span>
                   </td>
                   <td>

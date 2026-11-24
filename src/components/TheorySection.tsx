@@ -647,7 +647,7 @@ export function TheorySection() {
           'Mekanisme reaksi netralisasi dan perumusan persamaan reaksi ion bersih (H⁺ + OH⁻ → H₂O)',
           'Prinsip titrasi volumetri asam-basa dan penentuan titik ekivalen',
         ]}
-        boundaryNotes="Aplikasi kontekstual praktis (seperti pengapuran tanah masam dan respon sengatan serangga) merupakan contoh pengayaan materi berbasis prinsip netralisasi asam-basa."
+        boundaryNotes="Aplikasi kontekstual praktis (seperti pengapuran tanah masam dan reaksi netralisasi antasida) merupakan contoh pengayaan materi berbasis prinsip netralisasi asam-basa."
       />
     </section>
   )

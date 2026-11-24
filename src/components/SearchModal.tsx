@@ -65,7 +65,7 @@ const SEARCH_DATABASE: SearchItem[] = [
     pageId: 'teori',
     category: 'Materi Teori',
     description: 'Asam + Basa → Garam + Air dan aplikasi pengapuran tanah masam.',
-    keywords: ['netralisasi', 'titrasi', 'garam', 'air', 'pengapuran', 'sengatan'],
+    keywords: ['netralisasi', 'titrasi', 'garam', 'air', 'pengapuran', 'antasida', 'laboratorium'],
   },
   {
     id: 's-lab-lakmus',

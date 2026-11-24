@@ -21,7 +21,7 @@ const STRONG_BASES: CompoundOption[] = [
   { formula: 'LiOH', name: 'Litium Hidroksida', ionName: 'Li⁺ dan OH⁻' },
 ]
 
-const PRESET_MOLARITIES = [0.1, 0.05, 0.02, 0.01, 0.005, 0.001]
+const PRESET_MOLARITIES = [0.1, 0.05, 0.01, 0.001, 1e-4, 1e-8]
 
 export function PhCalculator() {
   const [solType, setSolType] = useState<SolutionCategory>('asam_kuat')

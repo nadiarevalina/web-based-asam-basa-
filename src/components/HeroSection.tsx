@@ -77,7 +77,7 @@ export function HeroSection({
               <strong className="guiding-q-title">Pertanyaan Pemantik Orientasi:</strong>
             </div>
             <p className="guiding-q-text">
-              "Mengapa sengatan lebah (bersifat asam) diobati dengan soda kue (basa), namun sengatan tawon (bersifat basa) justru dibilas dengan asam cuka? Bagaimana kita dapat membuktikan sifat suatu larutan tanpa mencicipinya?"
+              "Ketika larutan asam klorida (HCl) yang memerahkan lakmus dicampurkan secara tepat dengan larutan natrium hidroksida (NaOH) yang membirukan lakmus, mengapa campuran akhirnya menghasilkan larutan netral yang tidak mengubah warna indikator? Bagaimana kita dapat membuktikan dan memprediksi titik akhir reaksi netralisasi secara aman di laboratorium tanpa mencicipi zat kimia?"
             </p>
           </div>
 

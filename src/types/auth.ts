@@ -15,9 +15,10 @@ export interface UserAccount {
 export type ExperimentStatus =
   | 'belum_dikaitkan' // Belum ditautkan ke akun pengguna (draft/anonim)
   | 'sedang_dikerjakan' // Sedang aktif dikerjakan oleh siswa
-  | 'terkait' // Sudah ditautkan ke akun pemilik
-  | 'dalam_antrean' // Masuk antrean siap dikirim ke server
-  | 'diterima_server' // Server telah menerima data (HTTP 200)
+  | 'terkait' // Sudah ditautkan ke akun pemilik (tersimpan lokal)
+  | 'dalam_antrean' // Masuk antrean siap dikirim ke server (menunggu pengiriman)
+  | 'gagal_kirim' // Pengiriman ke server gagal/ditolak (siap dicoba ulang)
+  | 'diterima_server' // Server telah mengonfirmasi penerimaan data secara valid
   | 'dibaca_guru' // Guru telah memeriksa dan membaca hasilnya
 
 export type ExperimentType = 'lab_simulasi' | 'kuis_evaluasi'
@@ -34,17 +35,20 @@ export interface ExperimentDetails {
   studentConclusion?: string
   isHypothesisCorrect?: boolean
   // Untuk Kuis Evaluasi
-  score?: number
+  score?: number | null
   correctCount?: number
   wrongCount?: number
   totalQuestions?: number
   answeredCount?: number
+  progressCount?: number
   durationSeconds?: number
   moduleTitle?: string
   answers?: Record<string, string>
   itemsDetail?: Record<number, any>
+  questionVersion?: string
   startedAt?: string
   completedAt?: string
+  syncError?: string
 }
 
 export interface ExperimentItem {
@@ -77,7 +81,8 @@ export interface ServerSyncLog {
   timestamp: string
   experimentId: string
   ownerName: string
-  status: 'SUCCESS' | 'QUEUED' | 'READ'
+  status: 'SUCCESS' | 'QUEUED' | 'READ' | 'FAILED'
   httpCode: number
   message: string
+  error?: string
 }

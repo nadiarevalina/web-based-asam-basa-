@@ -86,12 +86,28 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
     return s.category === activeFilterCategory
   })
 
-  const getNatureLabel = (ph: number): string => {
-    if (ph < 3.0) return 'Asam Kuat'
-    if (ph < 7.0) return 'Asam Lemah'
+    // AD14-04: Pisahkan Sifat Larutan (Asam, Netral, Basa berdasarkan pH)
+  // dari Kekuatan Senyawa Kimia (Kuat vs Lemah berdasarkan derajat ionisasi alpha / metadata)
+  const getSolutionProperty = (ph: number): string => {
+    if (ph < 7.0) return 'Asam'
     if (ph === 7.0) return 'Netral'
-    if (ph <= 11.5) return 'Basa Lemah / Sedang'
-    return 'Basa Kuat'
+    return 'Basa'
+  }
+
+  const getCompoundStrengthLabel = (nature: SampleNature): string => {
+    return NATURE_LABELS[nature] || 'Netral'
+  }
+
+  // Label gabungan deskriptif yang presisi secara ilmiah
+  const getFullClassificationLabel = (sample: ChemicalSample): string => {
+    const prop = getSolutionProperty(sample.approximatePh)
+    const strength = getCompoundStrengthLabel(sample.nature)
+    if (sample.nature === 'netral') return 'Netral'
+    return `${prop} (${strength})`
+  }
+
+  const getNatureLabel = (_ph?: number): string => {
+    return getFullClassificationLabel(currentSample)
   }
 
   const handleSampleChange = (sampleId: string) => {
@@ -135,7 +151,7 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
       currentSample.approximatePh,
       colorResult.colorName,
       colorResult.colorHex,
-      getNatureLabel(currentSample.approximatePh),
+      getFullClassificationLabel(currentSample),
       hypothesisLabel,
       isHypothesisCorrect,
       studentConclusion.trim() || undefined
@@ -149,7 +165,7 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
       ph: currentSample.approximatePh,
       colorName: colorResult.colorName,
       colorHex: colorResult.colorHex,
-      natureLabel: getNatureLabel(currentSample.approximatePh),
+      natureLabel: getFullClassificationLabel(currentSample),
       hypothesisNature: hypothesisLabel,
       studentConclusion: studentConclusion.trim() || undefined,
       isHypothesisCorrect,
@@ -884,7 +900,7 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
                   <span
                     className={`obs-nature-pill nature-${currentSample.nature}`}
                   >
-                    {getNatureLabel(currentSample.approximatePh)}
+                    {getFullClassificationLabel(currentSample)}
                   </span>
                 </div>
                 <button

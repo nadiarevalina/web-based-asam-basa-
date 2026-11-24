@@ -7,9 +7,10 @@ import type {
   QuizItemAnswer,
   QuizQuestion,
   StorageStatus,
+  StudentIdentity,
 } from '../types/quiz'
 import { QUIZ_MODULE_ID, QUIZ_QUESTION_VERSION } from '../types/quiz'
-import { addQuizExperimentRecord, trackQuizProgress } from './authStorage'
+import { addQuizExperimentRecord } from './authStorage'
 
 const DRAFT_STORAGE_KEY = 'asambasa_quiz_m1_draft_v2'
 const HISTORY_STORAGE_KEY = 'asambasa_quiz_m1_history_v2'
@@ -46,7 +47,7 @@ export function saveStudentIdentity(identity: StudentIdentity): { success: boole
   try {
     const normalized: StudentIdentity = {
       ...identity,
-      name: identity.name.trim(),
+      name: (identity.name || identity.fullName || 'Siswa').trim(), fullName: (identity.fullName || identity.name || 'Siswa').trim(),
       schoolClass: identity.schoolClass?.trim() || 'XI MIPA',
       savedAt: new Date().toISOString(),
     }

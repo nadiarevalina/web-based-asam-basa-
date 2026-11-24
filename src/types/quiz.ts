@@ -1,4 +1,5 @@
 import type { QuizQuestion } from './chemistry'
+export type { QuizQuestion }
 
 export const QUIZ_QUESTION_VERSION = '2.0.0'
 export const QUIZ_MODULE_ID = 'modul-1'
@@ -10,9 +11,12 @@ export type CognitiveLevel = 'C3' | 'C4' | 'C5'
  */
 export interface StudentIdentity {
   id: string
-  fullName: string
-  schoolClass: string
-  isFromAccount: boolean
+  fullName?: string
+  name?: string
+  schoolClass?: string
+  nisn?: string
+  isFromAccount?: boolean
+  savedAt?: string
   createdAt?: string
 }
 
