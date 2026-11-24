@@ -53,7 +53,7 @@ const VERIFIED_SAMPLE_RESULTS: StudentActivityResult[] = [
       '7': 'C', // Benar (Kunci: C)
       '8': 'D', // Benar (Kunci: D)
       '9': 'A', // Salah (Kunci: B - Siswa salah mengira pH > 7 saat asam diencerkan ekstrim)
-      '10': 'C', // Salah (Kunci: E - Keliru membedakan asam formiat lebah vs basa sengatan tawon)
+      '10': 'C', // Salah (Kunci: E - Keliru memilih zat penetral asam lambung yang aman)
     },
     status: 'diterima_server',
     storageStatus: 'SENT',
@@ -121,7 +121,7 @@ const VERIFIED_SAMPLE_RESULTS: StudentActivityResult[] = [
       '7': 'C',
       '8': 'D',
       '9': 'B',
-      '10': 'A', // Salah (Kunci: E - Mengira asam cuka cocok untuk menetralkan sengatan lebah yang juga asam)
+      '10': 'A', // Salah (Kunci: E - Mengira basa kuat NaOH aman untuk penetral lambung)
     },
     status: 'dibaca_guru',
     storageStatus: 'SENT',
@@ -129,7 +129,7 @@ const VERIFIED_SAMPLE_RESULTS: StudentActivityResult[] = [
     serverReceivedAt: '2026-11-17T08:24:05.000Z',
     serverAckId: 'SRV-ACK-8812',
     teacherRating: 'Sangat Baik',
-    teacherFeedback: 'Analisis konsep asam basa sangat tajam. Perhatikan kembali sifat asam dari racun lebah vs basa tawon.',
+    teacherFeedback: 'Analisis konsep asam basa sangat tajam. Perhatikan kembali pemilihan zat penetral medis antasida lambung.',
     teacherReadAt: '2026-11-17T08:45:00.000Z',
     isSampleData: true,
     attemptNumber: 1,
@@ -727,9 +727,9 @@ export function generateTeacherRecommendations(
       targetIndicator: lowestSifat.indicator,
       evidenceSummary: `Pada Soal ${lowestSifat.questionNumber} (${lowestSifat.topic}), persentase pemahaman siswa sebesar ${lowestSifat.percentageCorrect}%. Terdapat ${lowestSifat.wrongCount} siswa yang keliru memilih opsi reaksi.`,
       studentDifficultyHypothesis:
-        'Indikasi kesulitan: Sebagian siswa kesulitan membedakan senyawa yang tepat untuk menetralkan asam vs basa dalam konteks kehidupan nyata (misal sengatan serangga dan pengapuran tanah masam).',
+        'Indikasi kesulitan: Sebagian siswa kesulitan membedakan senyawa yang tepat untuk menetralkan asam vs basa dalam konteks kehidupan nyata (misal penetralan asam lambung dan pengapuran tanah masam).',
       recommendedActivity:
-        'Diskusikan fenomena asam basa kontekstual di kelas menggunakan tabel komparasi pH bahan alam: sengatan lebah (asam formiat) dinetralkan bahan basa lemah (soda kue), sedangkan sengatan tawon (basa) dinetralkan cuka encer.',
+        'Diskusikan fenomena netralisasi kontekstual di kelas menggunakan perbandingan reaksi: asam lambung HCl dinetralkan basa aman Mg(OH)₂, sedangkan tanah pertanian masam dinetralkan kapur CaCO₃.',
       followUpGoal:
         'Peserta didik mampu memilih zat penawar asam atau basa secara ilmiah berdasarkan sifat keasaman zat pencemar.',
       priorityLevel: lowestSifat.percentageCorrect < 60 ? 'Tinggi' : 'Sedang',

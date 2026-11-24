@@ -41,28 +41,37 @@ export function PhCalculator() {
     setErrorMessage(null)
   }
 
+  // Tetapan autoionisasi air pada suhu standar 25°C (298 K)
+  const KW = 1.0e-14
+
   // Calculate results
   const M = parseFloat(molarityInput)
   const isValid = !isNaN(M) && M > 0 && M <= 1.0
 
   let ph = 7.0
   let pOh = 7.0
-  let ionConcStr = ''
   let scientificStr = ''
+  let isExtremelyDilute = false
 
   if (isValid) {
+    // Pada konsentrasi sangat encer (M <= 1e-6), kontribusi ion H+ atau OH- dari
+    // autoionisasi air pelarut mutlak diperhitungkan melalui persamaan kesetimbangan kuadrat:
+    // [H+] = (C + sqrt(C^2 + 4*Kw)) / 2  (untuk asam kuat monoprotik, a = 1)
+    // [OH-] = (C + sqrt(C^2 + 4*Kw)) / 2 (untuk basa kuat monovalen, b = 1)
     if (solType === 'asam_kuat') {
-      const hConc = M // a = 1
+      const C = M // valensi a = 1
+      const hConc = (C + Math.sqrt(C * C + 4 * KW)) / 2
       ph = -Math.log10(hConc)
-      pOh = 14 - ph
-      ionConcStr = `${hConc} M`
-      scientificStr = hConc.toExponential(2)
+      pOh = 14.0 - ph
+      scientificStr = hConc.toExponential(3)
+      isExtremelyDilute = M <= 1.0e-6
     } else {
-      const ohConc = M // b = 1
+      const C = M // valensi b = 1
+      const ohConc = (C + Math.sqrt(C * C + 4 * KW)) / 2
       pOh = -Math.log10(ohConc)
-      ph = 14 - pOh
-      ionConcStr = `${ohConc} M`
-      scientificStr = ohConc.toExponential(2)
+      ph = 14.0 - pOh
+      scientificStr = ohConc.toExponential(3)
+      isExtremelyDilute = M <= 1.0e-6
     }
   }
 
@@ -225,7 +234,19 @@ export function PhCalculator() {
                 <div className="scoreboard-badge">
                   <span className="status-label">Kategori Sifat:</span>
                   <strong className="status-val">
-                    {ph < 3 ? 'Asam Kuat Ekstrem' : ph < 7 ? 'Asam' : ph > 11 ? 'Basa Kuat Ekstrem' : 'Basa'}
+                    {ph < 3.0
+                      ? 'Asam Kuat Ekstrem'
+                      : ph <= 6.95
+                      ? 'Asam'
+                      : ph < 7.0
+                      ? 'Asam Sangat Encer (Mendekati Netral)'
+                      : ph === 7.0
+                      ? 'Netral'
+                      : ph <= 7.05
+                      ? 'Basa Sangat Encer (Mendekati Netral)'
+                      : ph > 11.0
+                      ? 'Basa Kuat Ekstrem'
+                      : 'Basa'}
                   </strong>
                 </div>
               </div>
@@ -271,11 +292,27 @@ export function PhCalculator() {
                     <li className="step-flow-item">
                       <div className="step-flow-header">
                         <span className="step-flow-num">2</span>
-                        <strong>Hitung Konsentrasi Ion Hidrogen [H⁺]:</strong>
+                        <strong>
+                          {isExtremelyDilute
+                            ? 'Hitung [H⁺] dengan Memperhitungkan Autoionisasi Air (Kw = 1.0 × 10⁻¹⁴):'
+                            : 'Hitung Konsentrasi Ion Hidrogen [H⁺]:'}
+                        </strong>
                       </div>
                       <div className="step-math-box font-mono">
-                        [H⁺] = M × a = {M} M × 1 = {ionConcStr} = {scientificStr} M
+                        {isExtremelyDilute ? (
+                          <>
+                            [H⁺] = (C + √(C² + 4Kw)) / 2<br />
+                            [H⁺] = ({M.toExponential(2)} + √(({M.toExponential(2)})² + 4 × 10⁻¹⁴)) / 2 = {scientificStr} M
+                          </>
+                        ) : (
+                          <>[H⁺] = M × a = {M} M × 1 = {scientificStr} M</>
+                        )}
                       </div>
+                      {isExtremelyDilute && (
+                        <p className="step-flow-desc">
+                          Karena konsentrasi asam klorida sangat encer (≤ 10⁻⁶ M), kontribusi ion H⁺ dari autoionisasi air pelarut (Kw = 10⁻¹⁴ pada 25°C) tidak boleh diabaikan. Kesetimbangan air mencegah nilai pH melompat ke area basa (&gt; 7).
+                        </p>
+                      )}
                     </li>
 
                     <li className="step-flow-item">
@@ -306,11 +343,27 @@ export function PhCalculator() {
                     <li className="step-flow-item">
                       <div className="step-flow-header">
                         <span className="step-flow-num">2</span>
-                        <strong>Hitung Konsentrasi Ion Hidroksida [OH⁻]:</strong>
+                        <strong>
+                          {isExtremelyDilute
+                            ? 'Hitung [OH⁻] dengan Memperhitungkan Autoionisasi Air (Kw = 1.0 × 10⁻¹⁴):'
+                            : 'Hitung Konsentrasi Ion Hidroksida [OH⁻]:'}
+                        </strong>
                       </div>
                       <div className="step-math-box font-mono">
-                        [OH⁻] = M × b = {M} M × 1 = {ionConcStr} = {scientificStr} M
+                        {isExtremelyDilute ? (
+                          <>
+                            [OH⁻] = (C + √(C² + 4Kw)) / 2<br />
+                            [OH⁻] = ({M.toExponential(2)} + √(({M.toExponential(2)})² + 4 × 10⁻¹⁴)) / 2 = {scientificStr} M
+                          </>
+                        ) : (
+                          <>[OH⁻] = M × b = {M} M × 1 = {scientificStr} M</>
+                        )}
                       </div>
+                      {isExtremelyDilute && (
+                        <p className="step-flow-desc">
+                          Karena konsentrasi basa sangat encer (≤ 10⁻⁶ M), kontribusi ion OH⁻ dari autoionisasi air murni (Kw = 10⁻¹⁴ pada 25°C) diperhitungkan melalui persamaan kesetimbangan kuadrat sehingga nilai pH tetap berada di atas 7 (mendekati netral).
+                        </p>
+                      )}
                     </li>
 
                     <li className="step-flow-item">
@@ -407,10 +460,10 @@ export function PhCalculator() {
             <strong>Ionisasi Sempurna:</strong> Mengasumsikan derajat ionisasi α = 1 (100%), sehingga rumus ini tidak berlaku untuk asam lemah (seperti CH₃COOH) atau basa lemah (seperti NH₃) yang membutuhkan konstanta kesetimbangan Ka atau Kb.
           </li>
           <li>
-            <strong>Kondisi Suhu Kamar (25°C):</strong> Menggunakan nilai tetapan autoionisasi air Kw = 1.0 × 10⁻¹⁴ (sehingga pH + pOH = 14).
+            <strong>Kondisi Suhu Kamar (25°C / 298 K):</strong> Menggunakan nilai tetapan autoionisasi air Kw = 1.0 × 10⁻¹⁴ (sehingga pH + pOH = 14 pada 25°C). Asumsi suhu standar laboratorium.
           </li>
           <li>
-            <strong>Autoionisasi Pelarut Diabaikan:</strong> Kontribusi ion H⁺ atau OH⁻ dari autoionisasi air murni diabaikan karena konsentrasi asam/basa yang dimasukkan jauh lebih tinggi dari 10⁻⁷ M.
+            <strong>Autoionisasi Air Diperhitungkan:</strong> Pada konsentrasi sangat encer (C ≤ 10⁻⁶ M), kontribusi ion H⁺ atau OH⁻ dari autoionisasi air pelarut diperhitungkan secara akurat melalui persamaan kesetimbangan kuadrat: [H⁺] = (C + √(C² + 4Kw)) / 2 untuk asam kuat, dan [OH⁻] = (C + √(C² + 4Kw)) / 2 untuk basa kuat. Oleh karena itu, asam encer ekstrem (seperti HCl 10⁻⁸ M) menghasilkan pH ≈ 6,98 dan secara ilmiah tidak pernah dikategorikan keliru sebagai basa.
           </li>
         </ul>
       </div>

@@ -563,17 +563,17 @@ export function TheorySection() {
               <div className="neutralization-examples-grid">
                 <div className="neutral-case">
                   <span className="case-tag">Kasus Pertanian</span>
-                  <h4>Pengapuran Tanah Masam</h4>
+                  <h4>Pengapuran Tanah Masam (Kalsium Karbonat)</h4>
                   <p>
-                    Lahan gambut atau tanah pertanian masam (pH &lt; 5) dinetralkan dengan menaburkan kapur tohor (<code>CaO</code>) atau kapur sirih agar unsur hara fosfor dan nitrogen dapat diserap akar tanaman.
+                    Lahan gambut atau tanah pertanian masam (pH &lt; 5) dinetralkan dengan menaburkan kalsium karbonat (<code>CaCO₃</code> / kapur pertanian / dolomit) agar unsur hara fosfor dan nitrogen dapat diserap akar tanaman: <code>CaCO₃(s) + 2H⁺(aq) → Ca²⁺(aq) + H₂O(l) + CO₂(g)</code>.
                   </p>
                 </div>
 
                 <div className="neutral-case">
-                  <span className="case-tag">Pertolongan Pertama</span>
-                  <h4>Penetralan Sengatan Serangga</h4>
+                  <span className="case-tag">Kesehatan Medis</span>
+                  <h4>Penetralan Asam Lambung oleh Antasida</h4>
                   <p>
-                    Sengatan semut/lebah mengandung asam format (<code>HCOOH</code>), dapat diredakan dengan pasta soda kue (<code>NaHCO₃</code>). Sebaliknya sengatan tawon yang bersifat basa dapat diredakan dengan kompres cuka makan.
+                    Kelebihan asam klorida (<code>HCl</code>) pada lambung penderita maag dinetralkan secara aman oleh magnesium hidroksida (<code>Mg(OH)₂</code>) membentuk garam magnesium klorida dan air: <code>Mg(OH)₂(s) + 2HCl(aq) → MgCl₂(aq) + 2H₂O(l)</code>.
                   </p>
                 </div>
 

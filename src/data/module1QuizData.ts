@@ -368,47 +368,47 @@ export const MODULE_1_HOTS_QUESTIONS: Module1QuizQuestion[] = [
   {
     id: 9,
     questionNumber: 9,
-    topic: 'Evaluasi Penanganan Medis Kontekstual Sengatan Serangga',
+    topic: 'Evaluasi Netralisasi Medis Asam Lambung dengan Antasida',
     cognitiveLevel: 'C5',
     cognitiveLabel: 'C5 — Mengevaluasi',
     indicator:
-      'Mengevaluasi ketepatan prosedur pertolongan pertama pada sengatan serangga lebah dan tawon berdasarkan sifat kimia asam-basa cairan sengatan.',
+      'Mengevaluasi ketepatan dan profil keamanan zat penetral medis pada kelebihan asam lambung berdasarkan sifat kimia asam-basa dan keselamatan jaringan biologis.',
     stimulus:
-      'Dalam kegiatan perkemahan sains sekolah, dua siswa mengalami insiden sengatan serangga:\n• Siswa 1 tersengat lebah madu (honeybee) yang menyuntikkan racun bersifat asam (mengandung asam metanoat/format HCOOH dengan pH berkisar 4.5–5.5).\n• Siswa 2 tersengat tawon kuning (wasp) yang menyuntikkan racun bersifat basa (mengandung senyawa peptida alkalin dan histamin dengan pH berkisar 8.5–9.0).\nDi kotak P3K tersedia:\n(1) Larutan soda api (NaOH 1 M)\n(2) Cuka makan encer (CH₃COOH 5%)\n(3) Pasta soda kue (NaHCO₃)\n(4) Air perasan jeruk nipis pekat',
+      'Seseorang mengalami hiperasiditas lambung akibat sekresi berlebih asam klorida (HCl 0.1 M, pH ≈ 1.5). Di laboratorium farmasi tersedia beberapa zat kimia penetral:\n(1) Larutan soda api (NaOH 1 M)\n(2) Suspensi magnesium hidroksida (Mg(OH)₂)\n(3) Kalsium karbonat (CaCO₃)\n(4) Asam cuka makan pekat (CH₃COOH 25%)',
     question:
-      'Berdasarkan prinsip netralisasi kimia dan keselamatan medis kulit, evaluasilah pasangan tindakan penanganan yang paling tepat, rasional, dan aman untuk Siswa 1 dan Siswa 2...',
+      'Berdasarkan prinsip reaksi netralisasi dan keselamatan medis organ pencernaan, evaluasilah zat penetral yang paling tepat, aman, dan rasional digunakan sebagai bahan aktif antasida...',
     options: [
       {
         key: 'A',
-        text: 'Siswa 1 diolesi larutan soda api (NaOH), sedangkan Siswa 2 diolesi air perasan jeruk nipis pekat',
+        text: 'Larutan NaOH karena merupakan basa kuat yang bereaksi paling cepat menetralkan seluruh HCl lambung secara tuntas',
       },
       {
         key: 'B',
-        text: 'Siswa 1 diolesi pasta soda kue (NaHCO₃), sedangkan Siswa 2 dikompres dengan larutan cuka makan encer (CH₃COOH)',
+        text: 'Suspensi Mg(OH)₂ atau CaCO₃ karena merupakan basa dengan kelarutan rendah yang menetralkan kelebihan asam secara bertahap dan aman tanpa merusak mukosa lambung',
       },
       {
         key: 'C',
-        text: 'Siswa 1 dikompres cuka makan encer, sedangkan Siswa 2 diolesi pasta soda kue',
+        text: 'Larutan asam cuka pekat karena asam asetat dapat menekan produksi asam klorida lambung secara kompetitif',
       },
       {
         key: 'D',
-        text: 'Kedua siswa cukup dibasuh dengan larutan soda api encer karena basa kuat dapat menetralkan segala jenis racun organik',
+        text: 'Campuran NaOH dan cuka pekat agar terjadi netralisasi instan sebelum mencapai cairan lambung',
       },
       {
         key: 'E',
-        text: 'Kedua siswa tidak memerlukan penanganan kimia karena racun serangga akan dinetralkan secara otomatis oleh udara bebas',
+        text: 'Asam lambung tidak memerlukan zat penetral karena asam klorida akan terurai secara spontan menjadi gas klorin',
       },
     ],
     correctAnswer: 'B',
     explanation:
-      'Prinsip penetralan toksin serangga pada jaringan kulit:\n• Siswa 1 terkena racun asam (HCOOH) lebah madu, sehingga memerlukan senyawa penetral basa lemah yang tidak mengiritasi kulit, yaitu pasta soda kue (NaHCO₃): HCOOH + NaHCO₃ → HCOONa + H₂O + CO₂↑.\n• Siswa 2 terkena racun basa tawon, sehingga memerlukan penetral asam lemah yang aman bagi kulit, yaitu kompres cuka makan encer (CH₃COOH 5%).\n• Penggunaan soda api (NaOH) sangat dilarang karena merupakan basa kuat yang bersifat kaustik ekstrem dan dapat menyebabkan nekrosis jaringan kulit (luka bakar kimiawi parah).',
+      'Prinsip penetralan asam lambung secara medis:\n• Kelebihan asam lambung (HCl) dinetralkan secara aman oleh basa bervalensi dua yang sukar larut, seperti magnesium hidroksida: Mg(OH)₂(s) + 2HCl(aq) → MgCl₂(aq) + 2H₂O(l) atau kalsium karbonat: CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g).\n• Basa dengan kelarutan rendah (suspensi) melepaskan ion OH⁻ atau CO₃²⁻ secara bertahap hanya saat bereaksi dengan kelebihan asam, menjaga pH lambung tetap berada pada rentang fisiologis aman (pH 3–5).\n• Penggunaan basa kuat larut seperti soda api (NaOH) sangat dilarang keras karena bersifat kaustik ekstrem dan dapat menyebabkan perforasi (kebocoran) dinding mukosa lambung serta luka bakar kimiawi organ internal.',
     correctReason:
-      'Pasta NaHCO₃ (basa lemah) menetralkan racun asam lebah secara aman, dan larutan CH₃COOH encer (asam lemah) menetralkan racun basa tawon tanpa menimbulkan efek samping kaustik berbahaya.',
+      'Mg(OH)₂ dan CaCO₃ menetralkan kelebihan asam lambung secara bertahap dan terkontrol tanpa merusak jaringan mukosa lambung.',
     distractorExplanations: {
-      A: 'Soda api (NaOH) adalah zat kaustik berbahaya yang tidak boleh dioleskan ke kulit manusia karena akan menimbulkan luka bakar kimiawi parah.',
-      C: 'Tindakan penanganan terbalik; mengoleskan cuka pada racun asam lebah akan memperparah rasa nyeri, demikian pula soda kue pada racun basa tawon.',
-      D: 'Penggunaan basa kuat NaOH pada kulit melanggar protokol keselamatan medis dan kimiawi.',
-      E: 'Membiarkan racun tanpa penetralan yang tepat dapat memicu respons inflamasi berkepanjangan dan kerusakan jaringan lokal.',
+      A: 'Soda api (NaOH) adalah basa kuat kaustik yang sangat berbahaya bagi jaringan biologis organ lambung manusia.',
+      C: 'Menambahkan asam cuka pekat justru akan meningkatkan keasaman lambung dan memperparah iritasi dinding lambung.',
+      D: 'Memasukkan reaktan basa kuat dan asam pekat ke organ internal membahayakan keselamatan pasien akibat panas eksoterm dan sifat korosif.',
+      E: 'Asam klorida encer dalam lambung tidak terurai menjadi gas klorin melainkan memerlukan reaksi netralisasi garam dan air.',
     },
     isVerified: true,
   },
