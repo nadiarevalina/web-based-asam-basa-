@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { getCurrentUser } from '../services/authStorage'
 import { MODULE_1_HOTS_QUESTIONS } from '../data/module1QuizData'
 import type {
   Module1QuizQuestion,
@@ -52,6 +53,27 @@ export function QuizSection() {
   // State sinkronisasi backend (kontrak Bab 4 & Lampiran B)
   const [syncStatusMessage, setSyncStatusMessage] = useState<string | null>(null)
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
+
+  // AD14-06: Isolasi draf & riwayat pengerjaan saat terjadi pergantian akun pengguna
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const freshUser = getCurrentUser()
+      const uid = freshUser?.id
+      const { draft: reloadedDraft } = loadQuizDraft(questions, uid)
+      const { history: reloadedHistory } = loadQuizHistory(uid)
+      setDraft(reloadedDraft)
+      setHistory(reloadedHistory)
+    }
+
+    window.addEventListener('asambasa:auth_changed', handleAuthChange)
+    window.addEventListener('storage', handleAuthChange)
+    window.addEventListener('focus', handleAuthChange)
+    return () => {
+      window.removeEventListener('asambasa:auth_changed', handleAuthChange)
+      window.removeEventListener('storage', handleAuthChange)
+      window.removeEventListener('focus', handleAuthChange)
+    }
+  }, [questions])
 
   const currentIdx = Math.max(0, Math.min(draft.currentQuestionIndex, totalQuestions - 1))
   const activeQuestion = questions[currentIdx]

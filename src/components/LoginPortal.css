@@ -1330,3 +1330,29 @@
 }
 
 
+
+/* ── AD14-08: Optimasi Tampilan Mobile Panel Guru & Dialog Auth (375px - 480px) ── */
+@media (max-width: 480px) {
+  .portal-filter-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .filter-item,
+  .filter-item.flex-grow {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .portal-modal-card {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 10px auto !important;
+    padding: 16px !important;
+  }
+  .history-table-container,
+  .teacher-table-wrapper {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}

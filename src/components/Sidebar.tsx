@@ -231,7 +231,7 @@ export function Sidebar({
         <div className="mobile-header-inner">
           <button
             type="button"
-            className="mobile-menu-toggle-btn"
+            className="mobile-menu-toggle-btn mobile-hamburger-btn"
             onClick={() => setMobileDrawerOpen(true)}
             aria-label="Buka Menu Sidebar"
             aria-expanded={mobileDrawerOpen}

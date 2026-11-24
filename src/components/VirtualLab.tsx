@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CHEMICAL_SAMPLES, INDICATORS } from '../data/chemistryData'
 import type { ChemicalSample, Indicator, SimulationRecord, SampleNature } from '../types/chemistry'
-import { addLabExperimentRecord } from '../services/authStorage'
+import { addLabExperimentRecord, getCurrentUser } from '../services/authStorage'
 import { LabCitation } from './LabCitation'
 import { LabBibliography } from './LabBibliography'
 
@@ -42,6 +42,32 @@ function createSimulationRecord(
   }
 }
 
+function getLabJournalKey(userId?: string): string {
+  const uid = userId || getCurrentUser()?.id
+  return uid ? `asambasa_lab_journal_${uid}` : 'asambasa_lab_journal_guest'
+}
+
+function loadLabJournal(userId?: string): SimulationRecord[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(getLabJournalKey(userId))
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function saveLabJournal(records: SimulationRecord[], userId?: string): void {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(getLabJournalKey(userId), JSON.stringify(records))
+  } catch (e) {
+    console.warn('[VirtualLab] Gagal menyimpan jurnal ke localStorage:', e)
+  }
+}
+
 export interface VirtualLabProps {
   onSimulationStateChange?: (state: 'initial' | 'acid' | 'neutral' | 'base') => void
 }
@@ -51,8 +77,24 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
   const [selectedIndicatorId, setSelectedIndicatorId] = useState<string>(INDICATORS[0].id)
   const [isTested, setIsTested] = useState<boolean>(false)
   const [isAnimating, setIsAnimating] = useState<boolean>(false)
-  const [history, setHistory] = useState<SimulationRecord[]>([])
+  const [history, setHistory] = useState<SimulationRecord[]>(() => loadLabJournal())
   const [activeFilterCategory, setActiveFilterCategory] = useState<'semua' | 'sehari-hari' | 'laboratorium'>('semua')
+
+  // AD14-06 & AD14-07: Muat ulang jurnal saat akun berganti atau halaman difokuskan kembali
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const freshUser = getCurrentUser()
+      setHistory(loadLabJournal(freshUser?.id))
+    }
+    window.addEventListener('asambasa:auth_changed', handleAuthChange)
+    window.addEventListener('storage', handleAuthChange)
+    window.addEventListener('focus', handleAuthChange)
+    return () => {
+      window.removeEventListener('asambasa:auth_changed', handleAuthChange)
+      window.removeEventListener('storage', handleAuthChange)
+      window.removeEventListener('focus', handleAuthChange)
+    }
+  }, [])
   
   // Guided Inquiry States (Tahap 3, 5, 6)
   const [hypothesisNature, setHypothesisNature] = useState<SampleNature | null>(null)
@@ -156,7 +198,9 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
       isHypothesisCorrect,
       studentConclusion.trim() || undefined
     )
-    setHistory([newRecord, ...history])
+    const updatedHistory = [newRecord, ...history]
+    setHistory(updatedHistory)
+    saveLabJournal(updatedHistory)
 
     // Daftarkan ke sistem antrean/tautan akun eksperimen
     addLabExperimentRecord({
@@ -178,7 +222,14 @@ export function VirtualLab({ onSimulationStateChange }: VirtualLabProps = {}) {
   }
 
   const handleClearHistory = () => {
-    setHistory([])
+    if (window.confirm('Apakah Anda yakin ingin mengosongkan seluruh catatan buku jurnal pengamatan inkuiri ini? Data yang dihapus tidak dapat dipulihkan.')) {
+      setHistory([])
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.removeItem(getLabJournalKey())
+        } catch {}
+      }
+    }
   }
 
   // Helper untuk mendapatkan sitasi spesifik sampel terpilih

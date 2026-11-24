@@ -10,10 +10,20 @@ import type {
   StudentIdentity,
 } from '../types/quiz'
 import { QUIZ_MODULE_ID, QUIZ_QUESTION_VERSION } from '../types/quiz'
-import { addQuizExperimentRecord } from './authStorage'
+import { addQuizExperimentRecord, getCurrentUser } from './authStorage'
 
 const DRAFT_STORAGE_KEY = 'asambasa_quiz_m1_draft_v2'
 const HISTORY_STORAGE_KEY = 'asambasa_quiz_m1_history_v2'
+
+export function getQuizDraftKey(userId?: string): string {
+  const uid = userId || getCurrentUser()?.id
+  return uid ? `asambasa_quiz_m1_draft_v2_${uid}` : DRAFT_STORAGE_KEY
+}
+
+export function getQuizHistoryKey(userId?: string): string {
+  const uid = userId || getCurrentUser()?.id
+  return uid ? `asambasa_quiz_m1_history_v2_${uid}` : HISTORY_STORAGE_KEY
+}
 
 export const STUDENT_IDENTITY_STORAGE_KEY = 'asambasa_student_identity_v2'
 
@@ -214,12 +224,15 @@ export function createInitialDraft(
  * Memuat draf kuis yang tersimpan. Jika data rusak atau versi berbeda,
  * sistem akan menginisialisasi draf baru tanpa memicu error crash.
  */
-export function loadQuizDraft(questions: (QuizQuestion | Module1QuizQuestion)[]): {
+export function loadQuizDraft(
+  questions: (QuizQuestion | Module1QuizQuestion)[],
+  userId?: string,
+): {
   draft: QuizDraftSession
   fromStorage: boolean
   error: string | null
 } {
-  const raw = readRawStorage(DRAFT_STORAGE_KEY)
+  const raw = readRawStorage(getQuizDraftKey(userId))
   if (!raw) {
     return {
       draft: createInitialDraft(questions),
@@ -323,7 +336,10 @@ export function loadQuizDraft(questions: (QuizQuestion | Module1QuizQuestion)[])
 /**
  * Menyimpan draf pengerjaan kuis ke penyimpanan lokal
  */
-export function saveQuizDraft(draft: QuizDraftSession): { success: boolean; error: string | null } {
+export function saveQuizDraft(
+  draft: QuizDraftSession,
+  userId?: string,
+): { success: boolean; error: string | null } {
   const updatedDraft: QuizDraftSession = {
     ...draft,
     updatedAt: new Date().toISOString(),
@@ -331,7 +347,7 @@ export function saveQuizDraft(draft: QuizDraftSession): { success: boolean; erro
 
   try {
     const serialized = JSON.stringify(updatedDraft)
-    return writeRawStorage(DRAFT_STORAGE_KEY, serialized)
+    return writeRawStorage(getQuizDraftKey(userId), serialized)
   } catch (err) {
     const errorMsg =
       err instanceof Error ? err.message : 'Gagal mengubah draf ke format penyimpanan.'
@@ -342,12 +358,15 @@ export function saveQuizDraft(draft: QuizDraftSession): { success: boolean; erro
 /**
  * Mereset draf pengerjaan yang sedang aktif tanpa menghapus riwayat kuis terdahulu
  */
-export function resetQuizDraft(questions: (QuizQuestion | Module1QuizQuestion)[]): {
+export function resetQuizDraft(
+  questions: (QuizQuestion | Module1QuizQuestion)[],
+  userId?: string,
+): {
   draft: QuizDraftSession
   success: boolean
   error: string | null
 } {
-  const removeRes = removeRawStorage(DRAFT_STORAGE_KEY)
+  const removeRes = removeRawStorage(getQuizDraftKey(userId))
   const freshDraft = createInitialDraft(questions)
   const saveRes = saveQuizDraft(freshDraft)
 
@@ -361,11 +380,11 @@ export function resetQuizDraft(questions: (QuizQuestion | Module1QuizQuestion)[]
 /**
  * Memuat seluruh riwayat hasil percobaan kuis yang telah selesai
  */
-export function loadQuizHistory(): {
+export function loadQuizHistory(userId?: string): {
   history: QuizAttemptHistory[]
   error: string | null
 } {
-  const raw = readRawStorage(HISTORY_STORAGE_KEY)
+  const raw = readRawStorage(getQuizHistoryKey(userId))
   if (!raw) {
     return { history: [], error: null }
   }
@@ -405,11 +424,14 @@ export function loadQuizHistory(): {
  * Menyimpan percobaan kuis yang telah selesai ke dalam riwayat
  * dan membersihkan draf aktif
  */
-export function saveCompletedAttempt(attempt: QuizAttemptHistory): {
+export function saveCompletedAttempt(
+  attempt: QuizAttemptHistory,
+  userId?: string,
+): {
   success: boolean
   error: string | null
 } {
-  const { history } = loadQuizHistory()
+  const { history } = loadQuizHistory(userId)
 
   const completeData: QuizAttemptHistory = {
     ...attempt,
@@ -430,11 +452,11 @@ export function saveCompletedAttempt(attempt: QuizAttemptHistory): {
 
   try {
     const serialized = JSON.stringify(updatedHistory)
-    const writeRes = writeRawStorage(HISTORY_STORAGE_KEY, serialized)
+    const writeRes = writeRawStorage(getQuizHistoryKey(userId), serialized)
 
     // Bersihkan draf aktif setelah sukses disimpan ke riwayat
     if (writeRes.success) {
-      removeRawStorage(DRAFT_STORAGE_KEY)
+      removeRawStorage(getQuizDraftKey(userId))
       // Simpan juga ke repositori eksperimen akun/antrean server dengan attemptId yang dipertahankan
       try {
         addQuizExperimentRecord({

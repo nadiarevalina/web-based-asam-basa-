@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { PageId } from '../types/navigation'
 import { normalizePageId } from '../types/navigation'
 
@@ -182,15 +182,62 @@ export function SearchModal({
   onNavigateToSection,
 }: SearchModalProps) {
   const [query, setQuery] = useState('')
+  const modalRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const previousActiveElementRef = useRef<HTMLElement | null>(null)
 
+  // AD14-10: Focus trap & keyboard navigation (Tab cycling, Esc closing, previous element focus return)
   useEffect(() => {
+    if (!isOpen) return
+
+    // Simpan elemen aktif sebelum modal dibuka untuk dikembalikan saat modal ditutup
+    previousActiveElementRef.current = document.activeElement as HTMLElement
+
+    // Auto-focus pada kolom input pencarian
+    const timer = setTimeout(() => {
+      inputRef.current?.focus()
+    }, 50)
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+        return
+      }
+
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+
+        if (focusableElements.length === 0) return
+
+        const firstElement = focusableElements[0]
+        const lastElement = focusableElements[focusableElements.length - 1]
+
+        if (e.shiftKey) {
+          // Shift + Tab: jika di elemen pertama, lompat ke elemen terakhir
+          if (document.activeElement === firstElement || !modalRef.current.contains(document.activeElement)) {
+            e.preventDefault()
+            lastElement.focus()
+          }
+        } else {
+          // Tab biasa: jika di elemen terakhir, lompat kembali ke elemen pertama
+          if (document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement.focus()
+          }
+        }
+      }
     }
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown)
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('keydown', handleKeyDown)
+      // Kembalikan fokus ke elemen pemicu sebelumnya
+      previousActiveElementRef.current?.focus()
     }
-    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
   if (!isOpen) return null
@@ -226,6 +273,7 @@ export function SearchModal({
       aria-label="Pencarian Materi Asam Basa"
     >
       <div
+        ref={modalRef}
         className="modal-card"
         onClick={(e) => e.stopPropagation()}
         role="document"
@@ -244,6 +292,7 @@ export function SearchModal({
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
+              ref={inputRef}
               type="text"
               autoFocus
               className="search-field"

@@ -13,10 +13,16 @@ interface SavedReflectionDraft {
   lastUpdated?: string
 }
 
-function getSavedDraft(): SavedReflectionDraft {
+function getReflectionStorageKey(userId?: string): string {
+  const uid = userId || getCurrentUser()?.id
+  return uid ? `asambasa_reflection_draft_${uid}` : 'asambasa_reflection_draft'
+}
+
+function getSavedDraft(userId?: string): SavedReflectionDraft {
   if (typeof window === 'undefined') return {}
   try {
-    const saved = localStorage.getItem('asambasa_reflection_draft')
+    const key = getReflectionStorageKey(userId)
+    const saved = localStorage.getItem(key) || localStorage.getItem('asambasa_reflection_draft')
     return saved ? JSON.parse(saved) : {}
   } catch {
     return {}
@@ -24,7 +30,7 @@ function getSavedDraft(): SavedReflectionDraft {
 }
 
 export function ReflectionSection() {
-  const [draft] = useState<SavedReflectionDraft>(getSavedDraft)
+  const [draft] = useState<SavedReflectionDraft>(() => getSavedDraft())
   const [studentName, setStudentName] = useState(draft.studentName || '')
   const [studentClass, setStudentClass] = useState(draft.studentClass || '')
   const [hypothesisEvaluation, setHypothesisEvaluation] = useState(
@@ -36,6 +42,29 @@ export function ReflectionSection() {
   const [challengingConcept, setChallengingConcept] = useState(draft.challengingConcept || '')
   const [actionPlan, setActionPlan] = useState(draft.actionPlan || '')
   const [saveNotice, setSaveNotice] = useState<string | null>(null)
+
+  // AD14-06: Isolasi draf refleksi antar-pengguna & sinkronisasi saat pergantian akun
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const freshUser = getCurrentUser()
+      const freshDraft = getSavedDraft(freshUser?.id)
+      setStudentName(freshDraft.studentName || '')
+      setStudentClass(freshDraft.studentClass || '')
+      setHypothesisEvaluation(freshDraft.hypothesisEvaluation || freshDraft.learningExperience || '')
+      setOverallConclusion(freshDraft.overallConclusion || freshDraft.understoodConcept || '')
+      setChallengingConcept(freshDraft.challengingConcept || '')
+      setActionPlan(freshDraft.actionPlan || '')
+    }
+
+    window.addEventListener('asambasa:auth_changed', handleAuthChange)
+    window.addEventListener('storage', handleAuthChange)
+    window.addEventListener('focus', handleAuthChange)
+    return () => {
+      window.removeEventListener('asambasa:auth_changed', handleAuthChange)
+      window.removeEventListener('storage', handleAuthChange)
+      window.removeEventListener('focus', handleAuthChange)
+    }
+  }, [])
 
   const handleSaveDraft = () => {
     try {
