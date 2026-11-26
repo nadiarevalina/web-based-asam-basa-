@@ -1025,6 +1025,12 @@
     width: 100% !important;
     max-width: 100% !important;
   }
+  .panel-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
   .teacher-tab-btn {
     padding: 8px 12px;
     font-size: 13px;

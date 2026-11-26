@@ -1367,7 +1367,8 @@
     padding: 16px !important;
   }
   .history-table-container,
-  .teacher-table-wrapper {
+  .teacher-table-wrapper,
+  .experiments-table-wrapper {
     max-width: 100% !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;

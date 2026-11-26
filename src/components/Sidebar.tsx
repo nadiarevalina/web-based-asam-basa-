@@ -234,9 +234,10 @@ export function Sidebar({
           <button
             type="button"
             className="mobile-menu-toggle-btn mobile-hamburger-btn"
-            onClick={() => setMobileDrawerOpen(true)}
-            aria-label="Buka Menu Sidebar"
+            onClick={() => setMobileDrawerOpen((prev) => !prev)}
+            aria-label={mobileDrawerOpen ? 'Tutup Menu Navigasi' : 'Buka Menu Navigasi'}
             aria-expanded={mobileDrawerOpen}
+            aria-controls="app-sidebar"
           >
             <svg
               className="mobile-header-svg"

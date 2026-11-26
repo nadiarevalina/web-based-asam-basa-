@@ -303,36 +303,46 @@
 
   .mobile-header-inner {
     height: 100%;
-    padding: 0 16px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .mobile-hamburger-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-sm);
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: var(--radius-md, 10px);
     border: 1px solid var(--border-medium);
     background: var(--surface-neutral-light);
     color: var(--text-primary);
     cursor: pointer;
     transition: all var(--transition-fast);
+    flex-shrink: 0;
+    touch-action: manipulation;
   }
 
-  .mobile-hamburger-btn:hover {
+  .mobile-hamburger-btn:hover,
+  .mobile-hamburger-btn:focus-visible {
     background: #eff6ff;
     color: #0284c7;
     border-color: #bae6fd;
+    outline: 2px solid #0284c7;
+    outline-offset: 2px;
   }
 
   .mobile-hamburger-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
 
   .mobile-brand-btn {
@@ -1060,20 +1070,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: var(--radius-md, 10px);
     border: 1px solid rgba(185, 229, 250, 0.25);
     background: rgba(255, 255, 255, 0.08);
     color: #B9E5FA;
     cursor: pointer;
     transition: all var(--transition-fast);
+    flex-shrink: 0;
+    touch-action: manipulation;
   }
 
-  .sidebar-mobile-close-btn:hover {
+  .sidebar-mobile-close-btn:hover,
+  .sidebar-mobile-close-btn:focus-visible {
     background: rgba(255, 213, 138, 0.20);
     color: #FFD58A;
     border-color: #FFD58A;
+    outline: 2px solid #FFD58A;
+    outline-offset: 2px;
   }
 
   .sidebar-desktop-toggle-btn {
@@ -7654,20 +7672,64 @@
   }
 }
 
-/* ── AD14-08: Pencegahan Horizontal Scrollbar & Optimasi Viewport Ponsel (375px - 480px) ── */
-@media (max-width: 480px) {
+/* ── AD14-08: Responsivitas Mobile, Target Sentuh Hamburger >= 44px, & Scroll Horizontal Tabel ── */
+@media (max-width: 767px) {
   html, body {
     overflow-x: hidden !important;
     max-width: 100vw;
   }
-  .app-container, .main-layout, .content-container, .page-container {
+
+  .app-container,
+  .app-layout,
+  .app-main-content-wrapper,
+  .page-view,
+  .content-section {
     max-width: 100% !important;
     overflow-x: hidden;
+    box-sizing: border-box;
   }
-  .lab-journal-section, .table-responsive-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
+
+  /* Tabel data dapat digulir horizontal secara mulus tanpa merusak tata letak halaman */
+  .panel-table-container,
+  .experiments-table-wrapper,
+  .history-table-container,
+  .history-table-wrapper,
+  .lab-journal-section,
+  .table-responsive,
+  .table-responsive-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+  }
+
+  /* Optimasi form & komponen agar tidak overflow pada 375px - 390px */
+  .calc-form-card,
+  .calc-results-card,
+  .quiz-card,
+  .reflection-sheet-card,
+  .control-group-card,
+  .bench-stage-card,
+  .ph-scale-interactive-card,
+  .portal-card {
+    max-width: 100% !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 430px) {
+  .mobile-header-inner {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .mobile-header-actions {
+    gap: 6px;
+  }
+
+  .mobile-brand-title {
+    font-size: clamp(14px, 4.2vw, 16px);
   }
 }
