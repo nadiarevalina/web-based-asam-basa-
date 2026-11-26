@@ -16,7 +16,6 @@ import {
   getDoc,
   collection,
   getDocs,
-  addDoc,
   query,
   orderBy,
   serverTimestamp,
@@ -251,27 +250,50 @@ export async function logoutFromFirebase(): Promise<void> {
 }
 
 /**
- * Menyimpan hasil aktivitas siswa (kuis atau lab) ke Cloud Firestore
+ * Menyimpan hasil aktivitas siswa (kuis atau lab) ke Cloud Firestore secara idempoten
+ * Menggunakan document ID stabil berbasis attemptId atau ID aktivitas unik (activity.id)
+ * sehingga proses coba ulang (retry) tidak pernah menduplikasi dokumen di server.
  */
 export async function saveActivityToFirestore(
   activity: StudentActivityResult | ExperimentItem
 ): Promise<{ success: boolean; firestoreId?: string; error?: string }> {
   const { isConfigured } = initFirebase()
   if (!isConfigured || !db) {
-    return { success: false, error: 'Firestore tidak aktif.' }
+    return { success: false, error: 'Cloud Firestore tidak aktif atau belum terkonfigurasi.' }
+  }
+
+  // Cek konektivitas jaringan perangkat
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return { success: false, error: 'Koneksi internet terputus (offline).' }
   }
 
   try {
-    const colRef = collection(db, 'student_activities')
-    const docRef = await addDoc(colRef, {
-      ...activity,
-      syncedAt: serverTimestamp(),
-      isSampleData: false,
-    })
-    return { success: true, firestoreId: docRef.id }
-  } catch (err) {
-    console.error('Gagal menyimpan aktivitas ke Firestore:', err)
-    return { success: false, error: String(err) }
+    const docId = activity.id
+    if (!docId) {
+      return { success: false, error: 'ID aktivitas tidak valid atau kosong.' }
+    }
+
+    // Dokumen unik diidentifikasi oleh ID percobaan / attemptId
+    const docRef = doc(db, 'student_activities', docId)
+
+    // Bersihkan nilai undefined agar Firestore SDK tidak memicu error skema
+    const cleanPayload = JSON.parse(JSON.stringify(activity))
+
+    await setDoc(
+      docRef,
+      {
+        ...cleanPayload,
+        syncedAt: serverTimestamp(),
+        isSampleData: false,
+      },
+      { merge: true }
+    )
+
+    return { success: true, firestoreId: docId }
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('Gagal menyimpan aktivitas ke Firestore:', errorMsg)
+    return { success: false, error: errorMsg }
   }
 }
 

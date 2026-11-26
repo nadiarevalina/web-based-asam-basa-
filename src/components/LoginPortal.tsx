@@ -329,7 +329,7 @@ export function LoginPortal({
   // Eksperimen milik pengguna saat ini yang siap diantrekan atau sudah dalam antrean
   const myExperiments = currentUser ? getExperimentsByOwner(currentUser.id) : []
   const myQueueItems = allExperiments.filter(
-    (exp) => exp.status === 'dalam_antrean' && (!currentUser || currentUser.role === 'guru' || exp.ownerId === currentUser.id)
+    (exp) => (exp.status === 'dalam_antrean' || exp.status === 'gagal_kirim') && (!currentUser || currentUser.role === 'guru' || exp.ownerId === currentUser.id)
   )
 
   const handleEnqueueItem = (experimentId: string) => {
@@ -343,8 +343,9 @@ export function LoginPortal({
     }
   }
 
-  const handleSendQueueToServer = async () => {
-    if (myQueueItems.length === 0) {
+  const handleSendQueueToServer = async (targetId?: string) => {
+    const itemsToSend = targetId ? allExperiments.filter((e) => e.id === targetId) : myQueueItems
+    if (itemsToSend.length === 0) {
       setActionAlert({
         type: 'info',
         message: 'Tidak ada item yang sedang berada dalam antrean kirim.',
@@ -354,18 +355,24 @@ export function LoginPortal({
 
     setIsSyncing(true)
     try {
-      const res = await sendQueueToServer()
+      const res = await sendQueueToServer(targetId ? [targetId] : undefined)
       if (res.success) {
         setActionAlert({
           type: 'success',
-          message: `Server HTTP 200 OK: ${res.processedCount} data percobaan berhasil diterima dan diarsipkan oleh server! Pemilik dan ID percobaan terverifikasi.`,
+          message: `Berhasil! ${res.processedCount} data percobaan berhasil diterima dan tersimpan ke Cloud Firestore (status: diterima_server).`,
         })
-        refreshData()
+      } else {
+        setActionAlert({
+          type: 'error',
+          message: res.error || 'Pengiriman gagal. Data tersimpan di antrean lokal (status: gagal_kirim).',
+        })
       }
-    } catch {
+      refreshData()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
       setActionAlert({
         type: 'error',
-        message: 'Terjadi kegagalan koneksi jaringan saat mengirim ke server.',
+        message: `Terjadi kendala jaringan saat mengirim ke server: ${msg}`,
       })
     } finally {
       setIsSyncing(false)
@@ -450,6 +457,8 @@ export function LoginPortal({
         return <span className="status-badge status-linked">Terkait Akun</span>
       case 'dalam_antrean':
         return <span className="status-badge status-queued">Dalam Antrean Kirim</span>
+      case 'gagal_kirim':
+        return <span className="status-badge status-failed">⚠️ Gagal Kirim</span>
       case 'diterima_server':
         return <span className="status-badge status-received">✓ Diterima Server</span>
       case 'dibaca_guru':
@@ -1329,7 +1338,7 @@ export function LoginPortal({
                 <button
                   type="button"
                   className="btn btn-primary btn-sm btn-sync-server"
-                  onClick={handleSendQueueToServer}
+                  onClick={() => handleSendQueueToServer()}
                   disabled={myQueueItems.length === 0 || isSyncing}
                 >
                   {isSyncing ? (
@@ -1397,15 +1406,22 @@ export function LoginPortal({
                           )}
                         </td>
                         <td className="text-muted font-mono">{formatDate(item.queuedAt)}</td>
-                        <td>{renderStatusBadge(item.status)}</td>
+                        <td>
+                          {renderStatusBadge(item.status)}
+                          {item.details.syncError && (
+                            <div style={{ fontSize: '10px', color: '#b91c1c', marginTop: '4px', maxWidth: '180px' }}>
+                              {item.details.syncError}
+                            </div>
+                          )}
+                        </td>
                         <td>
                           <button
                             type="button"
-                            className="btn btn-outline-cyan btn-xs"
-                            onClick={() => sendQueueToServer([item.id]).then(() => refreshData())}
+                            className={`btn ${item.status === 'gagal_kirim' ? 'btn-outline-amber' : 'btn-outline-cyan'} btn-xs`}
+                            onClick={() => handleSendQueueToServer(item.id)}
                             disabled={isSyncing}
                           >
-                            Kirim Ini
+                            {item.status === 'gagal_kirim' ? '🔄 Coba Kirim Ulang' : 'Kirim Ini'}
                           </button>
                         </td>
                       </tr>
@@ -1567,15 +1583,22 @@ export function LoginPortal({
                       </div>
                     )}
 
-                    {/* Tombol Antrekan jika status masih 'terkait' */}
-                    {item.status === 'terkait' && (
+                    {/* Tombol Antrekan / Retry jika status masih 'terkait' atau 'gagal_kirim' */}
+                    {(item.status === 'terkait' || item.status === 'gagal_kirim') && (
                       <div className="result-card-bottom-actions">
                         <button
                           type="button"
-                          className="btn btn-outline-cyan btn-sm"
-                          onClick={() => handleEnqueueItem(item.id)}
+                          className={`btn ${item.status === 'gagal_kirim' ? 'btn-outline-amber' : 'btn-outline-cyan'} btn-sm`}
+                          onClick={() => {
+                            if (item.status === 'gagal_kirim') {
+                              handleSendQueueToServer(item.id)
+                            } else {
+                              handleEnqueueItem(item.id)
+                            }
+                          }}
+                          disabled={isSyncing}
                         >
-                          📤 Masukkan ke Antrean Server
+                          {item.status === 'gagal_kirim' ? '🔄 Coba Kirim Ulang' : '📤 Masukkan ke Antrean Server'}
                         </button>
                       </div>
                     )}

@@ -32,7 +32,8 @@ export function isTeacherEmail(email?: string | null): boolean {
   if (isOfficial) return true
 
   // Periksa terhadap variabel lingkungan VITE_TEACHER_EMAIL jika ada
-  const envTeacher = (import.meta.env.VITE_TEACHER_EMAIL || '').trim().toLowerCase()
+  const env = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {}) as Record<string, string | undefined>
+  const envTeacher = (env.VITE_TEACHER_EMAIL || '').trim().toLowerCase()
   if (envTeacher && cleanEmail === envTeacher) {
     return true
   }
@@ -67,13 +68,14 @@ export function getFirebaseConfig(): FirebaseConfig {
   }
 
   // Gunakan variabel lingkungan (Vite env)
+  const env = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {}) as Record<string, string | undefined>
   return {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+    apiKey: env.VITE_FIREBASE_API_KEY || '',
+    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: env.VITE_FIREBASE_APP_ID || '',
   }
 }
 

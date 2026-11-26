@@ -420,7 +420,7 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
         startedAt: exp.details.startedAt || exp.createdAt,
         completedAt: isOngoing ? (exp.details.startedAt || exp.createdAt) : exp.createdAt,
         serverReceivedAt: exp.serverReceivedAt || exp.createdAt,
-        serverAckId: exp.serverAckId || (isOngoing ? 'DRAFT-LOCAL' : 'SRV-ACK-LOCAL'),
+        serverAckId: exp.serverAckId || (isOngoing ? 'DRAFT-LOCAL' : exp.id),
         teacherRating: exp.teacherRating,
         teacherFeedback: exp.teacherFeedback,
         teacherReadAt: exp.teacherReadAt,

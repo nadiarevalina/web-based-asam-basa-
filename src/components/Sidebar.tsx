@@ -29,16 +29,18 @@ export function Sidebar({
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => getCurrentUser())
 
-  // Refresh user state when window gains focus or storage changes
+  // Refresh user state when window gains focus, storage changes, or auth changed
   useEffect(() => {
     const handleStorageChange = () => {
       setCurrentUser(getCurrentUser())
     }
     window.addEventListener('storage', handleStorageChange)
     window.addEventListener('focus', handleStorageChange)
+    window.addEventListener('asambasa:auth_changed', handleStorageChange)
     return () => {
       window.removeEventListener('storage', handleStorageChange)
       window.removeEventListener('focus', handleStorageChange)
+      window.removeEventListener('asambasa:auth_changed', handleStorageChange)
     }
   }, [])
 

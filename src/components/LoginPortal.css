@@ -679,6 +679,23 @@
   border: 1px solid #6ee7b7;
 }
 
+.status-badge.status-failed {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.btn-outline-amber {
+  background: transparent;
+  color: #b45309;
+  border: 1px solid #f59e0b;
+}
+
+.btn-outline-amber:hover {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 /* Student Results Grid */
 .student-results-grid {
   display: grid;

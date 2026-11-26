@@ -22,7 +22,7 @@ function getSavedDraft(userId?: string): SavedReflectionDraft {
   if (typeof window === 'undefined') return {}
   try {
     const key = getReflectionStorageKey(userId)
-    const saved = localStorage.getItem(key) || localStorage.getItem('asambasa_reflection_draft')
+    const saved = localStorage.getItem(key)
     return saved ? JSON.parse(saved) : {}
   } catch {
     return {}
