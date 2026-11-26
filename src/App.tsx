@@ -128,7 +128,6 @@ export default function App() {
           <HeroSection
             onStartLearning={() => navigateToPage('teori')}
             onOpenLab={() => navigateToPage('lab')}
-            onOpenCalculator={() => navigateToPage('kalkulator')}
           />
 
           {/* Banner Tahapan Inkuiri Terbimbing */}
