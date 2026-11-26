@@ -196,7 +196,9 @@ export function ActivityDetailTab({ activity, onBackToList }: ActivityDetailTabP
           )}
 
           {questions.map((q) => {
-            const studentChoice = activity.answers ? activity.answers[String(q.questionNumber)] : undefined
+            const studentChoice = activity.answers
+              ? (activity.answers[String(q.questionNumber)] ?? activity.answers[String(q.id)])
+              : undefined
             const hasAnswered = studentChoice !== undefined && studentChoice !== null && studentChoice !== ''
             const isCorrect = hasAnswered && studentChoice === q.correctAnswer
 

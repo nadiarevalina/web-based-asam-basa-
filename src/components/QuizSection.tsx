@@ -53,6 +53,11 @@ export function QuizSection() {
   // State sinkronisasi backend (kontrak Bab 4 & Lampiran B)
   const [syncStatusMessage, setSyncStatusMessage] = useState<string | null>(null)
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
+  const [lastSaveResult, setLastSaveResult] = useState<{
+    attemptId: string
+    success: boolean
+    error?: string | null
+  } | null>(null)
 
   // AD14-06: Isolasi draf & riwayat pengerjaan saat terjadi pergantian akun pengguna
   useEffect(() => {
@@ -203,6 +208,11 @@ export function QuizSection() {
 
     // Simpan ke riwayat lokal tanpa menimpa percobaan sebelumnya
     const saveRes = saveCompletedAttempt(completedAttempt)
+    setLastSaveResult({
+      attemptId: completedAttempt.attemptId,
+      success: saveRes.success,
+      error: saveRes.error,
+    })
     if (saveRes.success) {
       const { history: refreshedHistory } = loadQuizHistory()
       setHistory(refreshedHistory)
@@ -768,9 +778,44 @@ export function QuizSection() {
             </div>
             <div className="meta-badge-item">
               <span className="meta-label">Penyimpanan:</span>
-              <span className="meta-value text-success">
-                ✓ Local Storage Perangkat
-              </span>
+              {(() => {
+                const isAttemptInHistory = history.some((h) => h.attemptId === draft.attemptId)
+                const saveFailed = lastSaveResult && !lastSaveResult.success
+                const hasStorageError = !storageStatus.isAvailable || Boolean(storageNotice && storageNotice.includes('Gagal'))
+
+                if (saveFailed || (hasStorageError && !isAttemptInHistory)) {
+                  return (
+                    <span
+                      className="meta-value text-warning"
+                      title={lastSaveResult?.error || storageNotice || 'Penyimpanan lokal gagal/dibatasi'}
+                    >
+                      ⚠️ Tersimpan Sementara di Memori (Storage Ditolak/Penuh)
+                    </span>
+                  )
+                }
+
+                if (isAttemptInHistory || (lastSaveResult && lastSaveResult.success)) {
+                  return (
+                    <span className="meta-value text-success">
+                      ✓ Tersimpan di Perangkat (LocalStorage)
+                    </span>
+                  )
+                }
+
+                if (!storageStatus.isAvailable) {
+                  return (
+                    <span className="meta-value text-warning">
+                      ⚠️ Memori Sesi (LocalStorage Dibatasi Peramban)
+                    </span>
+                  )
+                }
+
+                return (
+                  <span className="meta-value text-muted">
+                    ⏳ Memproses Penyimpanan...
+                  </span>
+                )
+              })()}
             </div>
           </div>
 

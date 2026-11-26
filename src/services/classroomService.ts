@@ -406,7 +406,7 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
         activityId: isQuiz ? 'kuis-m1-asam-basa' : 'lab-uji-indikator',
         activityTitle: exp.title,
         activityType: isQuiz ? 'kuis_evaluasi' : 'lab_simulasi',
-        questionVersion: '2.0.0',
+        questionVersion: exp.details.questionVersion || '2.0.0',
         score: computedScore,
         correctCount: exp.details.correctCount ?? (isOngoing ? 0 : 1),
         wrongCount: exp.details.wrongCount ?? 0,

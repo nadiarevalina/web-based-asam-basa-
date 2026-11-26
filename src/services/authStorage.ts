@@ -718,6 +718,9 @@ export function addQuizExperimentRecord(params: {
   durationSeconds?: number
   moduleTitle?: string
   currentUser?: UserAccount | null
+  answers?: Record<string, string>
+  itemsDetail?: Record<number, any>
+  questionVersion?: string
 }): ExperimentItem {
   const user = params.currentUser || getCurrentUser()
 
@@ -739,6 +742,9 @@ export function addQuizExperimentRecord(params: {
       totalQuestions: params.totalQuestions,
       durationSeconds: params.durationSeconds,
       moduleTitle: params.moduleTitle,
+      answers: params.answers,
+      itemsDetail: params.itemsDetail,
+      questionVersion: params.questionVersion || '2.0.0',
     },
   }
 

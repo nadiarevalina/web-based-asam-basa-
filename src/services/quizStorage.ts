@@ -459,6 +459,15 @@ export function saveCompletedAttempt(
       removeRawStorage(getQuizDraftKey(userId))
       // Simpan juga ke repositori eksperimen akun/antrean server dengan attemptId yang dipertahankan
       try {
+        const answersMap: Record<string, string> = {}
+        if (completeData.items) {
+          Object.entries(completeData.items).forEach(([qId, item]) => {
+            if (item && item.selectedOption) {
+              answersMap[String(qId)] = item.selectedOption
+            }
+          })
+        }
+
         addQuizExperimentRecord({
           attemptId: completeData.attemptId,
           score: completeData.score,
@@ -466,6 +475,9 @@ export function saveCompletedAttempt(
           wrongCount: completeData.wrongCount,
           totalQuestions: completeData.totalQuestions,
           moduleTitle: 'Kuis Evaluasi Modul 1 Asam Basa',
+          answers: answersMap,
+          itemsDetail: completeData.items,
+          questionVersion: completeData.questionVersion || '2.0.0',
         })
       } catch (e) {
         console.error('Failed to register quiz attempt to auth experiments:', e)
