@@ -9,7 +9,6 @@ import type {
 } from '../types/teacher'
 import { MODULE_1_HOTS_QUESTIONS } from '../data/module1QuizData'
 import { getAllExperiments } from './authStorage'
-import { fetchActivitiesFromFirestore, initFirebase } from './firebaseService'
 
 /**
  * Registry pencocokan bank soal berdasarkan questionVersion
@@ -359,18 +358,7 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
     }
   }
 
-  // 2. Baca data dari Cloud Firestore jika Firebase aktif
-  let cloudResults: StudentActivityResult[] = []
-  try {
-    const { isConfigured } = initFirebase()
-    if (isConfigured) {
-      cloudResults = await fetchActivitiesFromFirestore()
-    }
-  } catch (err) {
-    console.warn('Gagal memuat aktivitas dari Firestore:', err)
-  }
-
-  // 3. Baca data eksperimen lokal yang sudah diterima server atau sedang dikerjakan
+  // 2. Baca data eksperimen dari penyimpanan lokal (LocalStorage)
   const localExperiments = getAllExperiments()
   const localSyncedResults: StudentActivityResult[] = localExperiments
     .filter(
@@ -429,14 +417,8 @@ export async function listClass(user: UserAccount | null): Promise<ListClassResp
       }
     })
 
-  // Gabungkan hasil cloud dan lokal
-  const realSyncedResults = [...cloudResults]
-  const existingCloudIds = new Set(cloudResults.map((r) => r.id))
-  localSyncedResults.forEach((lr) => {
-    if (!existingCloudIds.has(lr.id)) {
-      realSyncedResults.push(lr)
-    }
-  })
+  // 3. Gunakan hasil sinkronisasi lokal
+  const realSyncedResults = [...localSyncedResults]
 
   // 4. Gabungkan dengan data contoh terverifikasi (hindari duplikasi id)
   const existingIds = new Set(realSyncedResults.map((r) => r.id))

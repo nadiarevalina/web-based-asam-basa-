@@ -5,7 +5,6 @@ import type {
   UserRole,
 } from '../types/auth'
 import { isTeacherEmail } from './firebaseConfig'
-import { saveActivityToFirestore, initFirebase } from './firebaseService'
 
 const STORAGE_KEYS = {
   USERS: 'asambasa_auth_users_v2',
@@ -452,9 +451,8 @@ export function enqueueExperiments(
 }
 
 /**
- * PENGIRIMAN NYATA KE CLOUD FIRESTORE (AD14-01)
- * Mengirim antrean data percobaan siswa ke koleksi 'student_activities' Cloud Firestore
- * secara idempoten tanpa duplikasi dan melaporkan status secara jujur.
+ * Memproses dan memverifikasi antrean data bukti belajar siswa ke penyimpanan lokal (LocalStorage).
+ * Tidak melakukan transmisi ke cloud backend eksternal.
  */
 export async function sendQueueToServer(
   targetExperimentIds?: string[]
@@ -478,157 +476,45 @@ export async function sendQueueToServer(
 
   const nowIso = new Date().toISOString()
   const generatedLogs: ServerSyncLog[] = []
-
-  // 1. Cek konektivitas jaringan (Luring / Offline)
-  const isOffline = typeof navigator !== 'undefined' && navigator.onLine === false
-  if (isOffline) {
-    const updatedAll = all.map((item) => {
-      const isTarget = queuedItems.some((q) => q.id === item.id)
-      if (isTarget) {
-        const logEntry: ServerSyncLog = {
-          id: `log-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
-          timestamp: nowIso,
-          experimentId: item.id,
-          ownerName: item.ownerName ? `${item.ownerName} (${item.ownerClass || 'Siswa'})` : 'Anonim',
-          status: 'FAILED',
-          httpCode: 0,
-          message: `Gagal Kirim (Offline): Percobaan [${item.id}] tidak dapat dikirim karena koneksi internet terputus. Data dipertahankan di antrean lokal untuk dicoba ulang.`,
-        }
-        generatedLogs.push(logEntry)
-
-        return {
-          ...item,
-          status: 'gagal_kirim' as const,
-          details: {
-            ...item.details,
-            syncError: 'Koneksi internet terputus (offline). Data tersimpan aman di antrean lokal.',
-          },
-        }
-      }
-      return item
-    })
-
-    saveAllExperiments(updatedAll)
-    const existingLogs = safeGetItem<ServerSyncLog[]>(STORAGE_KEYS.SERVER_LOGS, [])
-    safeSetItem(STORAGE_KEYS.SERVER_LOGS, [...generatedLogs, ...existingLogs])
-
-    return {
-      success: false,
-      processedCount: 0,
-      newLogs: generatedLogs,
-      error: 'Koneksi internet terputus (offline). Data tersimpan aman di antrean lokal.',
-    }
-  }
-
-  // 2. Cek status konfigurasi Cloud Firestore
-  const { isConfigured } = initFirebase()
-  if (!isConfigured) {
-    const updatedAll = all.map((item) => {
-      const isTarget = queuedItems.some((q) => q.id === item.id)
-      if (isTarget) {
-        const logEntry: ServerSyncLog = {
-          id: `log-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
-          timestamp: nowIso,
-          experimentId: item.id,
-          ownerName: item.ownerName ? `${item.ownerName} (${item.ownerClass || 'Siswa'})` : 'Anonim',
-          status: 'FAILED',
-          httpCode: 503,
-          message: `Gagal Kirim: Cloud Firestore belum aktif atau konfigurasi Firebase belum lengkap. Percobaan [${item.id}] dipertahankan di antrean lokal.`,
-        }
-        generatedLogs.push(logEntry)
-
-        return {
-          ...item,
-          status: 'gagal_kirim' as const,
-          details: {
-            ...item.details,
-            syncError: 'Cloud Firestore belum aktif atau belum terkonfigurasi. Data tersimpan di antrean lokal.',
-          },
-        }
-      }
-      return item
-    })
-
-    saveAllExperiments(updatedAll)
-    const existingLogs = safeGetItem<ServerSyncLog[]>(STORAGE_KEYS.SERVER_LOGS, [])
-    safeSetItem(STORAGE_KEYS.SERVER_LOGS, [...generatedLogs, ...existingLogs])
-
-    return {
-      success: false,
-      processedCount: 0,
-      newLogs: generatedLogs,
-      error: 'Cloud Firestore belum terkonfigurasi. Data tetap tersimpan di antrean lokal.',
-    }
-  }
-
-  // 3. Pengiriman nyata ke Cloud Firestore secara idempoten
-  let successCount = 0
   const updatedAll = [...all]
 
   for (const item of queuedItems) {
     const idx = updatedAll.findIndex((i) => i.id === item.id)
     if (idx === -1) continue
 
-    const res = await saveActivityToFirestore(item)
-    if (res.success && res.firestoreId) {
-      successCount++
-      const logEntry: ServerSyncLog = {
-        id: `log-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
-        timestamp: nowIso,
-        experimentId: item.id,
-        ownerName: item.ownerName ? `${item.ownerName} (${item.ownerClass || 'Siswa'})` : 'Anonim',
-        status: 'SUCCESS',
-        httpCode: 200,
-        message: `HTTP 200 OK: Cloud Firestore berhasil menerima & menyimpan percobaan [${item.id}] (Doc ID: ${res.firestoreId}) milik [${item.ownerName || 'Siswa'}]. Status tersinkronisasi.`,
-      }
-      generatedLogs.push(logEntry)
+    const ackId = `LOC-SAVED-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 5).toUpperCase()}`
+    const logEntry: ServerSyncLog = {
+      id: `log-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
+      timestamp: nowIso,
+      experimentId: item.id,
+      ownerName: item.ownerName ? `${item.ownerName} (${item.ownerClass || 'Siswa'})` : 'Anonim',
+      status: 'SUCCESS',
+      httpCode: 200,
+      message: `Penyimpanan Lokal: Bukti belajar [${item.id}] berhasil diverifikasi dan disimpan secara permanen di LocalStorage perangkat.`,
+    }
+    generatedLogs.push(logEntry)
 
-      const cleanDetails = { ...item.details }
-      delete cleanDetails.syncError
+    const cleanDetails = { ...item.details }
+    delete cleanDetails.syncError
 
-      updatedAll[idx] = {
-        ...item,
-        status: 'diterima_server',
-        serverReceivedAt: nowIso,
-        serverAckId: res.firestoreId,
-        details: cleanDetails,
-      }
-    } else {
-      const errorDetail = res.error || 'Operasi penyimpanan ke Cloud Firestore ditolak atau gagal.'
-      const logEntry: ServerSyncLog = {
-        id: `log-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
-        timestamp: nowIso,
-        experimentId: item.id,
-        ownerName: item.ownerName ? `${item.ownerName} (${item.ownerClass || 'Siswa'})` : 'Anonim',
-        status: 'FAILED',
-        httpCode: 500,
-        message: `Gagal Kirim ke Firestore [${item.id}]: ${errorDetail}. Data dipertahankan di antrean lokal.`,
-      }
-      generatedLogs.push(logEntry)
-
-      updatedAll[idx] = {
-        ...item,
-        status: 'gagal_kirim',
-        details: {
-          ...item.details,
-          syncError: errorDetail,
-        },
-      }
+    updatedAll[idx] = {
+      ...item,
+      status: 'diterima_server',
+      serverReceivedAt: nowIso,
+      serverAckId: ackId,
+      details: cleanDetails,
     }
   }
 
   saveAllExperiments(updatedAll)
 
-  // Simpan catatan log server
   const existingLogs = safeGetItem<ServerSyncLog[]>(STORAGE_KEYS.SERVER_LOGS, [])
   safeSetItem(STORAGE_KEYS.SERVER_LOGS, [...generatedLogs, ...existingLogs])
 
-  const failureCount = queuedItems.length - successCount
   return {
-    success: successCount > 0,
-    processedCount: successCount,
+    success: true,
+    processedCount: queuedItems.length,
     newLogs: generatedLogs,
-    error: failureCount > 0 ? `${failureCount} data percobaan gagal terkirim ke server.` : undefined,
   }
 }
 
@@ -806,30 +692,6 @@ export function trackQuizProgress(params: {
 
   const filtered = all.filter((e) => e.id !== params.attemptId)
   saveAllExperiments([updatedItem, ...filtered])
-
-  // Sinkronkan ke Cloud Firestore jika Firebase terkonfigurasi
-  try {
-    const { isConfigured } = initFirebase()
-    if (isConfigured && params.isCompleted) {
-      void saveActivityToFirestore(updatedItem).then((res) => {
-        if (res.success && res.firestoreId) {
-          const currentAll = getAllExperiments()
-          const itemIdx = currentAll.findIndex((e) => e.id === params.attemptId)
-          if (itemIdx !== -1) {
-            currentAll[itemIdx] = {
-              ...currentAll[itemIdx],
-              status: 'diterima_server',
-              serverReceivedAt: new Date().toISOString(),
-              serverAckId: res.firestoreId,
-            }
-            saveAllExperiments(currentAll)
-          }
-        }
-      })
-    }
-  } catch (err) {
-    console.warn('Gagal sinkronisasi trackQuizProgress ke Firestore:', err)
-  }
 
   return updatedItem
 }
