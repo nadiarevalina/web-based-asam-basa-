@@ -20,10 +20,15 @@ import {
   clearServerLogs,
 } from '../services/authStorage'
 import {
+  getFirebaseConfig,
+  saveFirebaseConfig,
+  clearCustomFirebaseConfig,
   isFirebaseConfigured,
   isTeacherEmail,
+  type FirebaseConfig,
 } from '../services/firebaseConfig'
 import {
+  reinitFirebase,
   loginWithFirebase,
   registerWithFirebase,
   logoutFromFirebase,
@@ -67,8 +72,11 @@ export function LoginPortal({
   const [regSubject, setRegSubject] = useState('Kimia')
   const [regPassword, setRegPassword] = useState('123')
 
-  // State Status Autentikasi
+  // State Konfigurasi Firebase
+  const [fbConfig, setFbConfig] = useState<FirebaseConfig>(() => getFirebaseConfig())
   const [isFbConfigured, setIsFbConfigured] = useState<boolean>(() => isFirebaseConfigured())
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false)
+  const [modalConfigInput, setModalConfigInput] = useState<FirebaseConfig>(() => getFirebaseConfig())
   const [isSubmittingAuth, setIsSubmittingAuth] = useState<boolean>(false)
 
   // Tab di dalam Portal
@@ -100,6 +108,7 @@ export function LoginPortal({
     setAllExperiments(getAllExperiments())
     setServerLogs(getServerLogs())
     setIsFbConfigured(isFirebaseConfigured())
+    setFbConfig(getFirebaseConfig())
 
     if (user?.role === 'guru') {
       setActiveTab('guru_dashboard')
@@ -131,7 +140,7 @@ export function LoginPortal({
         if (fbRes.success && fbRes.user) {
           setCurrentUser(fbRes.user)
           setAuthSuccess(
-            `Berhasil masuk! Selamat datang, ${fbRes.user.fullName} (${fbRes.user.role === 'guru' ? 'Guru' : 'Siswa'}).`
+            `Berhasil masuk via Firebase Cloud! Selamat datang, ${fbRes.user.fullName} (${fbRes.user.role === 'guru' ? 'Guru' : 'Siswa'}).`
           )
           if (fbRes.user.role === 'guru') {
             setActiveTab('guru_dashboard')
@@ -142,7 +151,7 @@ export function LoginPortal({
           setIsSubmittingAuth(false)
           return
         } else {
-          setAuthError(fbRes.error || 'Gagal masuk akun.')
+          setAuthError(fbRes.error || 'Gagal masuk akun Firebase.')
           setIsSubmittingAuth(false)
           return
         }
@@ -151,7 +160,7 @@ export function LoginPortal({
       }
     }
 
-    // Fallback akun lokal
+    // Fallback akun lokal / demo
     const res = loginUser(loginUsername, loginPassword)
     if (res.success && res.user) {
       setCurrentUser(res.user)
@@ -166,6 +175,22 @@ export function LoginPortal({
       setAuthError(res.error || 'Gagal masuk akun. Periksa username atau email dan kata sandi Anda.')
     }
     setIsSubmittingAuth(false)
+  }
+
+  const handleQuickLogin = (username: string) => {
+    setAuthError(null)
+    setAuthSuccess(null)
+    const res = loginUser(username, '123')
+    if (res.success && res.user) {
+      setCurrentUser(res.user)
+      setAuthSuccess(`Masuk cepat berhasil sebagai ${res.user.fullName} (${res.user.role === 'guru' ? 'Guru Resmi' : 'Siswa'}).`)
+      if (res.user.role === 'guru') {
+        setActiveTab('guru_dashboard')
+      } else {
+        setActiveTab('tautkan')
+      }
+      refreshData()
+    }
   }
 
   const handleRegister = async (e: React.FormEvent) => {

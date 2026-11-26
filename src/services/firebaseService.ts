@@ -9,31 +9,46 @@ import {
   type User as FirebaseUser,
   sendPasswordResetEmail,
 } from 'firebase/auth'
-import type { UserAccount, UserRole } from '../types/auth'
+import {
+  getFirestore,
+  type Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp,
+  type DocumentData,
+} from 'firebase/firestore'
+import type { UserAccount, UserRole, ExperimentItem } from '../types/auth'
+import type { StudentActivityResult } from '../types/teacher'
 import {
   getFirebaseConfig,
   isFirebaseConfigured,
   isTeacherEmail,
 } from './firebaseConfig'
-import { setCurrentUser, getCurrentUser, getAllUsers, saveUser } from './authStorage'
+import { setCurrentUser, getCurrentUser } from './authStorage'
 
 let app: FirebaseApp | null = null
 let auth: Auth | null = null
+let db: Firestore | null = null
 
 /**
- * Inisialisasi Firebase App dan Firebase Authentication
- * (Tanpa ketergantungan Cloud Firestore / Backend Database)
+ * Inisialisasi Firebase App, Auth, dan Firestore secara aman
  */
 export function initFirebase(): {
   isConfigured: boolean
   app: FirebaseApp | null
   auth: Auth | null
+  db: Firestore | null
 } {
   const config = getFirebaseConfig()
   const configured = isFirebaseConfigured(config)
 
   if (!configured) {
-    return { isConfigured: false, app: null, auth: null }
+    return { isConfigured: false, app: null, auth: null, db: null }
   }
 
   try {
@@ -43,10 +58,11 @@ export function initFirebase(): {
       app = getApp()
     }
     auth = getAuth(app)
-    return { isConfigured: true, app, auth }
+    db = getFirestore(app)
+    return { isConfigured: true, app, auth, db }
   } catch (err) {
-    console.warn('Inisialisasi Firebase Authentication mengalami kendala:', err)
-    return { isConfigured: false, app: null, auth: null }
+    console.warn('Inisialisasi Firebase mengalami kendala:', err)
+    return { isConfigured: false, app: null, auth: null, db: null }
   }
 }
 
@@ -56,40 +72,41 @@ export function initFirebase(): {
 export function reinitFirebase(): boolean {
   app = null
   auth = null
+  db = null
   const { isConfigured } = initFirebase()
   return isConfigured
 }
 
 /**
- * Mengonversi FirebaseUser menjadi UserAccount standar AsamBasa Lab
+ * Mengonversi FirebaseUser + Profile Firestore menjadi UserAccount standar AsamBasa Lab
  */
 export function mapFirebaseUserToUserAccount(
   fbUser: FirebaseUser,
-  existingProfile?: Partial<UserAccount> | null
+  profile?: DocumentData | null
 ): UserAccount {
   const email = fbUser.email || ''
   const isTeacher = isTeacherEmail(email)
-  const role: UserRole = isTeacher ? 'guru' : (existingProfile?.role === 'guru' ? 'guru' : 'siswa')
+  const role: UserRole = isTeacher ? 'guru' : (profile?.role === 'guru' ? 'guru' : 'siswa')
 
   return {
     id: fbUser.uid,
     username: email ? email.split('@')[0] : fbUser.uid.substring(0, 8),
-    fullName: existingProfile?.fullName || fbUser.displayName || (email ? email.split('@')[0] : 'Pengguna AsamBasa'),
+    fullName: profile?.fullName || fbUser.displayName || (email ? email.split('@')[0] : 'Pengguna AsamBasa'),
     role,
     identifierNumber:
-      existingProfile?.identifierNumber ||
+      profile?.identifierNumber ||
       (isTeacher ? 'NIP-GURU-OFFICIAL' : `NIS-${fbUser.uid.substring(0, 8).toUpperCase()}`),
-    schoolClass: isTeacher ? undefined : (existingProfile?.schoolClass || 'XI MIPA 1'),
-    subject: isTeacher ? (existingProfile?.subject || 'Kimia SMA') : undefined,
-    avatarColor: isTeacher ? '#8b5cf6' : (existingProfile?.avatarColor || '#0ea5e9'),
+    schoolClass: isTeacher ? undefined : (profile?.schoolClass || 'XI MIPA 1'),
+    subject: isTeacher ? (profile?.subject || 'Kimia SMA') : undefined,
+    avatarColor: isTeacher ? '#8b5cf6' : (profile?.avatarColor || '#0ea5e9'),
   }
 }
 
 /**
- * Mendaftarkan akun baru ke Firebase Authentication dan menyimpan profil secara lokal di LocalStorage.
- * ATURAN PERAN:
- * - Email resmi guru otomatis ditetapkan sebagai 'guru'.
- * - Seluruh akun baru lainnya otomatis ditetapkan sebagai 'siswa'.
+ * Mendaftarkan akun baru ke Firebase Authentication dan menyimpan profil di Cloud Firestore.
+ * ATURAN PERAN UTAMA:
+ * - Email nadia.revalina.2403316.@students.um.ac.id OTOMATIS ditetapkan sebagai 'guru'.
+ * - Seluruh akun baru lainnya OTOMATIS ditetapkan sebagai 'siswa'.
  */
 export async function registerWithFirebase(params: {
   email: string
@@ -99,10 +116,10 @@ export async function registerWithFirebase(params: {
   identifierNumber?: string
 }): Promise<{ success: boolean; user?: UserAccount; error?: string }> {
   const { isConfigured } = initFirebase()
-  if (!isConfigured || !auth) {
+  if (!isConfigured || !auth || !db) {
     return {
       success: false,
-      error: 'Firebase Authentication belum terkonfigurasi. Pastikan API Key diatur.',
+      error: 'Firebase belum terkonfigurasi. Pastikan apiKey, projectId, dan kredensial lain sudah diisi.',
     }
   }
 
@@ -114,24 +131,26 @@ export async function registerWithFirebase(params: {
     const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, params.password)
     const fbUser = userCredential.user
 
-    const userAccount: UserAccount = {
-      id: fbUser.uid,
-      username: cleanEmail.split('@')[0],
+    // Siapkan data profil pengguna
+    const userProfileData = {
+      uid: fbUser.uid,
+      email: cleanEmail,
       fullName: params.fullName.trim(),
       role: assignedRole,
       identifierNumber:
         params.identifierNumber?.trim() ||
         (isTeacher ? 'NIP-GURU-OFFICIAL' : `NIS-${Date.now().toString().slice(-6)}`),
-      schoolClass: isTeacher ? undefined : (params.schoolClass?.trim() || 'XI MIPA 1'),
-      subject: isTeacher ? 'Kimia SMA' : undefined,
+      schoolClass: isTeacher ? '' : (params.schoolClass?.trim() || 'XI MIPA 1'),
+      subject: isTeacher ? 'Kimia SMA' : '',
       avatarColor: isTeacher ? '#8b5cf6' : '#0ea5e9',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     }
 
-    // Simpan ke local storage
-    const allUsers = getAllUsers()
-    if (!allUsers.some((u) => u.id === userAccount.id || u.username.toLowerCase() === userAccount.username.toLowerCase())) {
-      saveUser(userAccount)
-    }
+    // Simpan ke Firestore users collection
+    await setDoc(doc(db, 'users', fbUser.uid), userProfileData)
+
+    const userAccount = mapFirebaseUserToUserAccount(fbUser, userProfileData)
     setCurrentUser(userAccount)
 
     return {
@@ -160,10 +179,10 @@ export async function loginWithFirebase(
   password: string
 ): Promise<{ success: boolean; user?: UserAccount; error?: string }> {
   const { isConfigured } = initFirebase()
-  if (!isConfigured || !auth) {
+  if (!isConfigured || !auth || !db) {
     return {
       success: false,
-      error: 'Firebase Authentication belum terkonfigurasi. Silakan periksa konfigurasi API Key.',
+      error: 'Firebase belum terkonfigurasi. Silakan isi konfigurasi API Key terlebih dahulu.',
     }
   }
 
@@ -173,25 +192,34 @@ export async function loginWithFirebase(
     const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password)
     const fbUser = userCredential.user
 
-    // Cari profil lokal yang cocok
-    const allUsers = getAllUsers()
-    const existingUser = allUsers.find(
-      (u) => u.id === fbUser.uid || u.username.toLowerCase() === cleanEmail.toLowerCase()
-    )
-
-    const isTeacher = isTeacherEmail(cleanEmail)
-    const userAccount: UserAccount = existingUser || {
-      id: fbUser.uid,
-      username: cleanEmail.split('@')[0],
-      fullName: fbUser.displayName || cleanEmail.split('@')[0],
-      role: isTeacher ? 'guru' : 'siswa',
-      identifierNumber: isTeacher ? 'NIP-GURU-OFFICIAL' : `NIS-${fbUser.uid.substring(0, 8).toUpperCase()}`,
-      schoolClass: isTeacher ? undefined : 'XI MIPA 1',
-      subject: isTeacher ? 'Kimia SMA' : undefined,
-      avatarColor: isTeacher ? '#8b5cf6' : '#0ea5e9',
+    // Ambil data profil dari Firestore
+    let profileData: DocumentData | null = null
+    try {
+      const userDocRef = doc(db, 'users', fbUser.uid)
+      const userDocSnap = await getDoc(userDocRef)
+      if (userDocSnap.exists()) {
+        profileData = userDocSnap.data()
+      } else {
+        // Jika dokumen belum ada (misal registrasi via console), buat otomatis
+        const isTeacher = isTeacherEmail(cleanEmail)
+        profileData = {
+          uid: fbUser.uid,
+          email: cleanEmail,
+          fullName: fbUser.displayName || cleanEmail.split('@')[0],
+          role: isTeacher ? 'guru' : 'siswa',
+          identifierNumber: isTeacher ? 'NIP-GURU-OFFICIAL' : `NIS-${fbUser.uid.substring(0, 8)}`,
+          schoolClass: isTeacher ? '' : 'XI MIPA 1',
+          createdAt: serverTimestamp(),
+        }
+        await setDoc(userDocRef, profileData)
+      }
+    } catch (e) {
+      console.warn('Gagal membaca profil dari Firestore, menggunakan fallback Auth:', e)
     }
 
+    const userAccount = mapFirebaseUserToUserAccount(fbUser, profileData)
     setCurrentUser(userAccount)
+
     return { success: true, user: userAccount }
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err)
@@ -260,7 +288,8 @@ export async function sendPasswordResetWithFirebase(
     const errorMsg = err instanceof Error ? err.message : String(err)
     console.warn('sendPasswordResetEmail warning:', err)
 
-    // Sesuai standar keamanan: email enumeration protection
+    // Sesuai standar keamanan & instruksi: email enumeration protection
+    // Jangan ungkap apakah suatu email terdaftar atau tidak ke pengguna jika Firebase mengembalikan auth/user-not-found
     if (errorMsg.includes('auth/user-not-found')) {
       return { success: true }
     } else if (errorMsg.includes('auth/invalid-email')) {
@@ -291,35 +320,106 @@ export async function sendPasswordResetWithFirebase(
 export const resetPasswordWithFirebase = sendPasswordResetWithFirebase
 
 /**
+ * Menyimpan hasil aktivitas siswa (kuis atau lab) ke Cloud Firestore secara idempoten
+ * Menggunakan document ID stabil berbasis attemptId atau ID aktivitas unik (activity.id)
+ * sehingga proses coba ulang (retry) tidak pernah menduplikasi dokumen di server.
+ */
+export async function saveActivityToFirestore(
+  activity: StudentActivityResult | ExperimentItem
+): Promise<{ success: boolean; firestoreId?: string; error?: string }> {
+  const { isConfigured } = initFirebase()
+  if (!isConfigured || !db) {
+    return { success: false, error: 'Cloud Firestore tidak aktif atau belum terkonfigurasi.' }
+  }
+
+  // Cek konektivitas jaringan perangkat
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return { success: false, error: 'Koneksi internet terputus (offline).' }
+  }
+
+  try {
+    const docId = activity.id
+    if (!docId) {
+      return { success: false, error: 'ID aktivitas tidak valid atau kosong.' }
+    }
+
+    // Dokumen unik diidentifikasi oleh ID percobaan / attemptId
+    const docRef = doc(db, 'student_activities', docId)
+
+    // Bersihkan nilai undefined agar Firestore SDK tidak memicu error skema
+    const cleanPayload = JSON.parse(JSON.stringify(activity))
+
+    await setDoc(
+      docRef,
+      {
+        ...cleanPayload,
+        syncedAt: serverTimestamp(),
+        isSampleData: false,
+      },
+      { merge: true }
+    )
+
+    return { success: true, firestoreId: docId }
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error('Gagal menyimpan aktivitas ke Firestore:', errorMsg)
+    return { success: false, error: errorMsg }
+  }
+}
+
+/**
+ * Mengambil daftar aktivitas siswa dari Cloud Firestore untuk Panel Guru
+ */
+export async function fetchActivitiesFromFirestore(): Promise<StudentActivityResult[]> {
+  const { isConfigured } = initFirebase()
+  if (!isConfigured || !db) {
+    return []
+  }
+
+  try {
+    const colRef = collection(db, 'student_activities')
+    const q = query(colRef, orderBy('completedAt', 'desc'))
+    const querySnapshot = await getDocs(q)
+
+    const list: StudentActivityResult[] = []
+    querySnapshot.forEach((d) => {
+      const data = d.data() as StudentActivityResult
+      list.push({
+        ...data,
+        id: d.id,
+      })
+    })
+
+    return list
+  } catch (err) {
+    console.warn('Gagal memuat aktivitas dari Firestore (mungkin rules belum dikonfigurasi):', err)
+    return []
+  }
+}
+
+/**
  * Listener status autentikasi Firebase
  */
 export function subscribeToAuthChanges(callback: (user: UserAccount | null) => void): () => void {
   const { isConfigured } = initFirebase()
-  if (!isConfigured || !auth) {
+  if (!isConfigured || !auth || !db) {
     callback(getCurrentUser())
     return () => { }
   }
 
-  const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+  const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
     if (fbUser) {
-      const cleanEmail = fbUser.email || ''
-      const allUsers = getAllUsers()
-      const existing = allUsers.find(
-        (u) => u.id === fbUser.uid || (cleanEmail && u.username.toLowerCase() === cleanEmail.toLowerCase())
-      )
-      const isTeacher = isTeacherEmail(cleanEmail)
-      const account: UserAccount = existing || {
-        id: fbUser.uid,
-        username: cleanEmail ? cleanEmail.split('@')[0] : fbUser.uid.substring(0, 8),
-        fullName: fbUser.displayName || (cleanEmail ? cleanEmail.split('@')[0] : 'Pengguna AsamBasa'),
-        role: isTeacher ? 'guru' : 'siswa',
-        identifierNumber: isTeacher ? 'NIP-GURU-OFFICIAL' : `NIS-${fbUser.uid.substring(0, 8).toUpperCase()}`,
-        schoolClass: isTeacher ? undefined : 'XI MIPA 1',
-        subject: isTeacher ? 'Kimia SMA' : undefined,
-        avatarColor: isTeacher ? '#8b5cf6' : '#0ea5e9',
+      try {
+        const userDocRef = doc(db!, 'users', fbUser.uid)
+        const snap = await getDoc(userDocRef)
+        const account = mapFirebaseUserToUserAccount(fbUser, snap.exists() ? snap.data() : null)
+        setCurrentUser(account)
+        callback(account)
+      } catch {
+        const account = mapFirebaseUserToUserAccount(fbUser, null)
+        setCurrentUser(account)
+        callback(account)
       }
-      setCurrentUser(account)
-      callback(account)
     } else {
       callback(null)
     }
