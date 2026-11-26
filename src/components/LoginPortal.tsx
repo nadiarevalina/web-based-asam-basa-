@@ -32,6 +32,7 @@ import {
   loginWithFirebase,
   registerWithFirebase,
   logoutFromFirebase,
+  sendPasswordResetWithFirebase,
 } from '../services/firebaseService'
 import './LoginPortal.css'
 
@@ -51,13 +52,17 @@ export function LoginPortal({
   // State Autentikasi
   const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => getCurrentUser())
   const [usersList, setUsersList] = useState<UserAccount[]>(() => getAllUsers())
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
+  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot'>('login')
 
   // Form Login
   const [loginUsername, setLoginUsername] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [authError, setAuthError] = useState<string | null>(null)
   const [authSuccess, setAuthSuccess] = useState<string | null>(null)
+
+  // Form Lupa Password
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetSuccessMessage, setResetSuccessMessage] = useState<string | null>(null)
 
   // Form Register
   const [regFullName, setRegFullName] = useState('')
@@ -261,6 +266,43 @@ export function LoginPortal({
       setAuthError(res.error || 'Gagal mendaftarkan akun.')
     }
     setIsSubmittingAuth(false)
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setAuthError(null)
+    setAuthSuccess(null)
+    setResetSuccessMessage(null)
+
+    const cleanEmail = resetEmail.trim()
+    if (!cleanEmail) {
+      setAuthError('Email wajib diisi.')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(cleanEmail)) {
+      setAuthError('Format email tidak valid. Masukkan alamat email yang benar (contoh: nama@sekolah.id).')
+      return
+    }
+
+    setIsSubmittingAuth(true)
+
+    try {
+      const res = await sendPasswordResetWithFirebase(cleanEmail)
+      if (res.success) {
+        setResetSuccessMessage(
+          'Jika alamat email tersebut terdaftar, instruksi untuk mengatur ulang password akan dikirimkan. Silakan periksa kotak masuk atau folder spam.'
+        )
+      } else {
+        setAuthError(res.error || 'Terjadi kesalahan saat memproses permintaan reset password.')
+      }
+    } catch (err: unknown) {
+      console.warn('Kendala reset password:', err)
+      setAuthError('Gagal mengirim tautan reset password. Periksa koneksi internet Anda dan coba lagi.')
+    } finally {
+      setIsSubmittingAuth(false)
+    }
   }
 
   const handleLogout = async () => {
@@ -856,34 +898,46 @@ export function LoginPortal({
         )}
       </div>
 
-      {/* Jika Belum Login: Tampilkan Form Login / Register */}
+      {/* Jika Belum Login: Tampilkan Form Login / Register / Lupa Password */}
       {!currentUser && (
         <div className="auth-form-card">
-          <div className="auth-tab-switch">
-            <button
-              type="button"
-              className={`auth-tab-btn ${authMode === 'login' ? 'active' : ''}`}
-              onClick={() => {
-                setAuthMode('login')
-                setAuthError(null)
-              }}
-            >
-              Masuk ke Akun
-            </button>
-            <button
-              type="button"
-              className={`auth-tab-btn ${authMode === 'register' ? 'active' : ''}`}
-              onClick={() => {
-                setAuthMode('register')
-                setAuthError(null)
-              }}
-            >
-              Daftar Akun Baru
-            </button>
-          </div>
+          {authMode !== 'forgot' ? (
+            <div className="auth-tab-switch">
+              <button
+                type="button"
+                className={`auth-tab-btn ${authMode === 'login' ? 'active' : ''}`}
+                onClick={() => {
+                  setAuthMode('login')
+                  setAuthError(null)
+                  setAuthSuccess(null)
+                }}
+              >
+                Masuk ke Akun
+              </button>
+              <button
+                type="button"
+                className={`auth-tab-btn ${authMode === 'register' ? 'active' : ''}`}
+                onClick={() => {
+                  setAuthMode('register')
+                  setAuthError(null)
+                  setAuthSuccess(null)
+                }}
+              >
+                Daftar Akun Baru
+              </button>
+            </div>
+          ) : (
+            <div className="forgot-password-header">
+              <div className="forgot-password-icon-badge" aria-hidden="true">🔑</div>
+              <h3 className="forgot-password-title">Reset Password</h3>
+              <p className="forgot-password-desc">
+                Masukkan alamat email yang terdaftar. Kami akan mengirimkan tautan untuk mengatur ulang password Anda.
+              </p>
+            </div>
+          )}
 
-          {authError && <div className="form-error-banner">{authError}</div>}
-          {authSuccess && <div className="form-success-banner">{authSuccess}</div>}
+          {authError && <div className="form-error-banner" role="alert">{authError}</div>}
+          {authSuccess && <div className="form-success-banner" role="status">{authSuccess}</div>}
 
           {authMode === 'login' ? (
             <form onSubmit={handleLogin} className="auth-inner-form">
@@ -913,6 +967,24 @@ export function LoginPortal({
                 />
               </div>
 
+              <div className="login-forgot-row">
+                <button
+                  type="button"
+                  className="btn-forgot-password-link"
+                  onClick={() => {
+                    setAuthMode('forgot')
+                    setAuthError(null)
+                    setAuthSuccess(null)
+                    setResetSuccessMessage(null)
+                    if (loginUsername.includes('@')) {
+                      setResetEmail(loginUsername)
+                    }
+                  }}
+                >
+                  Lupa Password?
+                </button>
+              </div>
+
               <div className="form-actions-row">
                 <button
                   type="submit"
@@ -929,7 +1001,7 @@ export function LoginPortal({
                 </button>
               </div>
             </form>
-          ) : (
+          ) : authMode === 'register' ? (
             <form onSubmit={handleRegister} className="auth-inner-form">
               <div className="form-row-2col">
                 <div className="form-group">
@@ -1079,6 +1151,94 @@ export function LoginPortal({
                 </button>
               </div>
             </form>
+          ) : (
+            /* authMode === 'forgot' */
+            resetSuccessMessage ? (
+              <div className="reset-success-box" role="status">
+                <div className="reset-success-icon" aria-hidden="true">✉️</div>
+                <div className="reset-success-content">
+                  <h4 className="reset-success-title">Permintaan Reset Password Dikirim</h4>
+                  <p className="reset-success-message">{resetSuccessMessage}</p>
+                  <div className="reset-success-guidelines">
+                    <div className="reset-success-note">
+                      <span className="reset-note-badge">Penting</span>
+                      <span>Buka tautan dalam email untuk menentukan password baru di antarmuka resmi Firebase Authentication.</span>
+                    </div>
+                    <div className="reset-success-tips">
+                      💡 <strong>Tips:</strong> Jika email belum masuk dalam 1–2 menit, periksa folder <em>Spam / Promosi</em> atau pastikan penulisan email sudah sesuai saat pendaftaran.
+                    </div>
+                  </div>
+                </div>
+                <div className="reset-success-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-submit-auth btn-back-to-login"
+                    onClick={() => {
+                      setAuthMode('login')
+                      setAuthError(null)
+                      setAuthSuccess(null)
+                      setResetSuccessMessage(null)
+                    }}
+                  >
+                    ← Kembali ke Login
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="auth-inner-form forgot-form">
+                <div className="form-group">
+                  <label htmlFor="reset-email">Alamat Email Terdaftar <span className="required-star">*</span></label>
+                  <input
+                    id="reset-email"
+                    type="email"
+                    className="form-input"
+                    placeholder="Contoh: nadia.revalina.2403316.@students.um.ac.id atau siswa@sekolah.id"
+                    value={resetEmail}
+                    onChange={(e) => {
+                      setResetEmail(e.target.value)
+                      if (authError) setAuthError(null)
+                    }}
+                    disabled={isSubmittingAuth}
+                    required
+                    autoComplete="email"
+                    autoFocus
+                  />
+                  <span className="form-input-hint">
+                    Gunakan email aktif yang Anda daftarkan pada akun AsamBasa Lab.
+                  </span>
+                </div>
+
+                <div className="form-actions-row form-actions-vertical">
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-submit-auth"
+                    disabled={isSubmittingAuth}
+                  >
+                    {isSubmittingAuth ? (
+                      <>
+                        <span className="spinner-inline" /> Mengirimkan Link Reset...
+                      </>
+                    ) : (
+                      'Kirim Link Reset Password ✉️'
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-cancel-reset"
+                    onClick={() => {
+                      setAuthMode('login')
+                      setAuthError(null)
+                      setAuthSuccess(null)
+                      setResetSuccessMessage(null)
+                    }}
+                    disabled={isSubmittingAuth}
+                  >
+                    ← Kembali ke Login
+                  </button>
+                </div>
+              </form>
+            )
           )}
         </div>
       )}

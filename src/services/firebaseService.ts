@@ -7,6 +7,7 @@ import {
   signOut as fbSignOut,
   onAuthStateChanged,
   type User as FirebaseUser,
+  sendPasswordResetEmail,
 } from 'firebase/auth'
 import {
   getFirestore,
@@ -248,6 +249,75 @@ export async function logoutFromFirebase(): Promise<void> {
   }
   setCurrentUser(null)
 }
+
+/**
+ * Mengirimkan tautan reset kata sandi (Password Reset) ke email pengguna via Firebase Authentication
+ */
+export async function sendPasswordResetWithFirebase(
+  email: string
+): Promise<{ success: boolean; error?: string }> {
+  const { isConfigured } = initFirebase()
+  if (!isConfigured || !auth) {
+    return {
+      success: false,
+      error: 'Layanan Firebase belum terkonfigurasi. Pastikan API Key dan Project ID sudah diatur.',
+    }
+  }
+
+  const cleanEmail = email.trim()
+  if (!cleanEmail) {
+    return {
+      success: false,
+      error: 'Alamat email wajib diisi.',
+    }
+  }
+
+  // Validasi format email dasar
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(cleanEmail)) {
+    return {
+      success: false,
+      error: 'Format alamat email tidak valid.',
+    }
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, cleanEmail)
+    return { success: true }
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err)
+    console.warn('sendPasswordResetEmail warning:', err)
+
+    // Sesuai standar keamanan & instruksi: email enumeration protection
+    // Jangan ungkap apakah suatu email terdaftar atau tidak ke pengguna jika Firebase mengembalikan auth/user-not-found
+    if (errorMsg.includes('auth/user-not-found')) {
+      return { success: true }
+    } else if (errorMsg.includes('auth/invalid-email')) {
+      return {
+        success: false,
+        error: 'Format alamat email tidak valid.',
+      }
+    } else if (errorMsg.includes('auth/too-many-requests')) {
+      return {
+        success: false,
+        error: 'Terlalu banyak permintaan reset kata sandi. Silakan tunggu beberapa saat.',
+      }
+    } else if (errorMsg.includes('auth/network-request-failed')) {
+      return {
+        success: false,
+        error: 'Koneksi jaringan gagal. Periksa koneksi internet Anda dan coba lagi.',
+      }
+    }
+
+    return {
+      success: false,
+      error: 'Terjadi kendala saat mengirim email reset password. Silakan coba lagi nanti.',
+    }
+  }
+}
+
+// Alias agar kompatibel
+export const resetPasswordWithFirebase = sendPasswordResetWithFirebase
 
 /**
  * Menyimpan hasil aktivitas siswa (kuis atau lab) ke Cloud Firestore secara idempoten
