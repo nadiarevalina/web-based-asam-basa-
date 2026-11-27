@@ -1,21 +1,216 @@
 import { useState } from 'react'
 import { AcademicReference, Citation } from './AcademicReference'
 
+type TheoryTabId = 'teori' | 'sifat' | 'kehidupan' | 'netralisasi'
+
+interface TheoryTabInfo {
+  id: TheoryTabId
+  number: string
+  title: string
+}
+
+const THEORY_TABS: TheoryTabInfo[] = [
+  { id: 'teori', number: '01', title: '3 Teori Asam-Basa' },
+  { id: 'sifat', number: '02', title: 'Sifat Fisis & Kimia' },
+  { id: 'kehidupan', number: '03', title: 'Aplikasi Sehari-hari' },
+  { id: 'netralisasi', number: '04', title: 'Reaksi Netralisasi' },
+]
+
+interface TheoryNextNavProps {
+  currentTab: TheoryTabId
+  onNavigateNext: (nextTab: TheoryTabId) => void
+  onBackToList: () => void
+}
+
+function TheoryNextNav({ currentTab, onNavigateNext, onBackToList }: TheoryNextNavProps) {
+  const currentIndex = THEORY_TABS.findIndex((t) => t.id === currentTab)
+  const isLast = currentIndex === THEORY_TABS.length - 1
+  const nextTab = !isLast ? THEORY_TABS[currentIndex + 1] : null
+
+  if (isLast) {
+    return (
+      <div className="theory-next-action-card is-final">
+        <div className="theory-next-info">
+          <span className="theory-next-badge badge-success">Materi Selesai</span>
+          <p className="theory-next-desc">
+            Anda telah menyelesaikan seluruh materi teori (01–04).
+          </p>
+        </div>
+        <button
+          type="button"
+          className="btn-theory-next-step btn-theory-return"
+          onClick={onBackToList}
+          aria-label="Kembali ke Daftar Materi Teori"
+        >
+          <span className="return-icon" aria-hidden="true">&#8679;</span>
+          <span>Kembali ke Daftar Materi</span>
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="theory-next-action-card">
+      <div className="theory-next-info">
+        <span className="theory-next-badge">Materi Selanjutnya</span>
+        <p className="theory-next-desc">
+          Lanjut ke: <strong>{nextTab?.number} • {nextTab?.title}</strong>
+        </p>
+      </div>
+      <button
+        type="button"
+        className="btn-theory-next-step"
+        onClick={() => nextTab && onNavigateNext(nextTab.id)}
+        aria-label={`Lanjut ke Materi Berikutnya: ${nextTab?.title}`}
+      >
+        <span>Lanjut ke Materi Berikutnya</span>
+        <span className="next-arrow-icon" aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+  )
+}
+
 export function TheorySection() {
-  const [activeTab, setActiveTab] = useState<'teori' | 'sifat' | 'kehidupan' | 'netralisasi'>('teori')
+  const [activeTab, setActiveTab] = useState<TheoryTabId>('teori')
 
-  // Interactive Inquiry Check State for each tab
-  const [quiz1Answer, setQuiz1Answer] = useState<string | null>(null)
-  const [quiz1Submitted, setQuiz1Submitted] = useState<boolean>(false)
+  // Interactive Inquiry Check State for each tab (dengan fallback localStorage)
+  const [quiz1Answer, setQuiz1Answer] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q1_ans') || null
+    } catch {
+      return null
+    }
+  })
+  const [quiz1Submitted, setQuiz1Submitted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q1_sub') === 'true'
+    } catch {
+      return false
+    }
+  })
 
-  const [quiz2Answer, setQuiz2Answer] = useState<string | null>(null)
-  const [quiz2Submitted, setQuiz2Submitted] = useState<boolean>(false)
+  const [quiz2Answer, setQuiz2Answer] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q2_ans') || null
+    } catch {
+      return null
+    }
+  })
+  const [quiz2Submitted, setQuiz2Submitted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q2_sub') === 'true'
+    } catch {
+      return false
+    }
+  })
 
-  const [quiz3Answer, setQuiz3Answer] = useState<string | null>(null)
-  const [quiz3Submitted, setQuiz3Submitted] = useState<boolean>(false)
+  const [quiz3Answer, setQuiz3Answer] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q3_ans') || null
+    } catch {
+      return null
+    }
+  })
+  const [quiz3Submitted, setQuiz3Submitted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q3_sub') === 'true'
+    } catch {
+      return false
+    }
+  })
 
-  const [quiz4Answer, setQuiz4Answer] = useState<string | null>(null)
-  const [quiz4Submitted, setQuiz4Submitted] = useState<boolean>(false)
+  const [quiz4Answer, setQuiz4Answer] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q4_ans') || null
+    } catch {
+      return null
+    }
+  })
+  const [quiz4Submitted, setQuiz4Submitted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('asb_theory_q4_sub') === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  const handleAnswerQuiz1 = (key: string) => {
+    setQuiz1Answer(key)
+    setQuiz1Submitted(true)
+    try {
+      localStorage.setItem('asb_theory_q1_ans', key)
+      localStorage.setItem('asb_theory_q1_sub', 'true')
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  const handleAnswerQuiz2 = (key: string) => {
+    setQuiz2Answer(key)
+    setQuiz2Submitted(true)
+    try {
+      localStorage.setItem('asb_theory_q2_ans', key)
+      localStorage.setItem('asb_theory_q2_sub', 'true')
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  const handleAnswerQuiz3 = (key: string) => {
+    setQuiz3Answer(key)
+    setQuiz3Submitted(true)
+    try {
+      localStorage.setItem('asb_theory_q3_ans', key)
+      localStorage.setItem('asb_theory_q3_sub', 'true')
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  const handleAnswerQuiz4 = (key: string) => {
+    setQuiz4Answer(key)
+    setQuiz4Submitted(true)
+    try {
+      localStorage.setItem('asb_theory_q4_ans', key)
+      localStorage.setItem('asb_theory_q4_sub', 'true')
+    } catch {
+      /* ignore storage errors */
+    }
+  }
+
+  // Navigasi ke materi berikutnya dengan smooth scroll ke atas materi
+  const handleNavigateNext = (nextTab: TheoryTabId) => {
+    setActiveTab(nextTab)
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const section = document.getElementById('teori-section')
+        if (section) {
+          const topOffset = section.getBoundingClientRect().top + window.pageYOffset - 70
+          window.scrollTo({
+            top: Math.max(0, topOffset),
+            behavior: 'smooth',
+          })
+        }
+      }, 50)
+    })
+  }
+
+  // Kembali ke awal daftar materi teori
+  const handleBackToMaterialList = () => {
+    setActiveTab('teori')
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const section = document.getElementById('teori-section')
+        if (section) {
+          const topOffset = section.getBoundingClientRect().top + window.pageYOffset - 70
+          window.scrollTo({
+            top: Math.max(0, topOffset),
+            behavior: 'smooth',
+          })
+        }
+      }, 50)
+    })
+  }
 
   return (
     <section id="teori-section" className="content-section" aria-labelledby="teori-heading">
@@ -257,10 +452,7 @@ export function TheorySection() {
                     key={opt.key}
                     type="button"
                     className={`check-option-item ${quiz1Answer === opt.key ? 'selected' : ''}`}
-                    onClick={() => {
-                      setQuiz1Answer(opt.key)
-                      setQuiz1Submitted(true)
-                    }}
+                    onClick={() => handleAnswerQuiz1(opt.key)}
                   >
                     <strong>{opt.key}.</strong>
                     <span>{opt.text}</span>
@@ -281,6 +473,13 @@ export function TheorySection() {
                 </div>
               )}
             </div>
+
+            {/* Tombol Navigasi ke Materi Teori Berikutnya */}
+            <TheoryNextNav
+              currentTab="teori"
+              onNavigateNext={handleNavigateNext}
+              onBackToList={handleBackToMaterialList}
+            />
           </div>
         )}
 
@@ -365,10 +564,7 @@ export function TheorySection() {
                     key={opt.key}
                     type="button"
                     className={`check-option-item ${quiz2Answer === opt.key ? 'selected' : ''}`}
-                    onClick={() => {
-                      setQuiz2Answer(opt.key)
-                      setQuiz2Submitted(true)
-                    }}
+                    onClick={() => handleAnswerQuiz2(opt.key)}
                   >
                     <strong>{opt.key}.</strong>
                     <span>{opt.text}</span>
@@ -389,6 +585,13 @@ export function TheorySection() {
                 </div>
               )}
             </div>
+
+            {/* Tombol Navigasi ke Materi Teori Berikutnya */}
+            <TheoryNextNav
+              currentTab="sifat"
+              onNavigateNext={handleNavigateNext}
+              onBackToList={handleBackToMaterialList}
+            />
           </div>
         )}
 
@@ -498,10 +701,7 @@ export function TheorySection() {
                     key={opt.key}
                     type="button"
                     className={`check-option-item ${quiz3Answer === opt.key ? 'selected' : ''}`}
-                    onClick={() => {
-                      setQuiz3Answer(opt.key)
-                      setQuiz3Submitted(true)
-                    }}
+                    onClick={() => handleAnswerQuiz3(opt.key)}
                   >
                     <strong>{opt.key}.</strong>
                     <span>{opt.text}</span>
@@ -522,6 +722,13 @@ export function TheorySection() {
                 </div>
               )}
             </div>
+
+            {/* Tombol Navigasi ke Materi Teori Berikutnya */}
+            <TheoryNextNav
+              currentTab="kehidupan"
+              onNavigateNext={handleNavigateNext}
+              onBackToList={handleBackToMaterialList}
+            />
           </div>
         )}
 
@@ -606,10 +813,7 @@ export function TheorySection() {
                     key={opt.key}
                     type="button"
                     className={`check-option-item ${quiz4Answer === opt.key ? 'selected' : ''}`}
-                    onClick={() => {
-                      setQuiz4Answer(opt.key)
-                      setQuiz4Submitted(true)
-                    }}
+                    onClick={() => handleAnswerQuiz4(opt.key)}
                   >
                     <strong>{opt.key}.</strong>
                     <span>{opt.text}</span>
@@ -630,6 +834,13 @@ export function TheorySection() {
                 </div>
               )}
             </div>
+
+            {/* Tombol Navigasi ke Materi Teori Berikutnya (Materi Terakhir: Kembali ke Daftar Materi) */}
+            <TheoryNextNav
+              currentTab="netralisasi"
+              onNavigateNext={handleNavigateNext}
+              onBackToList={handleBackToMaterialList}
+            />
           </div>
         )}
       </div>

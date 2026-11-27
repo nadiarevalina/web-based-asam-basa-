@@ -6718,6 +6718,163 @@
   color: #991b1b;
 }
 
+/* ==========================================================================
+   Theory Bottom Navigation (Next Material Navigation Button)
+   ========================================================================== */
+.theory-next-action-card {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--surface-blend-card, linear-gradient(135deg, #FFFDF8 0%, #FFF5DF 45%, #EBF7FD 100%));
+  border: 1px solid var(--surface-blend-border, #CBD5E1);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.theory-next-action-card.is-final {
+  background: linear-gradient(135deg, #FFFDF8 0%, #F0FDF4 50%, #EBF7FD 100%);
+  border-color: #86efac;
+}
+
+.theory-next-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.theory-next-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0369a1;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill, 9999px);
+  width: fit-content;
+}
+
+.theory-next-badge.badge-success {
+  color: #15803d;
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.theory-next-desc {
+  font-size: 14px;
+  color: var(--text-primary, #263747);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.theory-next-desc strong {
+  color: #0369a1;
+  font-weight: 700;
+}
+
+.btn-theory-next-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 26px;
+  min-height: 48px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+  transition: all var(--transition-fast, 0.2s ease);
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.btn-theory-next-step:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-theory-next-step:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+.btn-theory-next-step:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.btn-theory-next-step .next-arrow-icon {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-theory-next-step:hover .next-arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Tombol Kembali ke Daftar Materi pada materi terakhir */
+.btn-theory-next-step.btn-theory-return {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+}
+
+.btn-theory-next-step.btn-theory-return:hover {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-theory-next-step .return-icon {
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-theory-next-step:hover .return-icon {
+  transform: translateY(-3px);
+}
+
+/* Responsive Mobile Layout (Khusus Tampilan Smartphone) */
+@media (max-width: 640px) {
+  .theory-next-action-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .theory-next-info {
+    text-align: left;
+  }
+
+  .btn-theory-next-step {
+    width: 100%;
+    min-height: 50px;
+    padding: 14px 20px;
+    font-size: 15px;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 768px) {
   .inquiry-steps-list {
     grid-template-columns: repeat(4, 1fr);
