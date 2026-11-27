@@ -9,6 +9,7 @@ export interface SidebarProps {
   onOpenSearch: () => void
   isCollapsed: boolean
   onToggleCollapse: () => void
+  onOpenGuide?: () => void
 }
 
 interface NavMenuItem {
@@ -25,6 +26,7 @@ export function Sidebar({
   onOpenSearch,
   isCollapsed,
   onToggleCollapse,
+  onOpenGuide,
 }: SidebarProps) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => getCurrentUser())
@@ -282,6 +284,18 @@ export function Sidebar({
           </button>
 
           <div className="mobile-header-actions">
+            {onOpenGuide && (
+              <button
+                type="button"
+                className="mobile-action-icon-btn mobile-guide-btn"
+                onClick={() => onOpenGuide()}
+                title="Buka Petunjuk Prosedur Inkuiri"
+                aria-label="Petunjuk Prosedur Inkuiri"
+              >
+                <span style={{ fontSize: '16px' }}>💡</span>
+              </button>
+            )}
+
             <button
               type="button"
               className="mobile-action-icon-btn"
@@ -551,6 +565,58 @@ export function Sidebar({
                     )}
                     {activePage === 'guru' && (
                       <span className="sidebar-active-indicator teacher-indicator" aria-hidden="true" />
+                    )}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {/* Group: Panduan & Prosedur Inkuiri */}
+          {onOpenGuide && (
+            <div className="sidebar-menu-group group-guide">
+              {!isCollapsed && (
+                <span className="sidebar-group-label">Bantuan &amp; Panduan</span>
+              )}
+              <ul className="sidebar-nav-list" role="list">
+                <li className="sidebar-nav-item-wrap">
+                  <button
+                    type="button"
+                    className={`sidebar-nav-item ${isCollapsed ? 'collapsed' : ''}`}
+                    onClick={() => {
+                      onOpenGuide()
+                      setMobileDrawerOpen(false)
+                    }}
+                    title="Petunjuk Prosedur Penggunaan Inkuiri Terbimbing (6 Tahap)"
+                  >
+                    <span className="sidebar-item-icon-wrap">
+                      <svg
+                        className="sidebar-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
+                    </span>
+                    {!isCollapsed && (
+                      <span className="sidebar-item-text-group">
+                        <span className="sidebar-item-label">
+                          Petunjuk Prosedur{' '}
+                          <span className="sidebar-teacher-badge" style={{ background: '#f59e0b', color: '#ffffff' }}>
+                            6 Tahap
+                          </span>
+                        </span>
+                        <span className="sidebar-item-desc">
+                          Sintaks Inkuiri Terbimbing
+                        </span>
+                      </span>
                     )}
                   </button>
                 </li>

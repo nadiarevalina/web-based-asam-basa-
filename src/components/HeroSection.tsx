@@ -4,11 +4,13 @@ interface HeroSectionProps {
   onStartLearning: () => void
   onOpenLab: () => void
   onOpenCalculator?: () => void
+  onOpenGuide?: () => void
 }
 
 export function HeroSection({
   onStartLearning,
   onOpenLab,
+  onOpenGuide,
 }: HeroSectionProps) {
   const [fluidState, setFluidState] = useState<'acid' | 'neutral' | 'base'>('acid')
 
@@ -124,6 +126,19 @@ export function HeroSection({
               </svg>
               <span>Lab Virtual</span>
             </button>
+
+            {onOpenGuide && (
+              <button
+                type="button"
+                className="btn btn-outline-cyan hero-guide-btn"
+                onClick={onOpenGuide}
+                id="hero-guide-btn"
+                title="Buka Prosedur Penggunaan Inkuiri Terbimbing (6 Tahap)"
+              >
+                <span style={{ fontSize: '16px', marginRight: '6px' }}>💡</span>
+                <span>Petunjuk Prosedur</span>
+              </button>
+            )}
           </div>
 
           {/* Value Badges */}

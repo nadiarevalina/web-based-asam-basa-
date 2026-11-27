@@ -18,7 +18,10 @@ import { InquiryStageBanner } from './components/InquiryStageBanner'
 import { PageBottomNav } from './components/PageBottomNav'
 import { Footer } from './components/Footer'
 import { ChemistryBackground } from './components/ChemistryBackground'
+import { OnboardingModal } from './components/OnboardingModal'
 import './App.css'
+
+const ONBOARDING_STORAGE_KEY = 'asambasa_onboarding_completed'
 
 function getInitialPage(): PageId {
   if (typeof window === 'undefined') return 'beranda'
@@ -33,6 +36,28 @@ export default function App() {
   const [activePage, setActivePage] = useState<PageId>(getInitialPage)
   const [labSimulationState, setLabSimulationState] = useState<'initial' | 'acid' | 'neutral' | 'base'>('initial')
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+
+  // Status prosedur inkuiri terbimbing (Wajib di awal sebelum masuk Beranda)
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      const completed = window.localStorage.getItem(ONBOARDING_STORAGE_KEY)
+      return completed !== 'true'
+    } catch {
+      return true
+    }
+  })
+
+  const [isOnboardingMandatory, setIsOnboardingMandatory] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true
+    try {
+      const completed = window.localStorage.getItem(ONBOARDING_STORAGE_KEY)
+      return completed !== 'true'
+    } catch {
+      return true
+    }
+  })
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
     try {
@@ -58,6 +83,17 @@ export default function App() {
 
   // Navigasi ke halaman tertentu dan sinkronisasi ke URL hash
   const navigateToPage = useCallback((page: PageId) => {
+    // Validasi apakah prosedur inkuiri terbimbing telah diselesaikan
+    try {
+      const isCompleted = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
+      if (!isCompleted) {
+        setIsOnboardingMandatory(true)
+        setIsOnboardingOpen(true)
+      }
+    } catch {
+      // ignore storage error
+    }
+
     setActivePage(page)
     const targetHash = `#/${page}`
     if (window.location.hash !== targetHash) {
@@ -66,9 +102,33 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
+  // Fungsi untuk membuka kembali panduan prosedur kapan saja melalui menu bantuan
+  const handleOpenGuide = useCallback(() => {
+    setIsOnboardingMandatory(false)
+    setIsOnboardingOpen(true)
+  }, [])
+
+  // Callback ketika siswa menyelesaikan seluruh 6 tahap inkuiri dan menekan Mulai Pembelajaran
+  const handleOnboardingComplete = useCallback(() => {
+    setIsOnboardingOpen(false)
+    setIsOnboardingMandatory(false)
+    navigateToPage('beranda')
+  }, [navigateToPage])
+
   // Sinkronisasi tombol browser Back/Forward (popstate/hashchange)
   useEffect(() => {
     const handleHashChange = () => {
+      // Kunci akses langsung ke Beranda jika prosedur belum diselesaikan
+      try {
+        const isCompleted = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
+        if (!isCompleted) {
+          setIsOnboardingMandatory(true)
+          setIsOnboardingOpen(true)
+        }
+      } catch {
+        // ignore storage error
+      }
+
       const pageFromHash = normalizePageId(window.location.hash)
       setActivePage(pageFromHash)
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -77,6 +137,17 @@ export default function App() {
     // Inisialisasi hash jika belum ada
     if (!window.location.hash) {
       window.location.hash = `#/beranda`
+    }
+
+    // Periksa status penyelesaian pada pertama kali membuka halaman
+    try {
+      const isCompleted = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
+      if (!isCompleted) {
+        setIsOnboardingMandatory(true)
+        setIsOnboardingOpen(true)
+      }
+    } catch {
+      // ignore storage error
     }
 
     window.addEventListener('hashchange', handleHashChange)
@@ -111,6 +182,7 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebarCollapse}
+        onOpenGuide={handleOpenGuide}
       />
 
       {/* Area Konten Utama & Footer di Sisi Kanan Sidebar (Layer 10 di atas background) */}
@@ -128,6 +200,7 @@ export default function App() {
           <HeroSection
             onStartLearning={() => navigateToPage('teori')}
             onOpenLab={() => navigateToPage('lab')}
+            onOpenGuide={handleOpenGuide}
           />
 
           {/* Banner Tahapan Inkuiri Terbimbing */}
@@ -306,6 +379,14 @@ export default function App() {
       isOpen={isSearchOpen}
       onClose={() => setIsSearchOpen(false)}
       onNavigateToPage={navigateToPage}
+    />
+
+    {/* Pop-up Prosedur Penggunaan Berbasis Inkuiri Terbimbing (6 Tahap Wajib di Awal) */}
+    <OnboardingModal
+      isOpen={isOnboardingOpen}
+      isMandatory={isOnboardingMandatory}
+      onComplete={handleOnboardingComplete}
+      onClose={() => setIsOnboardingOpen(false)}
     />
   </div>
   )
