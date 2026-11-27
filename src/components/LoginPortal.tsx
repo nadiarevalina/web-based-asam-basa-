@@ -24,7 +24,6 @@ import {
   isTeacherEmail,
 } from '../services/firebaseConfig'
 import {
-  reinitFirebase,
   loginWithFirebase,
   registerWithFirebase,
   logoutFromFirebase,

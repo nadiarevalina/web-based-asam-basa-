@@ -382,7 +382,7 @@ export async function fetchActivitiesFromFirestore(): Promise<StudentActivityRes
     const querySnapshot = await getDocs(q)
 
     const list: StudentActivityResult[] = []
-    querySnapshot.forEach((d) => {
+    querySnapshot.forEach((d: any) => {
       const data = d.data() as StudentActivityResult
       list.push({
         ...data,
