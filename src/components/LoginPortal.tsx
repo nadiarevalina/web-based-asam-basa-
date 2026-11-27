@@ -20,12 +20,8 @@ import {
   clearServerLogs,
 } from '../services/authStorage'
 import {
-  getFirebaseConfig,
-  saveFirebaseConfig,
-  clearCustomFirebaseConfig,
   isFirebaseConfigured,
   isTeacherEmail,
-  type FirebaseConfig,
 } from '../services/firebaseConfig'
 import {
   reinitFirebase,
@@ -72,11 +68,8 @@ export function LoginPortal({
   const [regSubject, setRegSubject] = useState('Kimia')
   const [regPassword, setRegPassword] = useState('123')
 
-  // State Konfigurasi Firebase
-  const [fbConfig, setFbConfig] = useState<FirebaseConfig>(() => getFirebaseConfig())
+  // State Status Autentikasi
   const [isFbConfigured, setIsFbConfigured] = useState<boolean>(() => isFirebaseConfigured())
-  const [showConfigModal, setShowConfigModal] = useState<boolean>(false)
-  const [modalConfigInput, setModalConfigInput] = useState<FirebaseConfig>(() => getFirebaseConfig())
   const [isSubmittingAuth, setIsSubmittingAuth] = useState<boolean>(false)
 
   // Tab di dalam Portal
@@ -108,7 +101,6 @@ export function LoginPortal({
     setAllExperiments(getAllExperiments())
     setServerLogs(getServerLogs())
     setIsFbConfigured(isFirebaseConfigured())
-    setFbConfig(getFirebaseConfig())
 
     if (user?.role === 'guru') {
       setActiveTab('guru_dashboard')
@@ -175,22 +167,6 @@ export function LoginPortal({
       setAuthError(res.error || 'Gagal masuk akun. Periksa username atau email dan kata sandi Anda.')
     }
     setIsSubmittingAuth(false)
-  }
-
-  const handleQuickLogin = (username: string) => {
-    setAuthError(null)
-    setAuthSuccess(null)
-    const res = loginUser(username, '123')
-    if (res.success && res.user) {
-      setCurrentUser(res.user)
-      setAuthSuccess(`Masuk cepat berhasil sebagai ${res.user.fullName} (${res.user.role === 'guru' ? 'Guru Resmi' : 'Siswa'}).`)
-      if (res.user.role === 'guru') {
-        setActiveTab('guru_dashboard')
-      } else {
-        setActiveTab('tautkan')
-      }
-      refreshData()
-    }
   }
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -560,227 +536,9 @@ export function LoginPortal({
         </div>
       )}
 
-      {/* Banner Status Sambungan Firebase & Ketetapan Akun Guru */}
-      <div className={`firebase-banner-card ${isFbConfigured ? 'connected' : ''}`}>
-        <div className="firebase-banner-top">
-          <div className="firebase-banner-title-group">
-            <span className="firebase-logo-icon">🔥</span>
-            <div>
-              <h3 className="firebase-banner-title">
-                Integrasi Cloud Firebase Backend
-              </h3>
-              <p className="firebase-banner-desc">
-                {isFbConfigured
-                  ? `Terhubung ke Project ID: ${fbConfig.projectId || 'Terkonfigurasi'}`
-                  : 'Siap dihubungkan ke Firebase. Masukkan kredensial project Anda untuk sinkronisasi cloud.'}
-              </p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <span className={`firebase-status-pill ${isFbConfigured ? 'pill-online' : 'pill-pending'}`}>
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: isFbConfigured ? '#16a34a' : '#d97706',
-                  display: 'inline-block',
-                }}
-              />
-              {isFbConfigured ? 'Firebase Aktif (Online)' : 'Menunggu Kunci API'}
-            </span>
-            <button
-              type="button"
-              className="btn btn-outline-cyan btn-xs"
-              onClick={() => {
-                setModalConfigInput(getFirebaseConfig())
-                setShowConfigModal(true)
-              }}
-            >
-              ⚙️ Pengaturan Kredensial Firebase
-            </button>
-          </div>
-        </div>
-
-        <div className="firebase-banner-rules">
-          <div className="firebase-rule-row">
-            <span className="firebase-rule-pill-teacher">Ketetapan Akun Guru</span>
-            <span>
-              Email <strong>nadia.revalina.2403316.@students.um.ac.id</strong> secara permanen ditetapkan sebagai <strong>Akun Guru</strong> dengan akses penuh ke Panel Guru.
-            </span>
-          </div>
-          <div className="firebase-rule-row">
-            <span className="firebase-rule-pill-student">Ketetapan Akun Siswa</span>
-            <span>
-              Seluruh pendaftar atau akun baru lainnya otomatis ditetapkan sebagai <strong>Akun Siswa</strong>.
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal Pengaturan Kredensial Firebase */}
-      {showConfigModal && (
-        <div className="firebase-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-modal-title">
-          <div className="firebase-modal-card">
-            <div className="firebase-modal-header">
-              <h3 id="fb-modal-title" className="firebase-modal-title">
-                🔥 Pengaturan Kredensial Firebase
-              </h3>
-              <button
-                type="button"
-                className="firebase-modal-close"
-                onClick={() => setShowConfigModal(false)}
-                aria-label="Tutup"
-              >
-                &times;
-              </button>
-            </div>
-
-            <p className="firebase-modal-desc">
-              Masukkan kredensial project Firebase yang Anda peroleh dari <strong>Firebase Console &rarr; Project Settings &rarr; General &rarr; Your apps &rarr; Web app</strong>.
-              Nilai ini disimpan secara lokal di peramban Anda atau dapat dituliskan di file <code>.env</code> proyek.
-            </p>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                saveFirebaseConfig(modalConfigInput)
-                reinitFirebase()
-                setIsFbConfigured(isFirebaseConfigured(modalConfigInput))
-                setFbConfig(modalConfigInput)
-                setShowConfigModal(false)
-                setActionAlert({
-                  type: 'success',
-                  message: 'Kredensial Firebase berhasil disimpan dan backend diinisialisasi!',
-                })
-              }}
-            >
-              <div className="firebase-input-grid">
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">apiKey *</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: AIzaSyD..."
-                    value={modalConfigInput.apiKey}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({ ...prev, apiKey: e.target.value.trim() }))
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">authDomain *</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: asambasa-lab.firebaseapp.com"
-                    value={modalConfigInput.authDomain}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({ ...prev, authDomain: e.target.value.trim() }))
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">projectId *</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: asambasa-lab"
-                    value={modalConfigInput.projectId}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({ ...prev, projectId: e.target.value.trim() }))
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">storageBucket</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: asambasa-lab.firebasestorage.app"
-                    value={modalConfigInput.storageBucket}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({ ...prev, storageBucket: e.target.value.trim() }))
-                    }
-                  />
-                </div>
-
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">messagingSenderId</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: 1029384756"
-                    value={modalConfigInput.messagingSenderId}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({
-                        ...prev,
-                        messagingSenderId: e.target.value.trim(),
-                      }))
-                    }
-                  />
-                </div>
-
-                <div className="firebase-field-group">
-                  <label className="firebase-field-label">appId *</label>
-                  <input
-                    type="text"
-                    className="firebase-field-input"
-                    placeholder="Contoh: 1:1029384756:web:abcd1234ef56"
-                    value={modalConfigInput.appId}
-                    onChange={(e) =>
-                      setModalConfigInput((prev) => ({ ...prev, appId: e.target.value.trim() }))
-                    }
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="firebase-modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-outline-cyan btn-sm"
-                  onClick={() => {
-                    clearCustomFirebaseConfig()
-                    const envConfig = getFirebaseConfig()
-                    setModalConfigInput(envConfig)
-                    setFbConfig(envConfig)
-                    setIsFbConfigured(isFirebaseConfigured(envConfig))
-                    reinitFirebase()
-                    setShowConfigModal(false)
-                    setActionAlert({
-                      type: 'info',
-                      message: 'Konfigurasi telah diatur ulang ke nilai variabel lingkungan (.env).',
-                    })
-                  }}
-                >
-                  Reset ke .env
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setShowConfigModal(false)}
-                >
-                  Batal
-                </button>
-                <button type="submit" className="btn btn-primary btn-sm">
-                  Simpan &amp; Hubungkan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Card Status Pengguna Saat Ini */}
-      <div className="user-status-card">
-        {currentUser ? (
+      {/* Card Status Pengguna (Tampil saat pengguna telah masuk) */}
+      {currentUser && (
+        <div className="user-status-card">
           <div className="current-user-info-row">
             <div className="user-profile-left">
               <div
@@ -853,50 +611,8 @@ export function LoginPortal({
               </button>
             </div>
           </div>
-        ) : (
-          <div className="guest-login-prompt">
-            <div className="guest-prompt-text">
-              <h4>Anda Sedang Menggunakan Mode Tamu (Belum Masuk)</h4>
-              <p>
-                Hasil praktikum dan kuis yang Anda kerjakan akan tersimpan sementara di peramban ini.
-                Masuk ke akun Siswa untuk menautkan hasil, mengantrekan kiriman ke server, atau masuk sebagai Guru untuk memeriksa tugas siswa.
-              </p>
-            </div>
-            <div className="fast-login-chips">
-              <span className="fast-chip-label">Pilih Akses Cepat Demo:</span>
-              <button
-                type="button"
-                className="fast-login-btn btn-chip-teacher"
-                style={{ background: '#d97706', color: '#ffffff', borderColor: '#b45309', fontWeight: 700 }}
-                onClick={() => handleQuickLogin('nadia.revalina.2403316.@students.um.ac.id')}
-              >
-                👑 Guru Resmi: Nadia Revalina
-              </button>
-              <button
-                type="button"
-                className="fast-login-btn btn-chip-student"
-                onClick={() => handleQuickLogin('budi')}
-              >
-                👨‍🎓 Siswa: Budi (XI MIPA 1)
-              </button>
-              <button
-                type="button"
-                className="fast-login-btn btn-chip-student"
-                onClick={() => handleQuickLogin('nadia')}
-              >
-                👩‍🎓 Siswa: Nadia (XI MIPA 2)
-              </button>
-              <button
-                type="button"
-                className="fast-login-btn btn-chip-teacher"
-                onClick={() => handleQuickLogin('guru')}
-              >
-                👩‍🏫 Guru: Ibu Sri Wahyuni
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Jika Belum Login: Tampilkan Form Login / Register / Lupa Password */}
       {!currentUser && (
